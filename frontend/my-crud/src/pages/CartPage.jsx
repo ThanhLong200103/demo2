@@ -5,11 +5,51 @@ import axiosClient from "../api/axios";
 
 const CustomCartItem = () => {
   const [cart, setCart] = useState([]);
+  const handelIncrease = async (id, quantity) => {
+    const quantityProduct = -1;
+
+    quantity = quantity + 1;
+    setCart((prev) =>
+      prev.map((item) =>
+        item.id === id ? { ...item, quantity: quantity } : item,
+      ),
+    );
+    try {
+      console.log(quantityProduct);
+      const update = await axiosClient.put(`/cartitem/update/${id}`, {
+        quantity,
+        quantityProduct,
+      });
+      console.log(update);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  const handleReduce = async (id, quantity) => {
+    const quantityProduct = 1;
+
+    quantity = quantity - 1;
+    setCart((prev) =>
+      prev.map((item) =>
+        item.id === id ? { ...item, quantity: quantity } : item,
+      ),
+    );
+    try {
+      console.log(quantityProduct);
+      const update = await axiosClient.put(`/cartitem/update/${id}`, {
+        quantity,
+        quantityProduct,
+      });
+      console.log(update);
+    } catch (error) {
+      console.log(error);
+    }
+  };
   useEffect(() => {
     const cartRun = async () => {
       const cartData = await axiosClient.get("/cartitem");
       setCart(cartData);
-      console.log(cart);
+      // console.log(cart);
     };
     cartRun();
   }, []);
@@ -17,31 +57,35 @@ const CustomCartItem = () => {
     try {
       await axiosClient.delete(`/cartitem/delete/${id}`);
     } catch (err) {
-        console.log(err)
+      console.log(err);
     }
   };
   return (
-    <Container className="p-3 d-flex align-items-center">
+    <Container className="p-3  d-flex align-items-center">
       <Row className="w-100 justify-content-center">
         {cart.map((c) => (
-          <Col md={8}>
+          <Col md={8} className="p-2">
             <Card className="shadow border-0 p-3">
               <Card.Body>
                 <Row className="align-items-center">
                   <Col xs={12} md={6}>
                     <div className="d-flex align-items-center mb-2">
                       <FaUser className="text-primary me-2" />
-                      <h5 className="mb-0 fw-bold">{c.user.name}</h5>
+                      <h5 className="mb-0 fw-bold">{c.name}</h5>
                     </div>
                     <div className="d-flex align-items-center text-muted">
                       <FaEnvelope className="me-2" size={14} />
-                      <small>{c.user.email}</small>
+                      <small>{Number(c.price * c.quantity)}</small>
                     </div>
                   </Col>
 
                   <Col xs={8} md={4} className="mt-3 mt-md-0">
                     <div className="d-flex align-items-center">
-                      <Button variant="outline-secondary" size="sm">
+                      <Button
+                        variant="outline-secondary"
+                        size="sm"
+                        onClick={() => {handleReduce(c.id, c.quantity)}}
+                      >
                         <FaMinus size={10} />
                       </Button>
                       <Form.Control
@@ -51,7 +95,13 @@ const CustomCartItem = () => {
                         className="text-center mx-2"
                         style={{ width: "50px", fontWeight: "bold" }}
                       />
-                      <Button variant="outline-secondary" size="sm">
+                      <Button
+                        variant="outline-secondary"
+                        size="sm"
+                        onClick={() => {
+                          handelIncrease(c.id, c.quantity);
+                        }}
+                      >
                         <FaPlus size={10} />
                       </Button>
                     </div>

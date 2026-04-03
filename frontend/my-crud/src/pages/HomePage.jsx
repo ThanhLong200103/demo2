@@ -10,7 +10,9 @@ export default function HomePage() {
   const [products, setProducts] = useState([]);
   const [show, setShow] = useState(false);
   const [id, setId] = useState(null);
-
+  const quantity = 1
+  // const tinh = 0-1 ;
+  // console.log(tinh)
   useEffect(() => {
     const fetchProducts = async () => {
       try {
@@ -35,12 +37,14 @@ export default function HomePage() {
   };
 
   // ✅ Add to cart
-  const handleCreateCart = async (product_id, quantity) => {
+  const handleCreateCart = async (productId, quantity ,quantityProduct) => {
+     
     try {
       await axiosClient.post("/cartitem/create", {
-        product_id,
+        productId,
         quantity,
       });
+    
       alert("Added to cart!");
     } catch (err) {
       console.log(err);
@@ -99,7 +103,7 @@ export default function HomePage() {
                 <Button
                   variant="outline-secondary"
                   size="sm"
-                  onClick={() => {}}
+                  onClick={() => {handleCreateCart(p.id ,quantity ,p.quantity)}}
                 >
                   <MdAddShoppingCart />
                 </Button>

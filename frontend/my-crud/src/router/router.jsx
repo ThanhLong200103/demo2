@@ -5,6 +5,7 @@ import EditPage from "../pages/EditPage";
 import IndexPagew from "../pages/IndexPagew";
 import DeletePage from "../pages/DeletePage";
 import CartPage from "../pages/CartPage";
+import LoginPage from "../pages/loginPage";
 
 export default function AppRouter() {
     return(
@@ -15,8 +16,8 @@ export default function AppRouter() {
             <Route path="/index" element = {<IndexPagew></IndexPagew>}></Route>
             <Route path="/delete/:id" element = {<DeletePage></DeletePage>}></Route>
             <Route path="/cart" element = {<CartPage></CartPage>}></Route>
-
-
+            <Route path="/login" element = {<LoginPage></LoginPage>}></Route>
+            
         </Routes>
     )
 };

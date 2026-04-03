@@ -22,8 +22,8 @@ class CartItemController {
   editCartItem = async (req , res) =>{
     try{
         const {id} = req.params;
-        const {quantity} = req.body
-        const edit = await CartItemService.updateCartItem({quantity,id})
+        const {quantity , quantityProduct} = req.body
+        const edit = await CartItemService.updateCartItem({id , quantity ,quantityProduct})
         res.json(edit)
     }
     catch(err){
@@ -33,9 +33,8 @@ class CartItemController {
   }
   createCartItem = async (req , res )=>{
     try{
-        const{productId ,quantityProduct} = req.body;
-        const quantity = 1
-        const craete = await CartItemService.createCartItem({productId  , quantityProduct,quantity})
+        const{productId ,quantityProduct , quantity} = req.body;
+        const craete = await CartItemService.createCartItem({productId , quantityProduct,quantity})
         res.json(craete)
     }catch(err){
       res.status(500).json({ error: err.message });

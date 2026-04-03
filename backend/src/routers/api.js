@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const ProductController = require("../controllers/productController")
 const CartItemController = require("../controllers/cartItemController")
+const UserController = require("../controllers/userController")
 router.get("/api/cartitem",CartItemController.getCartItemAll)
 router.delete("/api/cartitem/delete/:id",CartItemController.deleteCartitem)
 router.put("/api/cartitem/update/:id" ,CartItemController.editCartItem)
@@ -13,6 +14,9 @@ router.post("/api/product/create",ProductController.createProduct)
 router.get("/api/product/:id",ProductController.getProduct)
 router.put("/api/product/edit/:id",ProductController.editProduct)
 router.delete("/api/product/delete/:id",ProductController.deleteProduct)
+// user
+router.get("/api/users",UserController.getAllUser)
+router.post("/api/login",UserController.login)
 
 let initApiRoutes = (app) => {
   app.use('/', router);
