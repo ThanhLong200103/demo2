@@ -41,7 +41,7 @@ class CartItemController {
 
     }
   }
-  getCart = async (req,res)=>{
+  getCartItem = async (req,res)=>{
     try{
       const {id} = req.params
       const data = await CartItemService.checkDelete(id);
@@ -49,6 +49,16 @@ class CartItemController {
     }catch(err){
       res.status(500).json({ error: err.message });
 
+    }
+  }
+  getCart = async (req, res)=>{
+    try {
+      const userId = req.user.id;
+      const data = await CartItemService.getCart(userId)
+      res.json(data)
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+      
     }
   }
 }

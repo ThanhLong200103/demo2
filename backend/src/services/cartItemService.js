@@ -2,6 +2,7 @@ const cartItem = require("../models/CartItem");
 const AppError = require("../utils/AppError");
 const db = require("../config/db")
 const ProductModel = require("../models/ProductModel")
+const Cart = require("../models/cart")
 class CartItemService {
   getAllCart = async () => {
     const item = await cartItem.getAllCartItem();
@@ -84,5 +85,10 @@ class CartItemService {
     const data = await cartItem.getcart(id);
     return data
   };
+
+  getCart = async (userId) =>{
+    const data = await Cart.getCart(userId);
+    return data;
+  }
 }
 module.exports = new CartItemService();

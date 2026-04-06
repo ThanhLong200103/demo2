@@ -3,7 +3,7 @@ const db = require("../config/db");
 class CartItem {
   getAllCartItem = async () => {
     const [row] = await db.query(
-      "SELECT p.price , p.quantity as quantityProduct, p.img,p.name , c.quantity , c.id FROM products p  INNER JOIN  cartitem c on p.id = c.product_id WHERE c.status = 'active' ",
+      "SELECT p.price , p.quantity as quantityProduct, p.img,p.name , c.quantity , c.id FROM products p  INNER JOIN  cartitem c on p.id = c.product_id WHERE c.status = 'active' AND  ",
     );
     console.log("ROW:", row);
     return row;

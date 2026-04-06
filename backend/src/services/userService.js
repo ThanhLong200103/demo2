@@ -9,6 +9,14 @@ class UserService {
         const result = await UserModel.userLogin(data);
         return result ;
     }
+    checkProfile = async (email)=>{
+        const profile = await UserModel.getUser(email) ;
+        return profile;
+    }
+    register = async (data)=>{
+        const result = await UserModel.createUser(data);
+        return result;
+    }
     
 }
 module.exports = new UserService();

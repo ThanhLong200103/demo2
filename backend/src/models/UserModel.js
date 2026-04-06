@@ -5,18 +5,25 @@ const User = {
         const [row] = await db.query("SELECT * FROM users")
         return row;
     },
-    getUser : async(id) =>{
+    getUserUpdate : async(id) =>{
        
         const[oneUser] = await db.query("SELECT * FROM users WHERE id = ? FOR UPDATE ",[id] );
         return oneUser[0];
     },
+    getUser : async(email) =>{
+       
+        const[oneUser] = await db.query("SELECT * FROM users WHERE email = ?",[email] );
+        return oneUser[0];
+    },
     userLogin : async(data)=>{
-        const {name , password} = data
-        const[oneUser] = await db.execute("SELECT * FROM users WHERE name = ? AND password =?",[name ,password] );
+        const {email , hasdPassWord} = data
+        const password = hasdPassWord
+        const[oneUser] = await db.execute("SELECT id , name , email ,password FROM users WHERE email = ? AND password =?",[email ,password] );
         return oneUser[0];
     },
     createUser : async(user)=>{
-        const{name,password ,email,phone} = user;
+        const{name,hasdPassWord ,email,phone} = user;
+        const password = hasdPassWord
         const[result] = await db.query("INSERT INTO users (name,password ,email,phone ) VALUES (?,?,?,?)" ,[name,password ,email,phone]);
         return result;
     },
@@ -28,6 +35,30 @@ const User = {
     deleteUser : async(id) =>{
         const[oneUser] = await db.query("DELETE FROM  users  WHERE id = ?",[id] );
         return oneUser;
+    },
+
+    editRefeshToken : async (refresh_token ,id)=>{
+       
+        const[result] = await db.query("UPDATE users SET refresh_token = ? ,time_refresh_token	= ?  WHERE id = ?" ,[refresh_token,new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), id]);
+        return result;
+    },
+    getToken : async (refresh_token ,id  ,connection = db)=>{
+        const [row] = await connection.execute("SELECT id , email,name ,password FROM users WHERE refresh_token = ? AND  id =? FOR UPDATE  ",[refresh_token,id])
+        return row[0];
+    },
+    updateRefeshToken : async (newHasdToken ,id , connection = db)=>{
+       const refresh_token = newHasdToken
+        const[result] = await connection.execute("UPDATE users SET refresh_token = ? ,time_refresh_token	= ?  WHERE id = ?" ,[refresh_token,new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), id]);
+        return result;
+    },
+    getTokenLogout : async (id  ,connection = db)=>{
+        const [row] = await connection.execute("SELECT * FROM users WHERE  id =? FOR UPDATE  ",[id])
+        return row[0];
+    },
+    updateRefeshTokenLogOut : async ( id , connection = db)=>{
+       const refresh_token = null
+        const[result] = await connection.execute("UPDATE users SET refresh_token = ? ,time_refresh_token	= ?  WHERE id = ?" ,[refresh_token,null, id]);
+        return result;
     },
 }
 module.exports = User

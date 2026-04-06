@@ -1,4 +1,6 @@
 const UserService = require("../services/userService");
+const AuthService = require("../services/auth.service");
+const { hasdPass, validatePass } = require("../utils/argon2");
 class UserController {
   getAllUser = async (req, res) => {
     try {
@@ -8,16 +10,90 @@ class UserController {
       res.status(500).json({ error: err.message });
     }
   };
-  login = async(req , res)=>{
+  login = async (req, res) => {
     try {
-        const {name , password} = req.body
-        const result = await UserService.userLogin({name ,password})
-        res.json(result)
+      const { email, password } = req.body;
+      const checkPass = await UserService.checkProfile(email);
+      if (!checkPass) {
+        return res.status(404).json({ message: "User không tồn tại" });
+      }
+      const validPass = await validatePass(checkPass.password, password);
+
+      if (validPass) {
+        const hasdPassWord = checkPass.password;
+        const result = await UserService.userLogin({ email, hasdPassWord });
+        const accessToken = await AuthService.login(result);
+        const refreshToken = await AuthService.refreshToken(checkPass.id);
+        res.cookie("refreshToken", refreshToken.token, {
+          httpOnly: true,
+          secure: false,
+          sameSite: "strict",
+          path: "/",
+        });
+        res.json({
+          result: result,
+          accessToken: accessToken,
+          // refreshToken: refreshToken.token,
+        });
+      }
+      // res.json(checkPass.password)
     } catch (error) {
       res.status(500).json({ error: error.message });
-        
     }
-  }
+  };
+  proFile = async (req, res) => {
+    try {
+      const profile = await UserService.checkProfile(req.user.email);
+      res.json(profile);
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  };
+  register = async (req, res) => {
+    try {
+      const { name, password, email, phone } = req.body;
+      const hasdPassWord = await hasdPass(password);
+      const register = await UserService.register({
+        name,
+        hasdPassWord,
+        email,
+        phone,
+      });
+      res.json(register);
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  };
+  resetRefreshToken = async (req, res) => {
+    try {
+      const token = req.cookies.refreshToken;
+      const data = await AuthService.resetRefreshToken(token);
+      res.clearCookie("refreshToken", {
+        path: "/",
+        httpOnly: true,
+      });
+      res.cookie("refreshToken", data.newRefreshToken, {
+        httpOnly: true,
+        secure: false,
+        sameSite: "strict",
+        path: "/",
+      });
+      // res.json(data)
+      res.json({ accessToken: data.newAccessToken });
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  };
+  userLogout = async (req, res) => {
+    try {
+      const id = req.user.id;
+      console.log(id);
+      const result = await AuthService.logOut(id);
+      res.json(result);
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  };
 }
 
-module.exports = new UserController()
+module.exports = new UserController();

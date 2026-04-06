@@ -1,6 +1,8 @@
-const corsReact = () =>{
-    origin: "http://localhost:3000";
-    methods: ["GET", "POST", "PUT", "DELETE"];
-    credentials: true
-}
-module.exports = corsReact
+const corsReact = {
+    origin: 'http://localhost:5173',       // domain frontend
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    credentials: true,                     // cho phép gửi cookie
+    allowedHeaders: ['Content-Type', 'Authorization']
+};
+
+module.exports = corsReact;

@@ -4,14 +4,14 @@ import axiosClient from "../api/axios";
 import { useNavigate } from "react-router-dom";
 
 export default function LoginPage() {
-  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const navigation = useNavigate();
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Name:", name, "Password:", password);
+    console.log("Email:", email, "Password:", password);
    try {
-    const data = await axiosClient.post("/login",{name,password});
+    const data = await axiosClient.post("/login",{email,password});
     console.log(data)
     localStorage.setItem ('id', data.id);
 
@@ -26,12 +26,12 @@ export default function LoginPage() {
       <Col md={8}>
         <Form onSubmit={handleSubmit}>
           <Form.Group className="mb-3" controlId="formName">
-            <Form.Label>Name</Form.Label>
+            <Form.Label>Email</Form.Label>
             <Form.Control 
               type="text" 
               placeholder="Name"  
-              value={name}
-              onChange={(e) => setName(e.target.value)} 
+              value={email}
+              onChange={(e) => setEmail(e.target.value)} 
             />
           </Form.Group>
 

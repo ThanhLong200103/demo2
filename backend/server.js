@@ -7,10 +7,11 @@ const cors = require("cors");
 const initApiRoutes = require("./src/routers/api");
 const app = express();
 const corsReact = require ("./src/config/cors")
-app.use(cors());
+const cookieParser = require('cookie-parser')
+app.use(cors(corsReact));
 app.use(express.json()); 
 app.use(express.urlencoded({ extended: true }));
-
+app.use(cookieParser())
 initApiRoutes(app);
 (async ()=>{
     await initDB()
