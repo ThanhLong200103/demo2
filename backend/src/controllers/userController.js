@@ -27,8 +27,10 @@ class UserController {
         res.cookie("refreshToken", refreshToken.token, {
           httpOnly: true,
           secure: false,
-          sameSite: "strict",
+          sameSite: "Lax",
           path: "/",
+          domain: "localhost",
+          maxAge: 7 * 24 * 60 * 60 * 1000,
         });
         res.json({
           result: result,
@@ -67,21 +69,29 @@ class UserController {
   resetRefreshToken = async (req, res) => {
     try {
       const token = req.cookies.refreshToken;
+      if (!token) {
+        return res.status(401).json({ message: "No refresh token" });
+      }
+      console.log("COOKIE:", req.cookies.refreshToken);
       const data = await AuthService.resetRefreshToken(token);
-      res.clearCookie("refreshToken", {
-        path: "/",
-        httpOnly: true,
-      });
+      if (!data || !data.newRefreshToken) {
+        return res.status(401).json({ message: "Invalid refresh token" });
+      }
       res.cookie("refreshToken", data.newRefreshToken, {
         httpOnly: true,
         secure: false,
-        sameSite: "strict",
+        sameSite: "Lax",
         path: "/",
+        domain: "localhost",
+        maxAge: 7 * 24 * 60 * 60 * 1000,
       });
       // res.json(data)
       res.json({ accessToken: data.newAccessToken });
     } catch (error) {
       res.status(500).json({ error: error.message });
+      return res.status(401).json({
+        message: "Refresh token expired or invalid",
+      });
     }
   };
   userLogout = async (req, res) => {
@@ -94,6 +104,16 @@ class UserController {
       res.status(500).json({ error: error.message });
     }
   };
+  // me = async (req, res)=>{
+  //   try {
+  //     const token = req.cookies.refreshToken;
+  //     const data = await AuthService.me(token)
+  //     res.json(data)
+  //   } catch (error) {
+  //     res.status(500).json({ error: error.message });
+
+  //   }
+  // }
 }
 
 module.exports = new UserController();

@@ -3,7 +3,8 @@ const cartItem = require("../models/CartItem")
 class CartItemController {
   getCartItemAll = async (req, res) => {
     try {
-      const all = await CartItemService.getAllCart();
+      const {id} = req.params
+      const all = await CartItemService.getAllCart(id);
       // console.log("DATA API:", all); 
       res.json(all);
     } catch (err) {
@@ -33,8 +34,9 @@ class CartItemController {
   }
   createCartItem = async (req , res )=>{
     try{
-        const{productId ,quantityProduct , quantity} = req.body;
-        const craete = await CartItemService.createCartItem({productId , quantityProduct,quantity})
+        const{productId  , quantity ,cartId} = req.body;
+        console.log(productId , quantity ,cartId)
+        const craete = await CartItemService.createCartItem({productId ,cartId ,quantity})
         res.json(craete)
     }catch(err){
       res.status(500).json({ error: err.message });

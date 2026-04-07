@@ -2,6 +2,7 @@ const db = require("./db");
 
 const initDB = async () => {
   try {
+
     await db.query(`
       CREATE TABLE IF NOT EXISTS products (
         id INT AUTO_INCREMENT PRIMARY KEY,
@@ -12,6 +13,7 @@ const initDB = async () => {
         status ENUM('active', 'inactive', 'out_of_stock') DEFAULT 'active'
       )
     `);
+
 
     await db.query(`
       CREATE TABLE IF NOT EXISTS users (
@@ -25,6 +27,7 @@ const initDB = async () => {
       )
     `);
 
+
     await db.query(`
       CREATE TABLE IF NOT EXISTS carts (
         id INT AUTO_INCREMENT PRIMARY KEY,
@@ -35,7 +38,7 @@ const initDB = async () => {
       )
     `);
 
-    // ✅ CART ITEM FIX CHUẨN
+    
     await db.query(`
       CREATE TABLE IF NOT EXISTS cartItem (
         id INT AUTO_INCREMENT PRIMARY KEY,
@@ -57,9 +60,57 @@ const initDB = async () => {
       )
     `);
 
-    console.log("Table ready");
+  
+    await db.query(`
+      CREATE TABLE IF NOT EXISTS orders (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        user_id INT NOT NULL,
+        total_price INT NOT NULL,
+        status ENUM('pending', 'completed', 'cancelled') DEFAULT 'pending',
+
+        CONSTRAINT FK_Order_User
+          FOREIGN KEY (user_id) REFERENCES users(id)
+          ON DELETE CASCADE
+      )
+    `);
+
+  
+    await db.query(`
+      CREATE TABLE IF NOT EXISTS order_items (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        order_id INT NOT NULL,
+        product_id INT NOT NULL,
+        quantity INT NOT NULL,
+        price INT NOT NULL,
+
+        CONSTRAINT FK_OrderItem_Order
+          FOREIGN KEY (order_id) REFERENCES orders(id)
+          ON DELETE CASCADE,
+
+        CONSTRAINT FK_OrderItem_Product
+          FOREIGN KEY (product_id) REFERENCES products(id)
+          ON DELETE CASCADE
+      )
+    `);
+
+
+    await db.query(`
+      CREATE TABLE IF NOT EXISTS payments (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        order_id INT NOT NULL,
+        amount INT NOT NULL,
+        status ENUM('pending', 'completed', 'failed') DEFAULT 'pending',
+        method ENUM('COD', 'paypal', 'MOMO') NOT NULL,
+
+        CONSTRAINT FK_Payment_Order
+          FOREIGN KEY (order_id) REFERENCES orders(id)
+          ON DELETE CASCADE
+      )
+    `);
+
+    console.log(" All tables created successfully");
   } catch (err) {
-    console.error("Init DB error:", err.message);
+    console.error(" Init DB error:", err.message);
   }
 };
 

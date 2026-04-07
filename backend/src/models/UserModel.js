@@ -60,5 +60,10 @@ const User = {
         const[result] = await connection.execute("UPDATE users SET refresh_token = ? ,time_refresh_token	= ?  WHERE id = ?" ,[refresh_token,null, id]);
         return result;
     },
+    //  getTokenMe: async (refresh_token ,id )=>{
+
+    //     const [row] = await db.execute("SELECT id , email,name ,password FROM users WHERE refresh_token = ? AND  id =? FOR UPDATE  ",[refresh_token,id])
+    //     return row[0];
+    // },
 }
 module.exports = User

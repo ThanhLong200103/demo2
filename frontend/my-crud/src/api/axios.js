@@ -16,7 +16,7 @@ const processQueue = (error, token = null) => {
 };
 
 const axiosClient = axios.create({
-  baseURL: "http://127.0.0.1:3000/api",
+  baseURL: "http://localhost:3000/api",
   headers: {
     "Content-Type": "application/json",
   },
@@ -32,7 +32,7 @@ axiosClient.interceptors.request.use(
     }
     return config;
   },
-  (error) => Promise.reject(error)
+  (error) => Promise.reject(error),
 );
 
 // 2. Response Interceptor
@@ -65,9 +65,9 @@ axiosClient.interceptors.response.use(
       try {
         // GỌI REFRESH TOKEN (Sử dụng instance axios gốc để tránh interceptor đè lên)
         const res = await axios.post(
-          "http://127.0.0.1:3000/api/refresh",
+          "http://localhost:3000/api/refresh",
           {},
-          { withCredentials: true }
+          { withCredentials: true },
         );
 
         const { accessToken } = res.data;
@@ -81,18 +81,21 @@ axiosClient.interceptors.response.use(
         resolve(axiosClient(originalRequest));
       } catch (refreshError) {
         processQueue(refreshError, null);
-        
-        // Logout nếu refresh thất bại
-        localStorage.removeItem("accessToken");
-        if (window.location.pathname !== "/login") {
-            window.location.href = "/login";
+
+        // Chỉ xóa token khi server xác nhận refresh không thành công (token hết hạn)
+        if (
+          window.location.pathname !== "/login" &&
+          refreshError.response?.status === 401
+        ) {
+          localStorage.removeItem("accessToken");
+          window.location.href = "/login";
         }
         reject(refreshError);
       } finally {
         isRefreshing = false;
       }
     });
-  }
+  },
 );
 
 export default axiosClient;

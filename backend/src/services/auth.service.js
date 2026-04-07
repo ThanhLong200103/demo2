@@ -24,10 +24,9 @@ class AuthService {
 
   resetRefreshToken = async (token) => {
     const conn = await db.getConnection();
+    console.log("TOKEN FROM CLIENT:", token);
     try {
-      if (!token) {
-        throw new AppError("token không tồn tại", 401);
-      }
+     
       await conn.beginTransaction();
       const decoded = verifyRefreshToken(token);
       const refresh_token = hasdRefreshToken(token);
@@ -37,9 +36,7 @@ class AuthService {
       const getToken = await UserModel.getToken(refresh_token, id, conn);
       // console.log(getToken)
       // return getToken
-      if (!getToken) {
-        throw new AppError("Không có quyền hạn", 403);
-      }
+      
       const newRefreshToken = signRefreshToken({ id: id });
       // console.log(newRefreshToken)
       const newHasdToken = hasdRefreshToken(newRefreshToken);
@@ -62,6 +59,14 @@ class AuthService {
       conn.release();
     }
   };
+
+  // me = async(token)=>{
+  //   const decoded = verifyRefreshToken(token);
+  //   const id = decoded.id
+  //   const refresh_token = hasdRefreshToken(token) 
+  //   const checkme = await UserModel.getTokenMe(refresh_token ,id)
+  //   return checkme;
+  // }
 
   logOut = async (id)=>{
     const connection = await db.getConnection();

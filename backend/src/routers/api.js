@@ -5,11 +5,12 @@ const CartItemController = require("../controllers/cartItemController")
 const UserController = require("../controllers/userController");
 const authMiddleware = require('../middlewares/auth.middleware');
 const validateUser = require('../middlewares/validateUser');
-router.get("/api/cartitem",CartItemController.getCartItemAll)
+const orderController = require('../controllers/orderController');
+router.get("/api/cartitem/:id",authMiddleware,CartItemController.getCartItemAll)
 router.get("/api/cart",authMiddleware,CartItemController.getCart)
 router.delete("/api/cartitem/delete/:id",CartItemController.deleteCartitem)
 router.put("/api/cartitem/update/:id" ,CartItemController.editCartItem)
-router.post("/api/cartitem/create" ,CartItemController.createCartItem)
+router.post("/api/cartitem/create" ,authMiddleware,CartItemController.createCartItem)
 router.get("/api/cartitem/:id" ,CartItemController.getCartItem)
 //Product
 router.get("/api/products",ProductController.getAllProduct)
@@ -24,7 +25,10 @@ router.get("/api/profile",authMiddleware,UserController.proFile)
 router.post("/api/register",validateUser,UserController.register)
 router.post("/api/refresh",UserController.resetRefreshToken)
 router.post("/api/logout",authMiddleware,UserController.userLogout)
+// router.get("/api/me",UserController.me)
 
+// order
+router.post("/api/order/create",authMiddleware,orderController.CreateOrder)
 let initApiRoutes = (app) => {
   app.use('/', router);
 };

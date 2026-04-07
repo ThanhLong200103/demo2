@@ -1,9 +1,11 @@
 const db = require("../config/db");
+const cart = require("./cart");
 
 class CartItem {
-  getAllCartItem = async () => {
-    const [row] = await db.query(
-      "SELECT p.price , p.quantity as quantityProduct, p.img,p.name , c.quantity , c.id FROM products p  INNER JOIN  cartitem c on p.id = c.product_id WHERE c.status = 'active' AND  ",
+  getAllCartItem = async (cart_id) => {
+    const [row] = await db.execute(
+      "SELECT p.price , p.quantity as quantityProduct, p.img,p.name , c.quantity , c.id FROM products p  INNER JOIN  cartitem c on p.id = c.product_id  WHERE c.status = 'active' AND  c.cart_id = ?",
+      [cart_id],
     );
     console.log("ROW:", row);
     return row;
@@ -31,10 +33,10 @@ class CartItem {
     );
     return row;
   };
-  checkproductID = async (productId, connection = db) => {
+  checkproductID = async (productId, cartId, connection = db) => {
     const [existingItem] = await connection.execute(
-      "SELECT * FROM  cartitem WHERE product_id = ? FOR UPDATE",
-      [productId],
+      "SELECT * FROM  cartitem WHERE product_id = ? AND cart_id = ? AND status = 'active' FOR UPDATE",
+      [productId, cartId],
     );
     return existingItem;
   };
@@ -65,6 +67,23 @@ class CartItem {
       [id],
     );
     return rows[0];
+  };
+
+
+  // Lấy thông tin cartitem theo danh sách id ,để dùng cho  orderItem sau khi đặt hàng thành công
+  getCartItemsByIds = async (ids, connection = db) => {
+    if (!ids || ids.length === 0) return [];
+    const placeholders = ids.map(() => "?").join(",");
+    const query = `SELECT c.product_id ,c.quantity ,p.price FROM cartitem  c INNER JOIN   products p on p.id = c.product_id   WHERE c.id IN (${placeholders}) FOR UPDATE`;
+    const [rows] = await connection.execute(query, ids);
+    return rows;
+  };
+  UpdateByIds = async (ids, connection = db) => {
+    if (!ids || ids.length === 0) return [];
+    const placeholders = ids.map(() => "?").join(",");
+    const query = `UPDATE cartitem SET status = 'ordered' WHERE id IN (${placeholders})`;
+    const [rows] = await connection.execute(query, ids);
+    return rows;
   };
 }
 module.exports = new CartItem();

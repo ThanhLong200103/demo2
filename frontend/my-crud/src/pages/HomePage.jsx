@@ -25,7 +25,7 @@ export default function HomePage() {
     fetchProducts();
   }, []);
 
-  // ✅ Delete
+
   const handleDelete = async (id) => {
     try {
       await axiosClient.delete(`/product/delete/${id}`);
@@ -36,14 +36,20 @@ export default function HomePage() {
     }
   };
 
-  // ✅ Add to cart
-  const handleCreateCart = async (productId, quantity ,quantityProduct) => {
+
+  const handleCreateCart = async (productId, quantity) => {
      
     try {
-      await axiosClient.post("/cartitem/create", {
+       const response = await axiosClient.get("/cart");
+
+        const cartId = response.id;
+        console.log(cartId ,productId ,quantity)
+    await axiosClient.post("/cartitem/create", {
         productId,
         quantity,
+        cartId,
       });
+    
     
       alert("Added to cart!");
     } catch (err) {
@@ -103,7 +109,7 @@ export default function HomePage() {
                 <Button
                   variant="outline-secondary"
                   size="sm"
-                  onClick={() => {handleCreateCart(p.id ,quantity ,p.quantity)}}
+                  onClick={() => {handleCreateCart(p.id ,quantity)}}
                 >
                   <MdAddShoppingCart />
                 </Button>

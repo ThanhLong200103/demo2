@@ -4,8 +4,9 @@ const db = require("../config/db")
 const ProductModel = require("../models/ProductModel")
 const Cart = require("../models/cart")
 class CartItemService {
-  getAllCart = async () => {
-    const item = await cartItem.getAllCartItem();
+  getAllCart = async (id) => {
+    const cart_id = id
+    const item = await cartItem.getAllCartItem(cart_id);
     return item;
   };
   createCartItem = async (data) => {
@@ -13,7 +14,8 @@ class CartItemService {
     try {
       await conn.beginTransaction();
       const productId  = data.productId
-      const checkProduct = await cartItem.checkproductID(productId , conn);
+      const cartId = data.cartId
+      const checkProduct = await cartItem.checkproductID(productId ,cartId , conn);
       const up =  await cartItem.updownQuanTiTyProduct(data ,conn);
       if(checkProduct.length > 0){
         const quantity = checkProduct[0].quantity + data.quantity

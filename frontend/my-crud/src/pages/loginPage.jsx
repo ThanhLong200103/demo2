@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button, Col, Container, Form } from "react-bootstrap";
 import axiosClient from "../api/axios";
 import { useNavigate } from "react-router-dom";
@@ -13,14 +13,30 @@ export default function LoginPage() {
    try {
     const data = await axiosClient.post("/login",{email,password});
     console.log(data)
-    localStorage.setItem ('id', data.id);
-
+    localStorage.setItem("accessToken",data.accessToken)
     navigation("/")
    } catch (error) {
     console.log(error)
    }
   }
+ useEffect(() => {
+  const accessToken = localStorage.getItem("accessToken");
 
+  
+  if (accessToken) {
+    const checkMe = async () => {
+      try {
+        await axiosClient.get("/profile");
+        navigation("/"); 
+      } catch (error) {
+        
+        console.log("Token expired, attempting refresh...");
+      }
+    };
+    checkMe();
+  }
+  // Nếu không có token, tuyệt đối KHÔNG gọi gì cả, cứ để họ ở trang Login.
+}, []);
   return (
     <Container className="d-flex justify-content-center mt-5">
       <Col md={8}>
