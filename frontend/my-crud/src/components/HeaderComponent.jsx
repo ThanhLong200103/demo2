@@ -4,32 +4,45 @@ import Container from "react-bootstrap/Container";
 import Form from "react-bootstrap/Form";
 import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
-import NavDropdown from "react-bootstrap/NavDropdown";
 import { FaShoppingCart } from "react-icons/fa";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import axiosClient from "../api/axios";
+import { AiOutlineLogout } from "react-icons/ai";
+import { toast } from "react-toastify";
 export default function HeaderComponent(params) {
-  // const[userId , setId] = useState();
-  //  useEffect(() => {
-  // const accessToken = localStorage.getItem("accessToken");
- 
-  // if (accessToken) {
-  //   const checkMe = async () => {
-  //     try {
-  //      const user =  await axiosClient.get("/profile");
-  //       // console.log(user.id); 
-  //       setId(user.id)
-  //     } catch (error) {
-        
-  //       console.log("Token expired, attempting refresh...");
-  //     }
-  //   };
-  //   checkMe();
-  // }
- 
-// }, []);
+  const navigate = useNavigate();
+  const [userId, setId] = useState(null);
+  const[profile, setProfile] = useState(null)
+  useEffect(() => {
+    const accessToken = localStorage.getItem("accessToken");
+
+    if (accessToken) {
+      const checkMe = async () => {
+        try {
+          const user = await axiosClient.get("/profile");
+          console.log(user.id);
+          setId(user.id);
+          setProfile(user)
+        } catch (error) {
+          console.log("Token expired, attempting refresh...");
+        }
+      };
+      checkMe();
+    }
+  }, []);
+  const handleLogOut = async () => {
+    try {
+      const logOut = await axiosClient.post("/logout");
+      toast.success("Đã đăng xuất");
+      localStorage.removeItem("accessToken");
+      navigate("/login");
+      setId(null)
+    } catch (error) {
+      console.log(error);
+    }
+  };
   return (
-  <Navbar expand="lg" className="bg-body-tertiary ">
+    <Navbar expand="lg" className="bg-body-tertiary ">
       <Container fluid>
         <Navbar.Toggle aria-controls="navbarScroll" />
         <Navbar.Collapse id="navbarScroll">
@@ -44,16 +57,46 @@ export default function HeaderComponent(params) {
             <Nav.Link as={Link} to="/create">
               Create
             </Nav.Link>
-            <Nav.Link as={Link} to="/index">
-              Index
-            </Nav.Link>
+           {profile ? <Nav.Link as={Link} to="/index  " state={profile}>
+              Profile
+            </Nav.Link> 
+             : " "
+           }
+           {profile ? <Nav.Link as={Link} to="/history  " >
+              Giao dịch
+            </Nav.Link> 
+             : " "
+           }
           </Nav>
-          <Form className="d-flex justify-content-end">
+          <Form
+            className="d-flex justify-content-end "
+            style={{ marginRight: "10px" }}
+          >
             <Button variant="outline-success" as={Link} to={`/cart`}>
               {" "}
               <FaShoppingCart />{" "}
             </Button>
           </Form>
+
+          {userId ? (
+            <Form className="d-flex justify-content-end">
+              <Button
+                variant="outline-success"
+                onClick={() => {
+                  handleLogOut();
+                }}
+              >
+                {" "}
+                <AiOutlineLogout />{" "}
+              </Button>
+            </Form>
+          ) : (
+            <Form className="d-flex justify-content-end">
+              <Button variant="outline-success" as={Link} to={`/login`}>
+                Đăng Nhập
+              </Button>
+            </Form>
+          )}
         </Navbar.Collapse>
       </Container>
     </Navbar>

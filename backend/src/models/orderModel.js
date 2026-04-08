@@ -15,11 +15,12 @@ class OrderModel {
         );
         return order[0];
     }
-    getAllOrder = async (user_id, connection = db)=>{
-        const [orders] = await connection.query(
+    getAllOrder = async (user_id )=>{
+        const [orders] = await db.execute(
             "SELECT * FROM orders WHERE user_id = ?",
             [user_id]
         );
+        // console.log(orders , user_id)
         return orders;
     }
     

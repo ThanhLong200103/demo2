@@ -11,10 +11,10 @@ class CartItem {
     return row;
   };
   createCartItem = async (data, connection = db) => {
-    const { productId, quantity } = data;
+    const { productId, quantity, cartId } = data;
     const [result] = await connection.execute(
-      "INSERT INTO  cartitem (product_id, quantity) VALUES (?,?)",
-      [productId, quantity],
+      "INSERT INTO cartitem (cart_id, product_id, quantity) VALUES (?,?,?)",
+      [cartId, productId, quantity],
     );
     return result;
   };
@@ -83,6 +83,14 @@ class CartItem {
     const placeholders = ids.map(() => "?").join(",");
     const query = `UPDATE cartitem SET status = 'ordered' WHERE id IN (${placeholders})`;
     const [rows] = await connection.execute(query, ids);
+    return rows;
+  };
+
+   getCartItemsOfSelectOrder = async (ids) => {
+    if (!ids || ids.length === 0) return [];
+    const placeholders = ids.map(() => "?").join(",");
+    const query = `SELECT c.id , c.product_id ,c.quantity ,p.price ,p.name,p.img FROM cartitem  c INNER JOIN   products p on p.id = c.product_id   WHERE c.id IN (${placeholders})`;
+    const [rows] = await db.execute(query, ids);
     return rows;
   };
 }

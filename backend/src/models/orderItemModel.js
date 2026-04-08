@@ -10,7 +10,14 @@ class OrderItemModel {
       
     }
     getOrderItem = async (id)=>{
-        
+        const [rows] = await db.execute(
+          `SELECT o.id, o.quantity, o.price, p.name, p.img
+           FROM order_items o
+           INNER JOIN products p ON o.product_id = p.id
+           WHERE order_id = ?`,
+          [id],
+        );
+        return rows;
     }
 }
 

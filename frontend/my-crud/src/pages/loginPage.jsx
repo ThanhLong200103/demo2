@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
-import { Button, Col, Container, Form } from "react-bootstrap";
+import { Button, Col, Container, Form, Row } from "react-bootstrap";
 import axiosClient from "../api/axios";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  
   const navigation = useNavigate();
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -14,7 +15,7 @@ export default function LoginPage() {
     const data = await axiosClient.post("/login",{email,password});
     console.log(data)
     localStorage.setItem("accessToken",data.accessToken)
-    navigation("/")
+   navigation("/")
    } catch (error) {
     console.log(error)
    }
@@ -38,6 +39,7 @@ export default function LoginPage() {
   // Nếu không có token, tuyệt đối KHÔNG gọi gì cả, cứ để họ ở trang Login.
 }, []);
   return (
+    <>
     <Container className="d-flex justify-content-center mt-5">
       <Col md={8}>
         <Form onSubmit={handleSubmit}>
@@ -45,7 +47,7 @@ export default function LoginPage() {
             <Form.Label>Email</Form.Label>
             <Form.Control 
               type="text" 
-              placeholder="Name"  
+              placeholder="Email"  
               value={email}
               onChange={(e) => setEmail(e.target.value)} 
             />
@@ -66,6 +68,11 @@ export default function LoginPage() {
           </Button>
         </Form>
       </Col>
+     
     </Container>
+    <Container className="mt-3">
+      <Link to={"/register"}>Đăng ký tài khoản</Link>
+    </Container>
+    </>
   );
 }

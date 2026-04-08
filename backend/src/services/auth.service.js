@@ -34,6 +34,9 @@ class AuthService {
       console.log(decoded);
     
       const getToken = await UserModel.getToken(refresh_token, id, conn);
+      if (!getToken) {
+        throw new Error("Invalid refresh token");
+      }
       // console.log(getToken)
       // return getToken
       

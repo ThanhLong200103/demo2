@@ -52,6 +52,7 @@ export default function HomePage() {
     
     
       alert("Added to cart!");
+      setProducts(products.map((p) => p.id === productId ? { ...p, quantity: p.quantity - quantity } : p));
     } catch (err) {
       console.log(err);
     }

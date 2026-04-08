@@ -1,5 +1,6 @@
 const UserService = require("../services/userService");
 const AuthService = require("../services/auth.service");
+const CartService = require("../services/cartItemService");
 const { hasdPass, validatePass } = require("../utils/argon2");
 class UserController {
   getAllUser = async (req, res) => {
@@ -24,6 +25,7 @@ class UserController {
         const result = await UserService.userLogin({ email, hasdPassWord });
         const accessToken = await AuthService.login(result);
         const refreshToken = await AuthService.refreshToken(checkPass.id);
+       const cart = await CartService.createCart(checkPass.id);
         res.cookie("refreshToken", refreshToken.token, {
           httpOnly: true,
           secure: false,
@@ -35,6 +37,7 @@ class UserController {
         res.json({
           result: result,
           accessToken: accessToken,
+          cartId: cart,
           // refreshToken: refreshToken.token,
         });
       }

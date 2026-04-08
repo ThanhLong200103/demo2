@@ -63,5 +63,14 @@ class CartItemController {
       
     }
   }
+  createCart = async (req, res) =>{
+    try {
+      const userId = req.user.id;
+      const data = await CartItemService.createCart(userId)
+      res.json(data)
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  }
 }
 module.exports = new CartItemController();

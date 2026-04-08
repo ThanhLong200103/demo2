@@ -1,10 +1,11 @@
 const db = require("../config/db");
 class PaymentModel {
   createPayment = async (data, connection = db) => {
-    const { orderId, amount, method } = data; 
-    const [result] = await connection.execute(
+    const { order_id, orderId, amount, method } = data;
+    const paymentOrderId = order_id || orderId;
+    const [result] = await connection.query(
       "INSERT INTO payments (order_id, amount, method) VALUES (?, ?, ?)",
-      [orderId, amount, method],
+      [paymentOrderId, amount, method],
     );
     return result;
   };

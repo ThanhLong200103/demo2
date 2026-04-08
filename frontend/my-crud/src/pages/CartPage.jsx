@@ -2,6 +2,8 @@ import React, { useEffect, useState, useMemo } from "react";
 import { Container, Row, Col, Card, Button, Form, Badge } from "react-bootstrap";
 import { FaUser, FaTrash, FaPlus, FaMinus, FaShoppingCart, FaCreditCard } from "react-icons/fa";
 import axiosClient from "../api/axios";
+import { Link } from "react-router-dom";
+import OrderPage from "./orderPage";
 
 const CustomCartItem = () => {
   const [cart, setCart] = useState([]);
@@ -39,7 +41,9 @@ const totalPrice = useMemo(() => {
     const cartRun = async () => {
       try {
         const response = await axiosClient.get("/cart");
+        console.log("Cart data:", response);
         const cartItemData = await axiosClient.get(`/cartitem/${response.id}`);
+        console.log(cartItemData);
         setCart(cartItemData);
       } catch (error) { console.error("Lỗi API Cart:", error); }
     };
@@ -61,6 +65,7 @@ const totalPrice = useMemo(() => {
   };
 
   return (
+    <>
     <div style={{ backgroundColor: "#f8f9fa", minHeight: "100vh", pb: "100px" }}>
       <Container className="py-5">
         <h3 className="mb-4 fw-bold"><FaShoppingCart className="me-2"/> Giỏ hàng của bạn</h3>
@@ -160,6 +165,8 @@ const totalPrice = useMemo(() => {
                 className="w-100 fw-bold py-2 shadow-sm" 
                 disabled={selectedIds.length === 0}
                 style={{ borderRadius: "10px" }}
+                as={Link}  to={`/order`}
+                state={{totalPrice , selectedIds}}
               >
                 Đặt hàng 
               </Button>
@@ -168,6 +175,8 @@ const totalPrice = useMemo(() => {
         </Container>
       </div>
     </div>
+   
+    </>
   );
 };
 

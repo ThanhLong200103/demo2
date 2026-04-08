@@ -6,6 +6,9 @@ import IndexPagew from "../pages/IndexPagew";
 import DeletePage from "../pages/DeletePage";
 import CartPage from "../pages/CartPage";
 import LoginPage from "../pages/loginPage";
+import OrderPage from "../pages/orderPage";
+import RegisterPage from "../pages/registerPage";
+import PurchaseHistoryPage from "../pages/purchaseHistoryPage";
 
 export default function AppRouter() {
     return(
@@ -17,6 +20,10 @@ export default function AppRouter() {
             <Route path="/delete/:id" element = {<DeletePage></DeletePage>}></Route>
             <Route path="/cart" element = {<CartPage></CartPage>}></Route>
             <Route path="/login" element = {<LoginPage></LoginPage>}></Route>
+            {/* <Route path="/login" element = {<LoginPage></LoginPage>}></Route> */}
+            <Route path="/order" element = {<OrderPage></OrderPage>}></Route>
+            <Route path="/register" element = {<RegisterPage></RegisterPage>}></Route>
+            <Route path="/history" element = {<PurchaseHistoryPage></PurchaseHistoryPage>}></Route>
             
         </Routes>
     )

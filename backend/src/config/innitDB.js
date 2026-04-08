@@ -2,7 +2,6 @@ const db = require("./db");
 
 const initDB = async () => {
   try {
-
     await db.query(`
       CREATE TABLE IF NOT EXISTS products (
         id INT AUTO_INCREMENT PRIMARY KEY,
@@ -13,7 +12,6 @@ const initDB = async () => {
         status ENUM('active', 'inactive', 'out_of_stock') DEFAULT 'active'
       )
     `);
-
 
     await db.query(`
       CREATE TABLE IF NOT EXISTS users (
@@ -27,7 +25,6 @@ const initDB = async () => {
       )
     `);
 
-
     await db.query(`
       CREATE TABLE IF NOT EXISTS carts (
         id INT AUTO_INCREMENT PRIMARY KEY,
@@ -38,29 +35,24 @@ const initDB = async () => {
       )
     `);
 
-    
     await db.query(`
-      CREATE TABLE IF NOT EXISTS cartItem (
-        id INT AUTO_INCREMENT PRIMARY KEY,
-        cart_id INT NOT NULL,
-        product_id INT NOT NULL,
-        quantity INT NOT NULL DEFAULT 1,
-        status ENUM('active', 'ordered', 'removed') DEFAULT 'active',
+     CREATE TABLE IF NOT EXISTS cartItem (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  cart_id INT NOT NULL,
+  product_id INT NOT NULL,
+  quantity INT NOT NULL DEFAULT 1,
+  status ENUM('active', 'ordered', 'removed') DEFAULT 'active',
 
-        CONSTRAINT FK_CartItem_Cart
-          FOREIGN KEY (cart_id) REFERENCES carts(id)
-          ON DELETE CASCADE,
+  CONSTRAINT FK_CartItem_Cart
+    FOREIGN KEY (cart_id) REFERENCES carts(id)
+    ON DELETE CASCADE,
 
-        CONSTRAINT FK_CartItem_Product
-          FOREIGN KEY (product_id) REFERENCES products(id)
-          ON DELETE CASCADE,
-
-        CONSTRAINT unique_cart_product 
-          UNIQUE (cart_id, product_id)
-      )
+  CONSTRAINT FK_CartItem_Product
+    FOREIGN KEY (product_id) REFERENCES products(id)
+    ON DELETE CASCADE
+)
     `);
 
-  
     await db.query(`
       CREATE TABLE IF NOT EXISTS orders (
         id INT AUTO_INCREMENT PRIMARY KEY,
@@ -74,7 +66,6 @@ const initDB = async () => {
       )
     `);
 
-  
     await db.query(`
       CREATE TABLE IF NOT EXISTS order_items (
         id INT AUTO_INCREMENT PRIMARY KEY,
@@ -93,14 +84,13 @@ const initDB = async () => {
       )
     `);
 
-
     await db.query(`
       CREATE TABLE IF NOT EXISTS payments (
         id INT AUTO_INCREMENT PRIMARY KEY,
         order_id INT NOT NULL,
         amount INT NOT NULL,
         status ENUM('pending', 'completed', 'failed') DEFAULT 'pending',
-        method ENUM('COD', 'paypal', 'MOMO') NOT NULL,
+        method ENUM('COD', 'paypal', 'MOMO') NOT NULL DEFAULT 'COD',
 
         CONSTRAINT FK_Payment_Order
           FOREIGN KEY (order_id) REFERENCES orders(id)

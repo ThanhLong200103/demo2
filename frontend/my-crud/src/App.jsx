@@ -7,7 +7,7 @@ function App() {
 
   return (
     <>
-    <HeaderComponent></HeaderComponent>
+    <HeaderComponent ></HeaderComponent>
     <AppRouter></AppRouter>
     <ToastContainer />
     </>

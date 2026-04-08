@@ -8,8 +8,8 @@ class ProductModel {
     return row;
   };
   getProduct = async (id) => {
-    const [existingItem] = await db.ex(
-      "SELECT * FROM  products WHERE id = ? ,status = 'active' FOR UPDATE",
+    const [existingItem] = await db.execute(
+      "SELECT * FROM  products WHERE id = ? AND status = 'active' FOR UPDATE",
       [id],
     );
     return existingItem;

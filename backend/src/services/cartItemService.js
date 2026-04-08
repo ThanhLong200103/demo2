@@ -16,16 +16,20 @@ class CartItemService {
       const productId  = data.productId
       const cartId = data.cartId
       const checkProduct = await cartItem.checkproductID(productId ,cartId , conn);
+      console.log("CHECK PRODUCT:", checkProduct);
       const up =  await cartItem.updownQuanTiTyProduct(data ,conn);
+      console.log("UP:", up);
       if(checkProduct.length > 0){
         const quantity = checkProduct[0].quantity + data.quantity
         const id = checkProduct[0].id;
         const edit = await cartItem.editCartItem({quantity,id},conn)
+        console.log("EDIT:", edit);
          await conn.commit();
         return [edit,up]
      
     }else{
         const create = await cartItem.createCartItem(data ,conn)
+        console.log("CREATE:", create);
          await conn.commit();
         return [create ,up]
         
@@ -90,6 +94,14 @@ class CartItemService {
 
   getCart = async (userId) =>{
     const data = await Cart.getCart(userId);
+    return data;
+  }
+  createCart = async (userId) =>{
+    const cartId = await Cart.getCart(userId);
+    if(cartId){
+      return cartId;
+    }
+    const data = await Cart.createCart(userId);
     return data;
   }
 }
