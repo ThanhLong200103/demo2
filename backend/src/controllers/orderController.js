@@ -15,6 +15,7 @@ class OrderController {
   getItemOrder = async (req, res) => {
     try {
       const { ids } = req.body;
+    
       console.log("ids:", ids);
       const data = await OrderService.getItemOrder(ids);
       res.json(data);
@@ -34,6 +35,16 @@ class OrderController {
       
     }
   }
+  cancelOrderItem = async (req, res) => {
+    try {
+      const { id } = req.user;
+      const idOrderItem = req.body.idOrderItem;
+      const data = await OrderService.cancelOrderItem(id , idOrderItem);
+      res.json(data); 
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  };
  
 }
 

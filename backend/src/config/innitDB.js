@@ -90,14 +90,23 @@ const initDB = async () => {
         order_id INT NOT NULL,
         amount INT NOT NULL,
         status ENUM('pending', 'completed', 'failed') DEFAULT 'pending',
-        method ENUM('COD', 'paypal', 'MOMO') NOT NULL DEFAULT 'COD',
+        method ENUM('COD', 'VNPay', 'MOMO') NOT NULL DEFAULT 'COD',
 
         CONSTRAINT FK_Payment_Order
           FOREIGN KEY (order_id) REFERENCES orders(id)
           ON DELETE CASCADE
       )
     `);
-
+    await db.query(`
+      ALTER TABLE order_items 
+ADD COLUMN status ENUM('pending', 'shipped', 'delivered', 'cancelled', 'returned') DEFAULT 'pending';
+      `);
+    await db.query(`
+        ALTER TABLE payments
+ADD COLUMN IF NOT EXISTS transaction_no VARCHAR(50) NULL,
+ADD COLUMN IF NOT EXISTS response_code VARCHAR(10) NULL,
+ADD COLUMN IF NOT EXISTS bank_code VARCHAR(20) NULL
+    `).catch(err => console.log("Columns might already exist:", err.message));
     console.log(" All tables created successfully");
   } catch (err) {
     console.error(" Init DB error:", err.message);

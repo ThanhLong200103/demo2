@@ -23,6 +23,42 @@ class OrderModel {
         // console.log(orders , user_id)
         return orders;
     }
+// cancle order
+     getCancelAllOrder = async (userId ,connection = db )=>{
+        const [orders] = await connection.execute(
+            "SELECT * FROM orders WHERE user_id = ?",
+            [userId]
+        );
+        // console.log(orders , user_id)
+        return orders;
+    }
+
+   cancelOrder = async (id, connection = db) => {
+        const [row] = await connection.execute(
+          "UPDATE orders SET status = 'cancelled' WHERE id = ?",
+          [id],
+        );
+        return row;
+      }
+// update order khi thanh toan thanh cong
+    selectUpdateOrder = async (id, connection = db) => {
+        const [rows] = await connection.execute(
+          "SELECT * FROM orders WHERE id = ? FOR UPDATE",
+          [id]
+        );
+        return rows[0];
+      }
+
+    updatestatusOrder = async (id, connection = db) => {
+        const [row] = await connection.execute(
+          "UPDATE orders SET status = 'completed' WHERE id = ?",
+          [id],
+        );
+        return row;
+      }
+
+    
+    
     
 }
 module.exports = new OrderModel();

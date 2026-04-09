@@ -1,6 +1,7 @@
 const OrderModel = require("../models/orderModel");
 const OrderItemModel = require("../models/orderItemModel");
 const CartItemModel = require("../models/CartItem");
+const ProductModel = require("../models/ProductModel");
 const db = require("../config/db");
 const paymentModel = require("../models/paymentModel");
 class OrderService {
@@ -62,6 +63,47 @@ class OrderService {
     }
     return orderItem;
   };
+
+  cancelOrderItem = async (id ,idOrderItem) => {
+    const conn = await db.getConnection();
+    try {
+      await conn.beginTransaction();
+      const getOrderCancel = await OrderModel.getCancelAllOrder(id, conn);
+      console.log("GET ORDER CANCEL:", getOrderCancel);
+      if (!getOrderCancel) {
+        throw new Error("Order not found");
+      }
+      const allCancelOrderItems = [];
+      for (const order of getOrderCancel) {
+        const orderId = order.id;
+      const getCancelOrderItem = await OrderItemModel.getCancelOrderItem(idOrderItem, orderId, conn);
+      allCancelOrderItems.push(getCancelOrderItem);
+      }
+      const orderItems = allCancelOrderItems.flat().filter(Boolean);
+
+      console.log("ALL CANCEL ORDER ITEMS:", orderItems[0].id ,orderItems[0].quantity , orderItems[0].product_id , orderItems[0].order_id);
+      const cancelOrderItem = await OrderItemModel.cancelOrderItem(orderItems[0].id, conn);
+      const updateQuantityProduct = await ProductModel.editQuantityProduct(orderItems[0].product_id, orderItems[0].quantity, conn);
+      const checkOrder = await OrderItemModel.checkOrder(orderItems[0].order_id , conn);
+      console.log("CHECK ORDER:", checkOrder.length);
+      if(checkOrder.length ==0){
+       await OrderModel.cancelOrder(orderItems[0].order_id, conn);
+      }
+        await conn.commit();
+      return [cancelOrderItem, updateQuantityProduct];
+    } catch (error) {
+      await conn.rollback();
+      throw error;
+    } finally {
+      conn.release();
+    }
+  }
+
+  updateOrder = async (data) => {
+    const conn = await db.getConnection();
+  }
+
+  
 }
 module.exports = new OrderService();
 

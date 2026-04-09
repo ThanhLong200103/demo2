@@ -7,6 +7,7 @@ const authMiddleware = require('../middlewares/auth.middleware');
 const validateUser = require('../middlewares/validateProduct');
 const orderController = require('../controllers/orderController');
 const validateProduct = require('../middlewares/validateProduct');
+const VnpayController = require('../controllers/vnpayController');
 router.get("/api/cartitem/:id",authMiddleware,CartItemController.getCartItemAll)
 router.get("/api/cart",authMiddleware,CartItemController.getCart)
 router.delete("/api/cartitem/delete/:id",authMiddleware,CartItemController.deleteCartitem)
@@ -32,6 +33,12 @@ router.post("/api/logout",authMiddleware,UserController.userLogout)
 router.post("/api/order/create",authMiddleware,orderController.CreateOrder)
 router.post("/api/order/getItemOrder",authMiddleware,orderController.getItemOrder)
 router.get("/api/order",authMiddleware,orderController.getOrderDone)
+router.post("/api/order/cancel",authMiddleware,orderController.cancelOrderItem)
+
+// vnpay
+router.post("/api/payment/vnpay",VnpayController.createPaymentUrl)
+router.get("/api/payment/vnpay_return",VnpayController.vnpayReturn)
+router.post("/api/payment/vnpay_ipn",VnpayController.vnpayIND)
 let initApiRoutes = (app) => {
   app.use('/', router);
 };
