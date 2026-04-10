@@ -36,9 +36,10 @@ router.get("/api/order",authMiddleware,orderController.getOrderDone)
 router.post("/api/order/cancel",authMiddleware,orderController.cancelOrderItem)
 
 // vnpay
-router.post("/api/payment/vnpay",VnpayController.createPaymentUrl)
+router.post("/api/payment/vnpay",authMiddleware,VnpayController.createPaymentUrl)
+router.post("/api/payment/vnpaycreate",authMiddleware,VnpayController.createPaymensVnpay)
 router.get("/api/payment/vnpay_return",VnpayController.vnpayReturn)
-router.post("/api/payment/vnpay_ipn",VnpayController.vnpayIND)
+router.get("/api/payment/vnpay_ipn",VnpayController.vnpayIND)
 let initApiRoutes = (app) => {
   app.use('/', router);
 };

@@ -37,6 +37,13 @@ class ProductModel {
     );
     return existingItem;
   };
+  getProducUpdateCart = async (id ,connection = db) => {
+    const [existingItem] = await connection.execute(
+      "SELECT * FROM  products WHERE id = ? AND status = 'active' FOR UPDATE",
+      [id],
+    );
+    return existingItem[0];
+  };
   editQuantityProduct = async (idProduct, quantity, connection = db) => {
     const [row] = await connection.execute(
       "UPDATE products SET quantity= quantity +?  WHERE id = ?",

@@ -51,15 +51,18 @@ class CartItem {
     const product = await this.getProductForUpdate(data.productId, connection);
     const quantityProduct = product.quantity - data.quantity;
     console.log(product);
+    console.log("QUANTITY PRODUCT:", quantityProduct);
     if (quantityProduct < 0) {
       throw new Error("Out of stock");
     }
-    const productId = data.productId;
+    else {
+       const productId = data.productId;
     const [existingItem] = await connection.execute(
       "UPDATE products SET quantity = ? WHERE id=?",
       [quantityProduct, productId],
     );
     return existingItem;
+    }
   };
   getcart = async (id, connection = db) => {
     const [rows] = await connection.execute(

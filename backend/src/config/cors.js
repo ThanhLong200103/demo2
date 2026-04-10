@@ -1,5 +1,5 @@
 const corsReact = {
-    origin: 'http://localhost:5173',       // domain frontend
+    origin: ['http://localhost:5173'],      // domain frontend
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true,                     // cho phép gửi cookie
     allowedHeaders: ['Content-Type', 'Authorization']

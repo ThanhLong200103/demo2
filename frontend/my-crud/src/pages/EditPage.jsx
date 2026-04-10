@@ -70,7 +70,7 @@ export default function EditPage() {
 
   return (
     <div style={{ maxWidth: "500px", margin: "50px auto" }}>
-      <h2>Update User</h2>
+      <h2>Update Product</h2>
 
       <Form onSubmit={handleSubmit}>
         <Form.Group className="mb-3">

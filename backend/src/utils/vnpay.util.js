@@ -28,5 +28,10 @@ const generateSignature = (params, secretKey) => {
     const hmac = crypto.createHmac("sha512", secretKey);
     return hmac.update(Buffer.from(signData, 'utf-8')).digest("hex");
 };
+const generateSignatureIPN = (params, secretKey) => {
+    const signData = qs.stringify(params, { encode: true });
+    const hmac = crypto.createHmac("sha512", secretKey);
+    return hmac.update(Buffer.from(signData, 'utf-8')).digest("hex");
+};
 
-module.exports = { sortObject, generateSignature };
+module.exports = { sortObject, generateSignature, generateSignatureIPN };

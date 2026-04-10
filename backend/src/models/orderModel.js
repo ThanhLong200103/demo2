@@ -49,10 +49,10 @@ class OrderModel {
         return rows[0];
       }
 
-    updatestatusOrder = async (id, connection = db) => {
+    updatestatusOrder = async (id ,status, connection = db) => {
         const [row] = await connection.execute(
-          "UPDATE orders SET status = 'completed' WHERE id = ?",
-          [id],
+          "UPDATE orders SET status = ? WHERE id = ?",
+          [status, id],
         );
         return row;
       }

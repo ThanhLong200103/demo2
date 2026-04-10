@@ -18,10 +18,10 @@ class PaymentModel {
     );
     return rows[0];
   }
-  updatePaymentStatus = async (id, connection = db) => {
+  updatePaymentStatus = async (id ,status ,vnp_TransactionNo, response_code, bank_code, connection = db) => {
     const [row] = await connection.execute(
-      "UPDATE payments SET status = 'completed' WHERE order_id = ?",
-      [ id],
+      "UPDATE payments SET status = ? ,transaction_no = ?, response_code = ?, bank_code = ? WHERE order_id = ?",
+      [status, vnp_TransactionNo, response_code, bank_code, id],
     );
     return row;
   }

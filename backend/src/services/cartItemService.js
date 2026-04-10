@@ -1,43 +1,45 @@
 const cartItem = require("../models/CartItem");
 const AppError = require("../utils/AppError");
-const db = require("../config/db")
-const ProductModel = require("../models/ProductModel")
-const Cart = require("../models/cart")
+const db = require("../config/db");
+const ProductModel = require("../models/ProductModel");
+const Cart = require("../models/cart");
 class CartItemService {
   getAllCart = async (id) => {
-    const cart_id = id
+    const cart_id = id;
     const item = await cartItem.getAllCartItem(cart_id);
     return item;
   };
   createCartItem = async (data) => {
-    const conn = await db.getConnection()
+    const conn = await db.getConnection();
     try {
       await conn.beginTransaction();
-      const productId  = data.productId
-      const cartId = data.cartId
-      const checkProduct = await cartItem.checkproductID(productId ,cartId , conn);
+      const productId = data.productId;
+      const cartId = data.cartId;
+      const checkProduct = await cartItem.checkproductID(
+        productId,
+        cartId,
+        conn,
+      );
       console.log("CHECK PRODUCT:", checkProduct);
-      const up =  await cartItem.updownQuanTiTyProduct(data ,conn);
+        const up = await cartItem.updownQuanTiTyProduct(data, conn);
       console.log("UP:", up);
-      if(checkProduct.length > 0){
-        const quantity = checkProduct[0].quantity + data.quantity
+      if (checkProduct.length > 0) {
+        const quantity = checkProduct[0].quantity + data.quantity;
         const id = checkProduct[0].id;
-        const edit = await cartItem.editCartItem({quantity,id},conn)
+        const edit = await cartItem.editCartItem({ quantity, id }, conn);
         console.log("EDIT:", edit);
-         await conn.commit();
-        return [edit,up]
-     
-    }else{
-        const create = await cartItem.createCartItem(data ,conn)
+        await conn.commit();
+        return [edit, up];
+      } else {
+        const create = await cartItem.createCartItem(data, conn);
         console.log("CREATE:", create);
-         await conn.commit();
-        return [create ,up]
-        
+        await conn.commit();
+        return [create, up];
       }
-       
     } catch (error) {
-      await conn.rollback()
-    }finally{
+      await conn.rollback();
+      throw error;
+    } finally {
       conn.release();
     }
   };
@@ -45,64 +47,73 @@ class CartItemService {
     const connection = await db.getConnection();
     try {
       await connection.beginTransaction();
-      const data = await cartItem.getcart(id ,connection);
-      const  idProduct = data.product_id
-      const quantity = data.quantity
-      const updateQuantityProduct = await ProductModel.editQuantityProduct(idProduct,quantity,connection);
-      const dele = await cartItem.deleteCartItem(id ,connection)
+      const data = await cartItem.getcart(id, connection);
+      const idProduct = data.product_id;
+      const quantity = data.quantity;
+      const updateQuantityProduct = await ProductModel.editQuantityProduct(
+        idProduct,
+        quantity,
+        connection,
+      );
+      const dele = await cartItem.deleteCartItem(id, connection);
       await connection.commit();
-      return [updateQuantityProduct , dele]
+      return [updateQuantityProduct, dele];
     } catch (err) {
-        await connection.rollback();
-        throw err;
-    }
-    finally {
-      
-        connection.release();
+      await connection.rollback();
+      throw err;
+    } finally {
+      connection.release();
     }
   };
-  updateCartItem = async ( data ) => {
-    const  conn =  await db.getConnection();
+  updateCartItem = async (data) => {
+    const conn = await db.getConnection();
     try {
       await conn.beginTransaction();
-      const id = data.id
-      const row = await cartItem.getcart(id ,conn);
-      if(row.quantity <=0){
+      const id = data.id;
+      const row = await cartItem.getcart(id, conn);
+      if (row.quantity <= 0) {
         throw new Error("Đã đặt số lượng nhất định");
       }
-      const upateCart = await cartItem.editCartItem(data , conn);
-      const idProduct = row.product_id
-      const quantity = data.quantityProduct
-      const updateQuantityProduct= await ProductModel.editQuantityProduct(idProduct , quantity , conn)
+      const upateCart = await cartItem.editCartItem(data, conn);
+      const idProduct = row.product_id;
+      const quantity = data.quantityProduct;
+      const getProduct = await ProductModel.getProducUpdateCart(idProduct, conn);
+      console.log("GET Quantity PRODUCT:", getProduct.quantity);
+      if(getProduct.quantity<1){
+        throw new Error("Số lượng sản phẩm không đủ");
+      }
+      const updateQuantityProduct = await ProductModel.editQuantityProduct(
+        idProduct,
+        quantity,
+        conn,
+      );
+      
       await conn.commit();
-      console.log([upateCart , updateQuantityProduct])
-     return [upateCart , updateQuantityProduct]
-
+      console.log([upateCart, updateQuantityProduct]);
+      return [upateCart, updateQuantityProduct];
     } catch (error) {
       await conn.rollback();
-        throw error
+      throw error;
     } finally {
-      
-        conn.release();
+      conn.release();
     }
-
   };
   checkDelete = async (id) => {
     const data = await cartItem.getcart(id);
-    return data
+    return data;
   };
 
-  getCart = async (userId) =>{
+  getCart = async (userId) => {
     const data = await Cart.getCart(userId);
     return data;
-  }
-  createCart = async (userId) =>{
+  };
+  createCart = async (userId) => {
     const cartId = await Cart.getCart(userId);
-    if(cartId){
+    if (cartId) {
       return cartId;
     }
     const data = await Cart.createCart(userId);
     return data;
-  }
+  };
 }
 module.exports = new CartItemService();

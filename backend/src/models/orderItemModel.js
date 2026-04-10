@@ -20,6 +20,17 @@ class OrderItemModel {
         return rows;
     }
 
+    getOrderItemHistory = async (id)=>{
+        const [rows] = await db.execute(
+          `SELECT o.id, o.quantity, o.price, p.name, p.img ,o.status
+           FROM order_items o
+           INNER JOIN products p ON o.product_id = p.id
+           WHERE order_id = ?`,
+          [id],
+        );
+        return rows;
+    }
+
 
     //cancle order item
     cancelOrderItem = async (id, connection = db) => {
@@ -56,10 +67,10 @@ class OrderItemModel {
       const [rows] = await connection.execute('SELECT * FROM order_items WHERE order_id = ? FOR UPDATE', [id]);
         return rows;
     }
-    updateStatusOrderItem = async (id, connection = db) => {
+    updateStatusOrderItem = async (id,statusOrderItem, connection = db) => {
         const [row] = await connection.execute(
-          "UPDATE order_items SET status = 'delivered' WHERE order_id = ?",
-          [id],
+          "UPDATE order_items SET status = ? WHERE order_id = ?",
+          [statusOrderItem, id],
         );
         return row;
       }

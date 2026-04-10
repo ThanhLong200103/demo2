@@ -58,7 +58,7 @@ class OrderService {
     // console.log(data.length);
     const orderItem = [];
     for(const d of data){
-      const item = await OrderItemModel.getOrderItem(d.id)
+      const item = await OrderItemModel.getOrderItemHistory(d.id)
       orderItem.push(item)
     }
     return orderItem;

@@ -9,6 +9,9 @@ import LoginPage from "../pages/loginPage";
 import OrderPage from "../pages/orderPage";
 import RegisterPage from "../pages/registerPage";
 import PurchaseHistoryPage from "../pages/purchaseHistoryPage";
+import VnpayPage from "../pages/VnpayPage";
+import PaymentSuccess from "../pages/PaymentSuccess";
+import PaymentFail from "../pages/PaymentFail";
 
 export default function AppRouter() {
     return(
@@ -24,7 +27,9 @@ export default function AppRouter() {
             <Route path="/order" element = {<OrderPage></OrderPage>}></Route>
             <Route path="/register" element = {<RegisterPage></RegisterPage>}></Route>
             <Route path="/history" element = {<PurchaseHistoryPage></PurchaseHistoryPage>}></Route>
-            
+            <Route path="/payment" element = {<VnpayPage></VnpayPage>}></Route>
+            <Route path="/payment-success" element = {<PaymentSuccess></PaymentSuccess>}></Route>
+            <Route path="/payment-failed" element = {<PaymentFail></PaymentFail>}></Route>
         </Routes>
     )
 };

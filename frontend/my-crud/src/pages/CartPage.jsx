@@ -21,9 +21,11 @@ const totalPrice = useMemo(() => {
 
   const handelIncrease = async (id, currentQty) => {
     const newQty = currentQty + 1;
-    setCart((prev) => prev.map((item) => (item.id === id ? { ...item, quantity: newQty } : item)));
+   
     try {
       await axiosClient.put(`/cartitem/update/${id}`, { quantity: newQty, quantityProduct: -1 });
+    setCart((prev) => prev.map((item) => (item.id === id ? { ...item, quantity: newQty } : item)));
+
     } catch (error) { console.log(error); }
   };
   console.log(totalPrice)
@@ -31,9 +33,11 @@ const totalPrice = useMemo(() => {
   const handleReduce = async (id, currentQty) => {
     if (currentQty <= 1) return;
     const newQty = currentQty - 1;
-    setCart((prev) => prev.map((item) => (item.id === id ? { ...item, quantity: newQty } : item)));
+   
     try {
+      
       await axiosClient.put(`/cartitem/update/${id}`, { quantity: newQty, quantityProduct: 1 });
+       setCart((prev) => prev.map((item) => (item.id === id ? { ...item, quantity: newQty } : item)));
     } catch (error) { console.log(error); }
   };
 

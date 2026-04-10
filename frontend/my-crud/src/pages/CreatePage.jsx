@@ -57,7 +57,7 @@ export default function CreatePage() {
 
   return (
     <div style={{ maxWidth: "500px", margin: "50px auto" }}>
-      <h2>Create User</h2>
+      <h2>Create Product</h2>
 
       <Form onSubmit={handleSubmit}>
         <Form.Group className="mb-3">

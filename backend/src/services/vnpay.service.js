@@ -1,8 +1,8 @@
 const moment = require("moment");
 const qs = require("qs");
-const { sortObject, generateSignature } = require("../utils/vnpay.util");
+const { sortObject, generateSignature, generateSignatureIPN } = require("../utils/vnpay.util");
 const config = require("../config/vnpay.config");
-const db = require("../config/innitDB");
+const db = require("../config/db");
 const orderModel = require("../models/orderModel");
 const CartItemModel = require("../models/CartItem");
 const orderItemModel = require("../models/orderItemModel");
@@ -23,7 +23,7 @@ class VnPayService {
         vnp_ReturnUrl: config.vnp_returnUrl,
         vnp_IpAddr: ipAddr,
         vnp_CreateDate: moment().format('YYYYMMDDHHmmss'),
-        vnp_IpnUrl: config.vnp_ipnUrl,
+        // vnp_IpnUrl: config.vnp_ipnUrl,
     }; 
 
     const sortedParams = sortObject(vnpParams);
@@ -34,17 +34,17 @@ class VnPayService {
 };
 
 vnpayReturn = (queryFromVnpay) => {
-    // 1. Tạo một bản sao để tránh làm hỏng dữ liệu gốc của req.query
+
     const vnp_Params = { ...queryFromVnpay };
 
-    // 2. Lấy SecureHash ra
+   
     const secureHash = vnp_Params['vnp_SecureHash'];
 
-    // 3. Xóa các field không dùng để hash
+ 
     delete vnp_Params['vnp_SecureHash'];
     delete vnp_Params['vnp_SecureHashType'];
 
-    // 4. SẮP XẾP params trước khi tạo lại chữ ký (QUAN TRỌNG!)
+    
     const sortedParams = sortObject(vnp_Params);
 
     // 5. Tạo lại chữ ký 
@@ -56,6 +56,8 @@ vnpayReturn = (queryFromVnpay) => {
         console.log("Mã băm hệ thống tạo lại:", signed);
         throw new Error("Thanh toán lỗi: Invalid signature");
     }
+    const orderId = vnp_Params['vnp_TxnRef'];
+    
 
     // Trả về params đã verify thành công để controller xử lý tiếp (update DB...)
     return vnp_Params;
@@ -88,21 +90,99 @@ vnpayIND = async (queryFromVnpay) => {
     console.log( "1", vnp_Params);
 
     const orderId = vnp_Params['vnp_TxnRef'];
-    const selectPaymentUpdate = await paymentModel.selectUpatePayment(orderId);
+
+    // xong phan return vnp cho client thi tách logic
+  if(vnp_Params['vnp_ResponseCode'] === '00') {
+    const status = "completed";
+    const statusOrderItem = "shipped";
+    const vnp_TransactionNo = vnp_Params['vnp_TransactionNo'];
+    const response_code = vnp_Params['vnp_ResponseCode'];
+    const bank_code = vnp_Params['vnp_BankCode'];
+      const connection = await db.getConnection();
+   try {
+    await connection.beginTransaction();
+     const selectPaymentUpdate = await paymentModel.selectUpatePayment(orderId,connection);
     if (!selectPaymentUpdate) {
         throw new Error("Không tìm thấy đơn hàng để cập nhật trạng thái thanh toán");
     }
-    const updatepayment = await paymentModel.updatePaymentStatus(orderId);
-    const order = await orderModel.selectUpdateOrder(orderId);
+    const updatepayment = await paymentModel.updatePaymentStatus(orderId,status ,vnp_TransactionNo, response_code, bank_code, connection);
+    const order = await orderModel.selectUpdateOrder(orderId ,connection);
     if (!order) {
         throw new Error("Không tìm thấy đơn hàng");
     }
-    await orderModel.updatestatusOrder(orderId);
-    const orderItems = await orderItemModel.selectUpdateOrderItem(orderId);
-    await orderItemModel.updateStatusOrderItem(orderId);
+    await orderModel.updatestatusOrder(orderId,status ,connection);
+    const orderItems = await orderItemModel.selectUpdateOrderItem(orderId ,connection);
+    await orderItemModel.updateStatusOrderItem(orderId,statusOrderItem ,connection);
+    await connection.commit();
     // Trả về params đã verify thành công để controller xử lý tiếp (update DB...)
     return [vnp_Params, updatepayment, order, orderItems];
+   } catch (error) {
+    await connection.rollback();
+    throw error;
+   }finally{ 
+      connection.release();
+    
+     }
 
+  }
+  else if(vnp_Params['vnp_ResponseCode'] === '24'){
+    const status = "failed";
+    const statusOrder = "cancelled";
+
+    const vnp_TransactionNo = vnp_Params['vnp_TransactionNo'];
+    const response_code = vnp_Params['vnp_ResponseCode'];
+    const bank_code = vnp_Params['vnp_BankCode'];
+      const connection = await db.getConnection();
+   try {
+    await connection.beginTransaction();
+     const selectPaymentUpdate = await paymentModel.selectUpatePayment(orderId,connection);
+    if (!selectPaymentUpdate) {
+        throw new Error("Không tìm thấy đơn hàng để cập nhật trạng thái thanh toán");
+    }
+    const updatepayment = await paymentModel.updatePaymentStatus(orderId,status ,vnp_TransactionNo, response_code, bank_code, connection);
+    const order = await orderModel.selectUpdateOrder(orderId ,connection);
+    if (!order) {
+        throw new Error("Không tìm thấy đơn hàng");
+    }
+    await orderModel.updatestatusOrder(orderId,statusOrder ,connection);
+    const orderItems = await orderItemModel.selectUpdateOrderItem(orderId ,connection);
+    await orderItemModel.updateStatusOrderItem(orderId,statusOrder ,connection);
+    await connection.commit();
+    // Trả về params đã verify thành công để controller xử lý tiếp (update DB...)
+    return [vnp_Params, updatepayment, order, orderItems];
+   } catch (error) {
+    await connection.rollback();
+    throw error;
+   }finally{ 
+      connection.release();
+    
+     }
+  }
+  else{
+     const status = "failed";
+    const vnp_TransactionNo = vnp_Params['vnp_TransactionNo'];
+    const response_code = vnp_Params['vnp_ResponseCode'];
+    const bank_code = vnp_Params['vnp_BankCode'];
+      const connection = await db.getConnection();
+   try {
+    await connection.beginTransaction();
+     const selectPaymentUpdate = await paymentModel.selectUpatePayment(orderId,connection);
+    if (!selectPaymentUpdate) {
+        throw new Error("Không tìm thấy đơn hàng để cập nhật trạng thái thanh toán");
+    }
+    const updatepayment = await paymentModel.updatePaymentStatus(orderId,status ,vnp_TransactionNo, response_code, bank_code, connection);
+  
+    await connection.commit();
+  
+    return [vnp_Params, updatepayment];
+   } catch (error) {
+    await connection.rollback();
+    throw error;
+   }finally{ 
+      connection.release();
+    
+     }
+  }
 }
 
 
@@ -132,10 +212,10 @@ createPaymentVnpay = async (data) => {
           conn,
         );
       }
-      const updateCartItem = await CartItemModel.UpdateByIds(
-        data.cartItemIds,
-        conn,
-      );
+      // const updateCartItem = await CartItemModel.UpdateByIds(
+      //   data.cartItemIds,
+      //   conn,
+      // );
       const payment = await paymentModel.createPayment(
         { order_id: orderId, amount: total_price, method: "VNPay" },
         conn,
