@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import axiosClient from "../api/axios";
 import { Button } from "react-bootstrap";
+import { toast } from "react-toastify";
 
 export default function VnpayPage(params) {
     const location = useLocation();
@@ -19,6 +20,7 @@ export default function VnpayPage(params) {
                 console.log(linkPay.paymentUrl);
             } catch (error) {
                 console.log(error);
+                toast.error("Lỗi khi tạo link thanh toán VNPAY");
             }
         }
         redirectToVnpay();

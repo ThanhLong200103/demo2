@@ -27,6 +27,7 @@ export default function RegisterPage() {
      navigate("/login")
     } catch (error) {
         console.log(error)
+        toast.error(error.response?.data?.message || "Tạo tài khoản thất bại")
     }
   }
   return (

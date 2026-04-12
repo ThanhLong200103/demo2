@@ -73,6 +73,7 @@ const initDB = async () => {
         product_id INT NOT NULL,
         quantity INT NOT NULL,
         price INT NOT NULL,
+        status ENUM('pending', 'shipped', 'delivered', 'cancelled', 'returned') DEFAULT 'pending',
 
         CONSTRAINT FK_OrderItem_Order
           FOREIGN KEY (order_id) REFERENCES orders(id)
@@ -97,10 +98,6 @@ const initDB = async () => {
           ON DELETE CASCADE
       )
     `);
-    await db.query(`
-      ALTER TABLE order_items 
-ADD COLUMN status ENUM('pending', 'shipped', 'delivered', 'cancelled', 'returned') DEFAULT 'pending';
-      `);
     await db.query(`
         ALTER TABLE payments
 ADD COLUMN IF NOT EXISTS transaction_no VARCHAR(50) NULL,

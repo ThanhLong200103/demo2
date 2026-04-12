@@ -9,34 +9,40 @@ import { Link, useNavigate } from "react-router-dom";
 import axiosClient from "../api/axios";
 import { AiOutlineLogout } from "react-icons/ai";
 import { toast } from "react-toastify";
+import { useDispatch, useSelector } from "react-redux";
+import { logout } from "../redux/features/authAccess";
+
 export default function HeaderComponent(params) {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const { token, isAuthenticated } = useSelector((state) => state.auth);
   const [userId, setId] = useState(null);
-  const[profile, setProfile] = useState(null)
-  useEffect(() => {
-    const accessToken = localStorage.getItem("accessToken");
+  const [profile, setProfile] = useState(null);
 
-    if (accessToken) {
+  useEffect(() => {
+    if (token) {
       const checkMe = async () => {
         try {
           const user = await axiosClient.get("/profile");
           console.log(user.id);
           setId(user.id);
-          setProfile(user)
+          setProfile(user);
         } catch (error) {
           console.log("Token expired, attempting refresh...");
         }
       };
       checkMe();
     }
-  }, []);
+  }, [token]);
+
   const handleLogOut = async () => {
     try {
       const logOut = await axiosClient.post("/logout");
       toast.success("Đã đăng xuất");
       localStorage.removeItem("accessToken");
+      dispatch(logout());
       navigate("/login");
-      setId(null)
+      setId(null);
     } catch (error) {
       console.log(error);
     }
@@ -57,12 +63,12 @@ export default function HeaderComponent(params) {
             <Nav.Link as={Link} to="/create">
               Create
             </Nav.Link>
-           {profile ? <Nav.Link as={Link} to="/index  " state={profile}>
+           {profile ? <Nav.Link as={Link} to="/index" state={profile}>
               Profile
             </Nav.Link> 
              : " "
            }
-           {profile ? <Nav.Link as={Link} to="/history  " >
+           {profile ? <Nav.Link as={Link} to="/history">
               Giao dịch
             </Nav.Link> 
              : " "

@@ -12,7 +12,7 @@ const User = {
     },
     getUser : async(email) =>{
        
-        const[oneUser] = await db.query("SELECT * FROM users WHERE email = ?",[email] );
+        const[oneUser] = await db.query("SELECT * FROM users WHERE email = ? ",[email] );
         return oneUser[0];
     },
     userLogin : async(data)=>{

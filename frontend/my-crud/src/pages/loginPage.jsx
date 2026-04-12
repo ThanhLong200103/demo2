@@ -2,11 +2,13 @@ import { useEffect, useState } from "react";
 import { Button, Col, Container, Form, Row } from "react-bootstrap";
 import axiosClient from "../api/axios";
 import { Link, useNavigate } from "react-router-dom";
-
+import { useDispatch, useSelector } from "react-redux";
+import { loginSuccess } from "../redux/features/authAccess";
+import { toast } from "react-toastify";
 export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  
+  const dispatch = useDispatch();
   const navigation = useNavigate();
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -15,9 +17,14 @@ export default function LoginPage() {
     const data = await axiosClient.post("/login",{email,password});
     console.log(data)
     localStorage.setItem("accessToken",data.accessToken)
+    dispatch(loginSuccess({ token: data.accessToken }));
    navigation("/")
    } catch (error) {
     console.log(error)
+    if (error.response?.status === 422) {
+    toast.error(error.response?.data?.message );
+    }
+    // toast.error(error.response?.data?.message );
    }
   }
  useEffect(() => {
@@ -30,8 +37,8 @@ export default function LoginPage() {
         await axiosClient.get("/profile");
         navigation("/"); 
       } catch (error) {
-        
         console.log("Token expired, attempting refresh...");
+        toast.error("Phiên đăng nhập hết hạn");
       }
     };
     checkMe();

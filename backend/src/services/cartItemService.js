@@ -72,7 +72,7 @@ class CartItemService {
       const id = data.id;
       const row = await cartItem.getcart(id, conn);
       if (row.quantity <= 0) {
-        throw new Error("Đã đặt số lượng nhất định");
+        throw new Error("Đã đặt số lượng nhất định vui lòng xóa giỏ hàng",422);
       }
       const upateCart = await cartItem.editCartItem(data, conn);
       const idProduct = row.product_id;
@@ -80,7 +80,7 @@ class CartItemService {
       const getProduct = await ProductModel.getProducUpdateCart(idProduct, conn);
       console.log("GET Quantity PRODUCT:", getProduct.quantity);
       if(getProduct.quantity<1){
-        throw new Error("Số lượng sản phẩm không đủ");
+        throw new Error("Số lượng sản phẩm không đủ" ,422);
       }
       const updateQuantityProduct = await ProductModel.editQuantityProduct(
         idProduct,

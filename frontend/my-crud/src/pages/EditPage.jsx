@@ -23,7 +23,7 @@ export default function EditPage() {
     setForm(data[0])
        } catch (error) {
     console.log(error)
-    
+    toast.error(error.response?.data?.message || "Lỗi khi tải sản phẩm")
    }
     }
     fechProduct();
@@ -54,17 +54,21 @@ export default function EditPage() {
     } catch (err) {
       const status = err.response?.status;
 
-      if (status === 400) {
-        const errors = err.response?.data?.errors;
-
+      if (status === 422) {
+        const errors = err.response?.data?.error;
         if (Array.isArray(errors)) {
           errors.forEach((msg) => toast.error(msg));
         } else {
-          toast.error("Dữ liệu không hợp lệ");
+          toast.error(errors || "Lỗi xác thực dữ liệu");
         }
+      } else if (status === 400) {
+        toast.error(err.response?.data?.message || "Dữ liệu không hợp lệ");
+      } else if (status === 500) {
+        toast.error("Lỗi máy chủ, vui lòng thử lại sau");
       } else {
-        console.log("ERROR:", err);
+        toast.error("Có lỗi xảy ra, vui lòng thử lại");
       }
+      console.log("ERROR:", err);
     }
   };
 

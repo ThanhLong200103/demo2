@@ -15,6 +15,7 @@ export default function PurchaseHistoryPage() {
         setOrderItem(flatData);
       } catch (err) {
         console.log(err);
+        toast.error("Lỗi khi tải lịch sử đơn hàng");
       }
     };
     Order();
@@ -35,7 +36,7 @@ export default function PurchaseHistoryPage() {
       );
     } catch (error) {
       console.log(error);
-      Toast.error("Hủy đơn hàng thất bại");
+      toast.error("Hủy đơn hàng thất bại");
     }
   };
   return (

@@ -16,10 +16,12 @@ class UserController {
       const { email, password } = req.body;
       const checkPass = await UserService.checkProfile(email);
       if (!checkPass) {
-        return res.status(404).json({ message: "User không tồn tại" });
+        return res.status(422).json({ message: "Tài khoản không tồn tại" });
       }
-      const validPass = await validatePass(checkPass.password, password);
 
+
+      
+      const validPass = await validatePass(checkPass.password, password);
       if (validPass) {
         const hasdPassWord = checkPass.password;
         const result = await UserService.userLogin({ email, hasdPassWord });
@@ -41,6 +43,9 @@ class UserController {
           // refreshToken: refreshToken.token,
         });
       }
+        else {
+          res.status(422).json({ message: "Mật khẩu không đúng" });
+        }
       // res.json(checkPass.password)
     } catch (error) {
       res.status(500).json({ error: error.message });
@@ -49,6 +54,7 @@ class UserController {
   proFile = async (req, res) => {
     try {
       const profile = await UserService.checkProfile(req.user.email);
+      console.log( "Profile:", req.user.email);
       res.json(profile);
     } catch (error) {
       res.status(500).json({ error: error.message });

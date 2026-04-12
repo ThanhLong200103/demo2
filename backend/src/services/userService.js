@@ -6,6 +6,7 @@ class UserService {
         return data
     }
     userLogin = async (data)=>{
+        
         const result = await UserModel.userLogin(data);
         return result ;
     }

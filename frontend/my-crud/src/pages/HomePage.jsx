@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 import Button from "react-bootstrap/Button";
 import DeletePage from "./DeletePage";
 import { MdAddShoppingCart } from "react-icons/md";
+import { toast } from "react-toastify";
 
 export default function HomePage() {
   const [products, setProducts] = useState([]);
@@ -54,7 +55,7 @@ export default function HomePage() {
       alert("Added to cart!");
       setProducts(products.map((p) => p.id === productId ? { ...p, quantity: p.quantity - quantity } : p));
     } catch (err) {
-      console.log(err);
+      toast.error("Lỗi khi thêm sản phẩm vào giỏ hàng");
     }
   };
 

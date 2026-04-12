@@ -4,6 +4,7 @@ import { FaUser, FaTrash, FaPlus, FaMinus, FaShoppingCart, FaCreditCard } from "
 import axiosClient from "../api/axios";
 import { Link } from "react-router-dom";
 import OrderPage from "./orderPage";
+import { toast } from "react-toastify";
 
 const CustomCartItem = () => {
   const [cart, setCart] = useState([]);
@@ -26,19 +27,32 @@ const totalPrice = useMemo(() => {
       await axiosClient.put(`/cartitem/update/${id}`, { quantity: newQty, quantityProduct: -1 });
     setCart((prev) => prev.map((item) => (item.id === id ? { ...item, quantity: newQty } : item)));
 
-    } catch (error) { console.log(error); }
+    } catch (error) { 
+      console.log(error); 
+      if (error.response?.status === 422) {
+        toast.error(error.response?.data?.message);
+      } else {
+        toast.error("Lỗi khi tăng số lượng");
+      }
+    }
   };
   console.log(totalPrice)
   console.log(selectedIds)
   const handleReduce = async (id, currentQty) => {
-    if (currentQty <= 1) return;
+    if (currentQty <= 1) {
+      toast.error("Số lượng không thể giảm thêm");
+      return;
+    };
     const newQty = currentQty - 1;
    
     try {
       
-      await axiosClient.put(`/cartitem/update/${id}`, { quantity: newQty, quantityProduct: 1 });
+       await axiosClient.put(`/cartitem/update/${id}`, { quantity: newQty, quantityProduct: 1 });
        setCart((prev) => prev.map((item) => (item.id === id ? { ...item, quantity: newQty } : item)));
-    } catch (error) { console.log(error); }
+    } catch (error) { 
+      console.log(error);
+      toast.error("Lỗi khi giảm số lượng");
+    }
   };
 
   useEffect(() => {
@@ -49,7 +63,10 @@ const totalPrice = useMemo(() => {
         const cartItemData = await axiosClient.get(`/cartitem/${response.id}`);
         console.log(cartItemData);
         setCart(cartItemData);
-      } catch (error) { console.error("Lỗi API Cart:", error); }
+      } catch (error) { 
+        console.error("Lỗi API Cart:", error); 
+        toast.error("Lỗi khi tải giỏ hàng");
+      }
     };
     cartRun();
   }, []);
@@ -59,7 +76,10 @@ const totalPrice = useMemo(() => {
       await axiosClient.delete(`/cartitem/delete/${id}`);
       setCart((s) => s.filter((item) => item.id !== id));
       setSelectedIds((s) => s.filter((itemId) => itemId !== id));
-    } catch (err) { console.log(err); }
+    } catch (err) { 
+      console.log(err); 
+      toast.error("Lỗi khi xóa sản phẩm khỏi giỏ");
+    }
   };
 
   const handleCheck = (id) => {
