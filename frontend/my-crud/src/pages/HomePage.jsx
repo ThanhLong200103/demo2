@@ -6,6 +6,7 @@ import Button from "react-bootstrap/Button";
 import DeletePage from "./DeletePage";
 import { MdAddShoppingCart } from "react-icons/md";
 import { toast } from "react-toastify";
+import { RepositoryFactory } from "../services/FactoryService";
 
 export default function HomePage() {
   const [products, setProducts] = useState([]);
@@ -17,7 +18,7 @@ export default function HomePage() {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const res = await axiosClient.get("/products");
+        const res = await RepositoryFactory.get("product").getAll();
         setProducts(res); 
       } catch (err) {
         console.log("Fetch error:", err);
@@ -25,7 +26,6 @@ export default function HomePage() {
     };
     fetchProducts();
   }, []);
-
 
   const handleDelete = async (id) => {
     try {

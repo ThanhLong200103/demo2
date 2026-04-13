@@ -2,6 +2,7 @@ const UserService = require("../services/userService");
 const AuthService = require("../services/auth.service");
 const CartService = require("../services/cartItemService");
 const { hasdPass, validatePass } = require("../utils/argon2");
+const runInTransaction = require("../utils/runTransaction");
 class UserController {
   getAllUser = async (req, res) => {
     try {
@@ -82,7 +83,9 @@ class UserController {
         return res.status(401).json({ message: "No refresh token" });
       }
       console.log("COOKIE:", req.cookies.refreshToken);
-      const data = await AuthService.resetRefreshToken(token);
+      const data = await runInTransaction(async (conn) => {
+        return await AuthService.resetRefreshToken(token, conn);
+      });
       if (!data || !data.newRefreshToken) {
         return res.status(401).json({ message: "Invalid refresh token" });
       }
@@ -107,7 +110,9 @@ class UserController {
     try {
       const id = req.user.id;
       console.log(id);
-      const result = await AuthService.logOut(id);
+      const result =  await runInTransaction(async (conn) => {
+        return await AuthService.logOut(id, conn);
+      });
       res.json(result);
     } catch (error) {
       res.status(500).json({ error: error.message });

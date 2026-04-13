@@ -9,10 +9,7 @@ class CartItemService {
     const item = await cartItem.getAllCartItem(cart_id);
     return item;
   };
-  createCartItem = async (data) => {
-    const conn = await db.getConnection();
-    try {
-      await conn.beginTransaction();
+  createCartItem = async (data, conn) => {
       const productId = data.productId;
       const cartId = data.cartId;
       const checkProduct = await cartItem.checkproductID(
@@ -28,47 +25,28 @@ class CartItemService {
         const id = checkProduct[0].id;
         const edit = await cartItem.editCartItem({ quantity, id }, conn);
         console.log("EDIT:", edit);
-        await conn.commit();
+
         return [edit, up];
       } else {
         const create = await cartItem.createCartItem(data, conn);
         console.log("CREATE:", create);
-        await conn.commit();
+    
         return [create, up];
       }
-    } catch (error) {
-      await conn.rollback();
-      throw error;
-    } finally {
-      conn.release();
-    }
   };
-  deleteCartItem = async (id) => {
-    const connection = await db.getConnection();
-    try {
-      await connection.beginTransaction();
-      const data = await cartItem.getcart(id, connection);
+  deleteCartItem = async (id, conn) => {
+      const data = await cartItem.getcart(id, conn);
       const idProduct = data.product_id;
       const quantity = data.quantity;
       const updateQuantityProduct = await ProductModel.editQuantityProduct(
         idProduct,
         quantity,
-        connection,
+        conn,
       );
-      const dele = await cartItem.deleteCartItem(id, connection);
-      await connection.commit();
+      const dele = await cartItem.deleteCartItem(id, conn);
       return [updateQuantityProduct, dele];
-    } catch (err) {
-      await connection.rollback();
-      throw err;
-    } finally {
-      connection.release();
-    }
   };
-  updateCartItem = async (data) => {
-    const conn = await db.getConnection();
-    try {
-      await conn.beginTransaction();
+  updateCartItem = async (data, conn) => {
       const id = data.id;
       const row = await cartItem.getcart(id, conn);
       if (row.quantity <= 0) {
@@ -88,15 +66,8 @@ class CartItemService {
         conn,
       );
       
-      await conn.commit();
       console.log([upateCart, updateQuantityProduct]);
       return [upateCart, updateQuantityProduct];
-    } catch (error) {
-      await conn.rollback();
-      throw error;
-    } finally {
-      conn.release();
-    }
   };
   checkDelete = async (id) => {
     const data = await cartItem.getcart(id);

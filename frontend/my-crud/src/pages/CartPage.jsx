@@ -5,12 +5,12 @@ import axiosClient from "../api/axios";
 import { Link } from "react-router-dom";
 import OrderPage from "./orderPage";
 import { toast } from "react-toastify";
+import { RepositoryFactory } from "../services/FactoryService";
 
 const CustomCartItem = () => {
   const [cart, setCart] = useState([]);
   const [selectedIds, setSelectedIds] = useState([]);
-
- 
+  const CartService = RepositoryFactory.get("cart");
 const totalPrice = useMemo(() => {
   return cart
     .filter((item) => selectedIds.includes(item.id)) 
@@ -24,7 +24,7 @@ const totalPrice = useMemo(() => {
     const newQty = currentQty + 1;
    
     try {
-      await axiosClient.put(`/cartitem/update/${id}`, { quantity: newQty, quantityProduct: -1 });
+     await CartService.updateCartItem(id, { quantity: newQty  ,quantityProduct: -1 });
     setCart((prev) => prev.map((item) => (item.id === id ? { ...item, quantity: newQty } : item)));
 
     } catch (error) { 
@@ -47,7 +47,7 @@ const totalPrice = useMemo(() => {
    
     try {
       
-       await axiosClient.put(`/cartitem/update/${id}`, { quantity: newQty, quantityProduct: 1 });
+       await CartService.updateCartItem(id, { quantity: newQty  ,quantityProduct: 1 });
        setCart((prev) => prev.map((item) => (item.id === id ? { ...item, quantity: newQty } : item)));
     } catch (error) { 
       console.log(error);
@@ -57,10 +57,10 @@ const totalPrice = useMemo(() => {
 
   useEffect(() => {
     const cartRun = async () => {
-      try {
-        const response = await axiosClient.get("/cart");
+      try { 
+        const response = await CartService.getCart();
         console.log("Cart data:", response);
-        const cartItemData = await axiosClient.get(`/cartitem/${response.id}`);
+        const cartItemData =  await CartService.getCartItem(response.id);
         console.log(cartItemData);
         setCart(cartItemData);
       } catch (error) { 
@@ -73,7 +73,7 @@ const totalPrice = useMemo(() => {
 
   const handleDeleteCart = async (id) => {
     try {
-      await axiosClient.delete(`/cartitem/delete/${id}`);
+      await CartService.deleteCartItem(id);
       setCart((s) => s.filter((item) => item.id !== id));
       setSelectedIds((s) => s.filter((itemId) => itemId !== id));
     } catch (err) { 

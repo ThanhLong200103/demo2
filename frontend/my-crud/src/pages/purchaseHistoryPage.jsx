@@ -2,13 +2,15 @@ import { useEffect, useState } from "react";
 import axiosClient from "../api/axios";
 import { Badge, Button, Card, Col, Container, Row, Toast } from "react-bootstrap";
 import { toast } from "react-toastify";
+import { RepositoryFactory } from "../services/FactoryService";
 
 export default function PurchaseHistoryPage() {
   const [orderItem, setOrderItem] = useState([]);
+  const OrderService = RepositoryFactory.get("order");
   useEffect(() => {
     const Order = async () => {
       try {
-        const res = await axiosClient.get("/order");
+        const res = await OrderService.getAll();
 
         // console.log(res)
         const flatData = res.flat();
@@ -26,9 +28,9 @@ export default function PurchaseHistoryPage() {
   const handleCancel = async (itemId) => {
     try {
       const idOrderItem = itemId;
-      const cancel = await axiosClient.post("/order/cancel", { idOrderItem });
+      const cancel = await OrderService.cancelOrder(idOrderItem);
       console.log(cancel);
-      Toast.success("Hủy đơn hàng thành công");
+      toast.success("Hủy đơn hàng thành công");
       setOrderItem((prevItems) =>
         prevItems.filter((item) =>
           item.id !== itemId

@@ -1,4 +1,5 @@
 const VnPayService = require("../services/vnpay.service");
+const runInTransaction = require("../utils/runTransaction");
 
 class VnpayController {
   createPaymentUrl = (req, res) => {
@@ -18,7 +19,9 @@ class VnpayController {
     try {
          const { cartItemIds ,totalPrice } = req.body ;
       const userId = req.user.id;
-        const data = await VnPayService.createPaymentVnpay({cartItemIds ,totalPrice, userId });
+        const data = await runInTransaction(async (conn) => {
+            return await VnPayService.createPaymentVnpay({cartItemIds ,totalPrice, userId }, conn);
+        });
         return res.json(data);
     } catch (error) {
         res.status(500).json({ error: error.message });
@@ -47,7 +50,9 @@ class VnpayController {
         try {
             const vnp_Params = req.query;
             console.log("vnp_Params_IPN:", vnp_Params);
-            const result = await VnPayService.vnpayIND(vnp_Params);
+            const result = await runInTransaction(async (conn) => {
+                return await VnPayService.vnpayIND(vnp_Params, conn);
+            });
             console.log(result)
             res.json(result);
         } catch (error) {

@@ -5,11 +5,8 @@ const ProductModel = require("../models/ProductModel");
 const db = require("../config/db");
 const paymentModel = require("../models/paymentModel");
 class OrderService {
-  createOrder = async (data) => {
-    const conn = await db.getConnection();
-    try {
-      await conn.beginTransaction();
-      const user_id = data.userId;
+  createOrder = async (data , conn) => {
+     const user_id = data.userId;
       const total_price = data.totalPrice;
       const orderId = await OrderModel.createOrder(
         { user_id, total_price },
@@ -38,14 +35,8 @@ class OrderService {
         { order_id: orderId, amount: total_price, method: "COD" },
         conn,
       );
-      await conn.commit();
+      // await conn.commit();
       return [orderId, cartItem, payment];
-    } catch (error) {
-      await conn.rollback();
-      throw error;
-    } finally {
-      conn.release();
-    }
   };
 
   getItemOrder = async (ids) => {
@@ -64,11 +55,8 @@ class OrderService {
     return orderItem;
   };
 
-  cancelOrderItem = async (id ,idOrderItem) => {
-    const conn = await db.getConnection();
-    try {
-      await conn.beginTransaction();
-      const getOrderCancel = await OrderModel.getCancelAllOrder(id, conn);
+  cancelOrderItem = async (id ,idOrderItem, conn)  => {
+    const getOrderCancel = await OrderModel.getCancelAllOrder(id, conn);
       console.log("GET ORDER CANCEL:", getOrderCancel);
       if (!getOrderCancel) {
         throw new Error("Order not found");
@@ -89,14 +77,8 @@ class OrderService {
       if(checkOrder.length ==0){
        await OrderModel.cancelOrder(orderItems[0].order_id, conn);
       }
-        await conn.commit();
+        // await conn.commit();
       return [cancelOrderItem, updateQuantityProduct];
-    } catch (error) {
-      await conn.rollback();
-      throw error;
-    } finally {
-      conn.release();
-    }
   }
 
   updateOrder = async (data) => {

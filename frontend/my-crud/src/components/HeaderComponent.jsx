@@ -11,6 +11,7 @@ import { AiOutlineLogout } from "react-icons/ai";
 import { toast } from "react-toastify";
 import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../redux/features/authAccess";
+import { RepositoryFactory } from "../services/FactoryService";
 
 export default function HeaderComponent(params) {
   const navigate = useNavigate();
@@ -23,7 +24,7 @@ export default function HeaderComponent(params) {
     if (token) {
       const checkMe = async () => {
         try {
-          const user = await axiosClient.get("/profile");
+          const user = await RepositoryFactory.get("user").profile();
           console.log(user.id);
           setId(user.id);
           setProfile(user);
@@ -37,7 +38,7 @@ export default function HeaderComponent(params) {
 
   const handleLogOut = async () => {
     try {
-      const logOut = await axiosClient.post("/logout");
+      const logOut = await RepositoryFactory.get("user").logout();
       toast.success("Đã đăng xuất");
       localStorage.removeItem("accessToken");
       dispatch(logout());

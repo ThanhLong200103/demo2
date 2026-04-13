@@ -1,12 +1,16 @@
 
 const OrderService = require("../services/order.service");
+const runInTransaction = require("../utils/runTransaction");
 
 class OrderController {
   CreateOrder = async (req, res) => {
     try {
       const { cartItemIds ,totalPrice } = req.body ;
       const userId = req.user.id;
-      const data = await OrderService.createOrder({cartItemIds ,totalPrice, userId });
+
+      const data = await runInTransaction (async (conn) => {
+         return await OrderService.createOrder({cartItemIds ,totalPrice, userId }, conn);
+       });
       res.json(data );
     } catch (error) {
       res.status(500).json({ error: error.message });
@@ -39,7 +43,9 @@ class OrderController {
     try {
       const { id } = req.user;
       const idOrderItem = req.body.idOrderItem;
-      const data = await OrderService.cancelOrderItem(id , idOrderItem);
+      const data = await runInTransaction(async (conn) => {
+        return await OrderService.cancelOrderItem(id , idOrderItem, conn);
+      });
       res.json(data); 
     } catch (error) {
       res.status(500).json({ error: error.message });

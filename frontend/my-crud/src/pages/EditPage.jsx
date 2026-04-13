@@ -4,11 +4,12 @@ import Button from "react-bootstrap/Button";
 import axiosClient from "../api/axios";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
+import { RepositoryFactory } from "../services/FactoryService";
 
 export default function EditPage() {
   const navigate = useNavigate();
   const { id } = useParams();
- 
+ const productService = RepositoryFactory.get("product");
   const [form, setForm] = useState({
     name: "",
     price: "",
@@ -18,7 +19,7 @@ export default function EditPage() {
   useEffect(() => {
     const fechProduct = async () =>{
    try {
-     const data = await axiosClient.get(`/product/${id}`);
+     const data = await productService.getById(id);
     console.log(data[0])
     setForm(data[0])
        } catch (error) {
@@ -39,7 +40,7 @@ export default function EditPage() {
     e.preventDefault();
 
     try {
-      await axiosClient.put(`/product/edit/${id}`, form);
+      await productService.update(id, form);
 
       toast.success("Update Product thành công ");
 

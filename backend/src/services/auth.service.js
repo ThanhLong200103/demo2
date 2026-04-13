@@ -22,13 +22,8 @@ class AuthService {
     return { token, updateRefreshToken };
   };
 
-  resetRefreshToken = async (token) => {
-    const conn = await db.getConnection();
-    console.log("TOKEN FROM CLIENT:", token);
-    try {
-     
-      await conn.beginTransaction();
-      const decoded = verifyRefreshToken(token);
+  resetRefreshToken = async (token ,conn) => {
+     const decoded = verifyRefreshToken(token);
       const refresh_token = hasdRefreshToken(token);
       const id = decoded.id;
       console.log(decoded);
@@ -51,16 +46,9 @@ class AuthService {
       );
       // console.log(updateToken)
       const newAccessToken = signToken(getToken);
-      await conn.commit();
+      // await conn.commit();
       // //  return decoded;
     return { newRefreshToken, newAccessToken };
-    } catch (error) {
-      if (conn) await conn.rollback();
-        
-        throw error;
-    } finally {
-      conn.release();
-    }
   };
 
   // me = async(token)=>{
@@ -71,19 +59,11 @@ class AuthService {
   //   return checkme;
   // }
 
-  logOut = async (id)=>{
-    const connection = await db.getConnection();
-    try {
-      await connection.beginTransaction();
-        const getRefresh = await UserModel.getTokenLogout(id ,connection);
-        const getupdateLogOut = await UserModel.updateRefeshTokenLogOut(id,connection)
-        await connection.commit();
+  logOut = async (id, conn)=>{
+    const getRefresh = await UserModel.getTokenLogout(id ,conn);
+        const getupdateLogOut = await UserModel.updateRefeshTokenLogOut(id,conn)
+        await conn.commit();
         return getupdateLogOut ;
-    } catch (error) {
-      await connection.rollback();
-    } finally {
-      connection.release();
-    }
   }
 }
 

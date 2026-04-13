@@ -3,6 +3,7 @@ import { Button, Col, Container, Form } from "react-bootstrap";
 import axiosClient from "../api/axios";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import { RepositoryFactory } from "../services/FactoryService";
 
 export default function RegisterPage() {
   const [data, setData] = useState({
@@ -22,7 +23,7 @@ export default function RegisterPage() {
      e.preventDefault();
      console.log(data)
     try {
-         const register = await axiosClient.post("/register" ,data)
+         const register = await RepositoryFactory.get("user").register(data);
      toast.success("Tạo tài khoản thành công")
      navigate("/login")
     } catch (error) {

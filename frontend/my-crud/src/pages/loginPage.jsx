@@ -5,6 +5,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { loginSuccess } from "../redux/features/authAccess";
 import { toast } from "react-toastify";
+import { RepositoryFactory } from "../services/FactoryService";
 export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -14,7 +15,7 @@ export default function LoginPage() {
     e.preventDefault();
     console.log("Email:", email, "Password:", password);
    try {
-    const data = await axiosClient.post("/login",{email,password});
+    const data = await RepositoryFactory.get("user").login({ email, password });
     console.log(data)
     localStorage.setItem("accessToken",data.accessToken)
     dispatch(loginSuccess({ token: data.accessToken }));
@@ -34,7 +35,7 @@ export default function LoginPage() {
   if (accessToken) {
     const checkMe = async () => {
       try {
-        await axiosClient.get("/profile");
+        await RepositoryFactory.get("user").profile();
         navigation("/"); 
       } catch (error) {
         console.log("Token expired, attempting refresh...");

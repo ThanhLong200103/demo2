@@ -3,26 +3,24 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import axiosClient from "../api/axios";
 import { Container, Card, Row, Col, Button, Form } from "react-bootstrap";
 import { toast } from "react-toastify";
+import { RepositoryFactory } from "../services/FactoryService";
 
 export default function OrderPage() {
   const location = useLocation();
   const { totalPrice, selectedIds } = location.state || {};
   const [orderItems, setOrderItems] = useState([]);
   const [paymentMethod, setPaymentMethod] = useState("COD");
-    const navigate = useNavigate();
-  
+  const navigate = useNavigate();
   //  console.log(location)
   //   console.log(totalPrice, selectedIds);
   useEffect(() => {
     const checkItemOder = async () => {
       try {
         if (selectedIds.length > 0) {
-          const data = await axiosClient.post("/order/getItemOrder", {
-            ids: selectedIds,
-          });
+          const data = await RepositoryFactory.get("order").getItemOrder(selectedIds );
           setOrderItems(data);
-          //   console.log(data)
-          //   console.log(orderItems);
+            // console.log(data)
+            // console.log(orderItems);
         }
       } catch (error) {
         console.log(error);
@@ -36,7 +34,8 @@ export default function OrderPage() {
   }, [orderItems]);
   const handleOrder = async () => {
     try {
-      const pay = await axiosClient.post("/order/create", {
+
+      const pay = await RepositoryFactory.get("order").create({
         cartItemIds: selectedIds,
         totalPrice: totalPrice,
       });
@@ -53,7 +52,8 @@ export default function OrderPage() {
   };
   const handleOnlinePayment = async () => {
     try {
-      const pay = await axiosClient.post("/payment/vnpaycreate", {
+      
+      const pay = await RepositoryFactory.get("vnpay").createPayment({
         cartItemIds: selectedIds,
         totalPrice: totalPrice,
       });

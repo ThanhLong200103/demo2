@@ -4,6 +4,7 @@ import Button from "react-bootstrap/Button";
 import axiosClient from "../api/axios";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { RepositoryFactory } from "../services/FactoryService";
 
 export default function CreatePage() {
   const navigate = useNavigate();
@@ -26,7 +27,7 @@ export default function CreatePage() {
     e.preventDefault();
 
     try {
-      await axiosClient.post("/product/create", form);
+      await RepositoryFactory.get("product").create(form);
 
       toast.success("Tạo user thành công ");
 
