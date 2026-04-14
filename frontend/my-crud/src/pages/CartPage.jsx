@@ -15,7 +15,7 @@ const totalPrice = useMemo(() => {
   return cart
     .filter((item) => selectedIds.includes(item.id)) 
     .reduce((sum, item) => {
-      // Lấy giá và số lượng MỚI NHẤT từ biến cart
+     
       return sum + (item.price * item.quantity);
     }, 0);
 }, [cart, selectedIds]);

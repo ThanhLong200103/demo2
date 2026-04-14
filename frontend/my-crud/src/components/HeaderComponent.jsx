@@ -44,6 +44,7 @@ export default function HeaderComponent(params) {
       dispatch(logout());
       navigate("/login");
       setId(null);
+      setProfile(null);
     } catch (error) {
       console.log(error);
     }
@@ -64,16 +65,15 @@ export default function HeaderComponent(params) {
             <Nav.Link as={Link} to="/create">
               Create
             </Nav.Link>
-           {profile ? <Nav.Link as={Link} to="/index" state={profile}>
-              Profile
-            </Nav.Link> 
-             : " "
-           }
-           {profile ? <Nav.Link as={Link} to="/history">
-              Giao dịch
-            </Nav.Link> 
-             : " "
-           }
+            {profile && (
+              <Nav.Link as={Link} to="/index" state={profile}>
+                Profile
+              </Nav.Link>
+            )}
+
+           {profile  && <Nav.Link as={Link} to="/history">
+                Giao dịch
+              </Nav.Link>}
           </Nav>
           <Form
             className="d-flex justify-content-end "

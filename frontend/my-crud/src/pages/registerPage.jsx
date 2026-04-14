@@ -27,8 +27,29 @@ export default function RegisterPage() {
      toast.success("Tạo tài khoản thành công")
      navigate("/login")
     } catch (error) {
-        console.log(error)
-        toast.error(error.response?.data?.message || "Tạo tài khoản thất bại")
+       const status = error.response?.status;
+      const apiData = error.response?.data;
+      const validationErrors = apiData?.error;
+
+      if (status === 422) {
+        if (validationErrors?.email) {
+          toast.error(validationErrors.email);
+        }
+        if (validationErrors?.password) {
+          toast.error(validationErrors.password);
+        }
+          if (validationErrors?.name) {
+          toast.error(validationErrors.name);
+        }
+          if (validationErrors?.phone) {
+          toast.error(validationErrors.phone);
+        }
+         if (!validationErrors?.email && !validationErrors?.password && !validationErrors?.name && !validationErrors?.phone) {
+          toast.error(apiData?.message || "Đã có lỗi xảy ra");
+        }
+      } else {
+        toast.error(apiData?.message || "Đã có lỗi xảy ra");
+      }
     }
   }
   return (

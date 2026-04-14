@@ -44,8 +44,8 @@ export default function CreatePage() {
 
       if (status === 422) {
         const errors = err.response?.data?.error;
-        if (Array.isArray(errors)) {
-          errors.forEach((msg) => toast.error(msg));
+        if (typeof errors === "object" && errors !== null) {
+          Object.values(errors).forEach((msg) => toast.error(msg));
         } else {
           toast.error(errors || "Lỗi xác thực dữ liệu");
         }

@@ -10,7 +10,8 @@ const initProductRoutes = require("./src/routers/routerProduct.js");
 const initOrderRoutes = require("./src/routers/routerOrder.js");
 const app = express();
 const corsReact = require ("./src/config/cors")
-const cookieParser = require('cookie-parser')
+const cookieParser = require('cookie-parser');
+const initRouterError = require('./src/routers/routerErorr.js');
 app.use(cors(corsReact));
 app.use(express.json()); 
 app.use(express.urlencoded({ extended: true }));
@@ -19,7 +20,7 @@ initPaymentRoutes(app);
 initUserRoutes(app);
 initProductRoutes(app);
 initOrderRoutes(app);
-
+initRouterError(app);
 (async ()=>{
     await initDB()
     app.listen(port, () => {

@@ -24,6 +24,7 @@ export default function IndexPagew() {
         setData(location.state)
     },[data]
   )
+  
   return (
     <>
       <Container className="d-flex justify-content-center mt-5">
