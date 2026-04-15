@@ -7,6 +7,7 @@ import DeletePage from "./DeletePage";
 import { MdAddShoppingCart } from "react-icons/md";
 import { toast } from "react-toastify";
 import { RepositoryFactory } from "../services/FactoryService";
+import ProductComponent from "../components/ProductComponent";
 
 export default function HomePage() {
   const [products, setProducts] = useState([]);
@@ -26,7 +27,6 @@ export default function HomePage() {
     };
     fetchProducts();
   }, []);
-
   const handleDelete = async (id) => {
     try {
       await axiosClient.delete(`/product/delete/${id}`);
@@ -60,73 +60,8 @@ export default function HomePage() {
   };
 
   return (
-    <>
-      <Table striped bordered hover>
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>Price</th>
-            <th>Image</th>
-            <th>Quantity</th>
-            <th>Handle</th>
-          </tr>
-        </thead>
-
-        <tbody>
-          {products.map((p) => (
-            <tr key={p.id}>
-              <td>{p.name}</td>
-              <td>{p.price}</td>
-
-     
-              <td>
-                <img src={p.img} alt={p.name} width="60" />
-              </td>
-
-              <td>{p.quantity}</td>
-
-              <td>
-                <Button
-                  as={Link}
-                  to={`/edit/${p.id}`}
-                  variant="success"
-                  size="sm"
-                  className="me-2"
-                >
-                  Edit
-                </Button>
-
-                <Button
-                  variant="outline-danger"
-                  size="sm"
-                  className="me-2"
-                  onClick={() => {
-                    setShow(true);
-                    setId(p.id);
-                  }}
-                >
-                  Delete
-                </Button>
-
-                <Button
-                  variant="outline-secondary"
-                  size="sm"
-                  onClick={() => {handleCreateCart(p.id ,quantity)}}
-                >
-                  <MdAddShoppingCart />
-                </Button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </Table>
-
-      <DeletePage
-        show={show}
-        handleClose={() => setShow(false)}
-        userId={id}
-        onDelete={handleDelete}
-      />
-    </>
+      <>
+      <ProductComponent products = {products}></ProductComponent>
+      </>
   );
 }

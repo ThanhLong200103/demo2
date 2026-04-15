@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Button, Col, Container, Form } from "react-bootstrap";
 import axiosClient from "../api/axios";
 import { toast } from "react-toastify";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { RepositoryFactory } from "../services/FactoryService";
 
 export default function RegisterPage() {
@@ -54,12 +54,12 @@ export default function RegisterPage() {
   }
   return (
     <>
-      <Container className="d-flex justify-content-center mt-5">
-        <Col md={8}>
-          <Form onSubmit={handleRegister}>
-            <Form.Group className="mb-3" controlId="formGroupName">
+      <Container className="d-flex justify-content-center mt-5 mb-5">
+        <Col md={8} xs={6}>
+          <Form onSubmit={handleRegister} className="mb-3">
+            <Form.Group  className="mb-3 " controlId="formGroupName">
               <Form.Label>Name</Form.Label>
-              <Form.Control type="text" placeholder="Name"value={data.name} name="name"
+              <Form.Control  type="text" placeholder="Name"value={data.name} name="name"
             onChange={handleChange} />
             </Form.Group>
             <Form.Group className="mb-3" controlId="formGroupPassword">
@@ -74,9 +74,10 @@ export default function RegisterPage() {
               <Form.Label>Phone</Form.Label>
               <Form.Control type="text" placeholder="Phone"  name="phone" value={data.phone } onChange={handleChange}/>
             </Form.Group>
-             <Button variant="primary" type="submit" >Đăng Ký</Button>
+             <Button className="mt-5" variant="danger" type="submit" >Đăng Ký</Button>
           </Form>
-         
+         <p>Bạn đã có tài khoản ?</p>
+         <Link to="/login  " >Đăng nhập ngay</Link>
         </Col>
       </Container>
     </>

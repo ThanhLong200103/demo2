@@ -65,7 +65,7 @@ export default function LoginPage() {
 
   return (
     <>
-      <Container className="d-flex justify-content-center mt-5">
+      <Container className="d-flex justify-content-center mt-5 mb-5">
         <Col md={8}>
           <Form onSubmit={handleSubmit}>
             <Form.Group className="mb-3" controlId="formName">
@@ -88,14 +88,13 @@ export default function LoginPage() {
               />
             </Form.Group>
 
-            <Button variant="primary" type="submit">
+            <Button className="mt-3 mb-3" variant="danger" type="submit">
               Submit
             </Button>
           </Form>
+          <p className="mt-1">Bạn chưa có tài khoản</p>
+          <Link to={"/register"}>Đăng ký tài khoản</Link>
         </Col>
-      </Container>
-      <Container className="mt-3">
-        <Link to={"/register"}>Đăng ký tài khoản</Link>
       </Container>
     </>
   );

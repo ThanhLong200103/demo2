@@ -23,7 +23,6 @@ export default function AppRouter() {
             <Route path="/delete/:id" element = {<DeletePage></DeletePage>}></Route>
             <Route path="/cart" element = {<CartPage></CartPage>}></Route>
             <Route path="/login" element = {<LoginPage></LoginPage>}></Route>
-            {/* <Route path="/login" element = {<LoginPage></LoginPage>}></Route> */}
             <Route path="/order" element = {<OrderPage></OrderPage>}></Route>
             <Route path="/register" element = {<RegisterPage></RegisterPage>}></Route>
             <Route path="/history" element = {<PurchaseHistoryPage></PurchaseHistoryPage>}></Route>

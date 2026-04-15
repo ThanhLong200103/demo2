@@ -1,3 +1,4 @@
+import FooterComponent from "./components/FooterComponent";
 import HeaderComponent from "./components/HeaderComponent"
 import AppRouter from "./router/router"
 import { ToastContainer } from "react-toastify";
@@ -10,6 +11,7 @@ function App() {
     <HeaderComponent ></HeaderComponent>
     <AppRouter></AppRouter>
     <ToastContainer />
+    <FooterComponent></FooterComponent>
     </>
   )
 }
