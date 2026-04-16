@@ -6,35 +6,41 @@ export default function ProductComponent({ products }) {
   return (
     <>
       <Container fluid>
-        <Row className="d-flex justify-content-center  mb-4 ">
+        <Row className="d-flex justify-content-center  mb-4  mt-4 ">
           {products.map((product) => (
             <Col
               md={4}
               xs={6}
               lg={2}
-              className=" bg-white  justify-content-center"
+              className="bg-white d-flex flex-column"
               key={product.id}
             >
-              <div className=" position-relative">
-                <div>
-                  <img
-                    src={
-                      product.img }
-                    alt={product.name}
-                    className="w-100"
-                  />
+              <div className="w-100 position-relative">
+                <img
+                  src={product.img}
+                  alt={product.name}
+                  style={{ width: "100%", height: "100%" }}
+                />
+                <p className="position-absolute top-0 border bg-danger text-white text-center  " style={{width:"50px",borderRadius:"10px"}}>-99%</p>
+              </div>
+
+              <div className="pt-1 d-flex flex-column flex-grow-1">
+                <div className="d-flex justify-content-between">
+                  <p className="mb-1">+ màu sắc</p>
+                  <p className="mb-1">+ kích thước</p>
                 </div>
-                <div className=" pt-1 d-flex flex-wrap  flex-column text-center">
-                  <p className="">Số lượng: {product.quantity}</p>
-                  <p className="fs-6">{product.name}</p>
-                  <div className="d-flex justify-content-center">
-                    <p className="text-danger fw-bold pe-2 pt-1">
-                      {product.price.toLocaleString()}đ
-                    </p>
-                    <p className="border border-dark rounded p-1">
-                      <MdOutlineAddShoppingCart />
-                    </p>
-                  </div>
+
+                <a className="text-decoration-none text-black text-start">
+                  {product.name}
+                </a>
+
+                <div className="d-flex justify-content-start mt-auto ">
+                  <p className="text-danger fw-bold pe-2 pt-1">
+                    {product.price.toLocaleString()}đ
+                  </p>
+                  <p className="p-1 text-decoration-line-through">
+                    100,000,000 đ
+                  </p>
                 </div>
               </div>
             </Col>

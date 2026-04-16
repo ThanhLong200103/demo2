@@ -4,30 +4,30 @@ import axiosClient from "../api/axios";
 import { toast } from "react-toastify";
 import { Link, useNavigate } from "react-router-dom";
 import { RepositoryFactory } from "../services/FactoryService";
-
-export default function RegisterPage() {
+import "../styles/inputAccount.css";
+export default function RegisterPage({ setAccount }) {
   const [data, setData] = useState({
     name: "",
     password: "",
     email: "",
     phone: "",
   });
-  const navigate = useNavigate()
-  const handleChange = (e)=>{
-     setData({
+  const navigate = useNavigate();
+  const handleChange = (e) => {
+    setData({
       ...data,
       [e.target.name]: e.target.value,
     });
-  }
-  const handleRegister = async (e)=>{
-     e.preventDefault();
-     console.log(data)
+  };
+  const handleRegister = async (e) => {
+    e.preventDefault();
+    console.log(data);
     try {
-         const register = await RepositoryFactory.get("user").register(data);
-     toast.success("Tạo tài khoản thành công")
-     navigate("/login")
+      const register = await RepositoryFactory.get("user").register(data);
+      toast.success("Tạo tài khoản thành công");
+      navigate("/login");
     } catch (error) {
-       const status = error.response?.status;
+      const status = error.response?.status;
       const apiData = error.response?.data;
       const validationErrors = apiData?.error;
 
@@ -38,46 +38,117 @@ export default function RegisterPage() {
         if (validationErrors?.password) {
           toast.error(validationErrors.password);
         }
-          if (validationErrors?.name) {
+        if (validationErrors?.name) {
           toast.error(validationErrors.name);
         }
-          if (validationErrors?.phone) {
+        if (validationErrors?.phone) {
           toast.error(validationErrors.phone);
         }
-         if (!validationErrors?.email && !validationErrors?.password && !validationErrors?.name && !validationErrors?.phone) {
+        if (
+          !validationErrors?.email &&
+          !validationErrors?.password &&
+          !validationErrors?.name &&
+          !validationErrors?.phone
+        ) {
           toast.error(apiData?.message || "Đã có lỗi xảy ra");
         }
       } else {
         toast.error(apiData?.message || "Đã có lỗi xảy ra");
       }
     }
-  }
+  };
   return (
     <>
-      <Container className="d-flex justify-content-center mt-5 mb-5">
+      <Container className="d-flex justify-content-center mb-5">
         <Col md={8} xs={6}>
-          <Form onSubmit={handleRegister} className="mb-3">
-            <Form.Group  className="mb-3 " controlId="formGroupName">
-              <Form.Label>Name</Form.Label>
-              <Form.Control  type="text" placeholder="Name"value={data.name} name="name"
-            onChange={handleChange} />
+          <Form onSubmit={handleRegister} className="mb-3 formAccount">
+            <Form.Group className="mb-3 " controlId="formGroupName">
+              <Form.Control
+                type="text"
+                placeholder="Họ"
+                value={data.name}
+                name="ho"
+                className="inputAccount"
+                onChange={handleChange}
+              />
             </Form.Group>
+            <Form.Group className="mb-3 " controlId="formGroupName">
+              <Form.Control
+                type="text"
+                placeholder="Tên"
+                value={data.name}
+                name="name"
+                className="inputAccount"
+                onChange={handleChange}
+              />
+            </Form.Group>
+            <Form.Group className="mb-3 d-flex gap-4" controlId="formGroupGender">
+                <Form.Check
+                  type="radio"
+                  label="Nữ"
+                  name="Gender"
+                  id="radio-1"
+                />
+                <Form.Check
+                  type="radio"
+                  label="Nam"
+                  name="Gender"
+                  id="radio-2"
+                />
+              </Form.Group>
             <Form.Group className="mb-3" controlId="formGroupPassword">
-              <Form.Label>Password</Form.Label>
-              <Form.Control type="password" placeholder="Password" name="password" value={data.password} onChange={handleChange} />
+              
+
+              <Form.Control
+                type="password"
+                placeholder="mm/dd/yyyy"
+                name="ngaySinh"
+                value={data.password}
+                onChange={handleChange}
+                className="inputAccount"
+              />
             </Form.Group>
             <Form.Group className="mb-3" controlId="formGroupEmail">
-              <Form.Label>Email</Form.Label>
-              <Form.Control type="text" placeholder="Email" name="email" value={data.email} onChange={handleChange} />
+              <Form.Control
+                type="text"
+                placeholder="Email"
+                name="email"
+                value={data.email}
+                onChange={handleChange}
+                className="inputAccount"
+              />
             </Form.Group>
             <Form.Group className="mb-3" controlId="formGroupPhone">
-              <Form.Label>Phone</Form.Label>
-              <Form.Control type="text" placeholder="Phone"  name="phone" value={data.phone } onChange={handleChange}/>
+              <Form.Control
+                type="text"
+                placeholder="Mật khẩu"
+                name="password"
+                value={data.phone}
+                onChange={handleChange}
+                className="inputAccount"
+              />
             </Form.Group>
-             <Button className="mt-5" variant="danger" type="submit" >Đăng Ký</Button>
+            <div >
+              
+						This site is protected by reCAPTCHA and the Google 
+						<a href="https://policies.google.com/privacy" className="text-decoration-none"> Privacy Policy </a> 
+						and 
+            <a href="https://policies.google.com/terms" className="text-decoration-none"> Terms of Service </a> apply.
+					
+            </div>
+
+            <div className="mt-3 d-flex gap-4">
+            <Button className="h-75 px-4 text-danger border-0"  type="submit" style={{cursor:"pointer" , background:"#d2d2d2"}}>
+              Đăng ký
+            </Button>
+             <div>
+              <p className="mb-0">Bạn đã có tài khoản?</p>
+              <b className="text-primary mt-0" onClick={()=>{setAccount(false)}}>Đăng nhập ngay</b>
+          
+             </div>
+            </div>
           </Form>
-         <p>Bạn đã có tài khoản ?</p>
-         <Link to="/login  " >Đăng nhập ngay</Link>
+         
         </Col>
       </Container>
     </>

@@ -2,11 +2,13 @@ import { Button, Col, Container, Form, Row, InputGroup } from "react-bootstrap";
 import { AiOutlineFacebook } from "react-icons/ai";
 import { FaInstagram, FaTwitter, FaYoutube } from "react-icons/fa";
 import { RiTiktokFill } from "react-icons/ri";
+import "../styles/maxWidth.css"
 export default function FooterComponent() {
   return (
     <>
-      <Container fluid style={{background :"#f5f5f5"}}>
-        <Row className="d-flex justify-content-between ">
+      <Container fluid style={{background :"#f5f5f5"}} className="">
+        <div className="maxWidth">
+          <Row className="  d-flex justify-content-between  " >
           <Col
             className="col-xl-3 col-lg-6 pt-lg-4 pb-lg-3 ps-lg-2  col-md-12 col-12 ps-xs-2  "
             style={{ borderRight: "1px solid #dedede" }}
@@ -179,6 +181,7 @@ export default function FooterComponent() {
         >
           <Col>Copyright © 2026 Torano. Powered by Haravan</Col>
         </Row>
+        </div>
       </Container>
     </>
   );

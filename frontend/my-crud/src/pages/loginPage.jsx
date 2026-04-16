@@ -5,8 +5,8 @@ import { useDispatch } from "react-redux";
 import { loginSuccess } from "../redux/features/authAccess";
 import { toast } from "react-toastify";
 import { RepositoryFactory } from "../services/FactoryService";
-
-export default function LoginPage() {
+import "../styles/inputAccount.css"
+export default function LoginPage({setAccount}) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const dispatch = useDispatch();
@@ -65,35 +65,55 @@ export default function LoginPage() {
 
   return (
     <>
-      <Container className="d-flex justify-content-center mt-5 mb-5">
+      <Container className="d-flex justify-content-center mb-5 formAccount">
         <Col md={8}>
           <Form onSubmit={handleSubmit}>
             <Form.Group className="mb-3" controlId="formName">
-              <Form.Label>Email</Form.Label>
               <Form.Control
                 type="text"
-                placeholder="Email"
+                placeholder="Vui lòng nhập email của bạn"
                 value={email}
+                className="inputAccount"
                 onChange={(e) => setEmail(e.target.value)}
               />
             </Form.Group>
 
             <Form.Group className="mb-3" controlId="formPassword">
-              <Form.Label>Password</Form.Label>
+             
               <Form.Control
                 type="password"
-                placeholder="Password"
+                placeholder="Vui lòng nhập mật khẩu"
                 value={password}
+                 className="inputAccount"
                 onChange={(e) => setPassword(e.target.value)}
               />
             </Form.Group>
+            <div >
+              
+						This site is protected by reCAPTCHA and the Google 
+						<a href="https://policies.google.com/privacy" className="text-decoration-none"> Privacy Policy </a> 
+						and 
+            <a href="https://policies.google.com/terms" className="text-decoration-none"> Terms of Service </a> apply.
+					
+            </div>
 
-            <Button className="mt-3 mb-3" variant="danger" type="submit">
-              Submit
+           <div className="d-flex gap-4  mt-4 flex-wrap " style={{maxWidth :"990px"}}>
+             <Button className="h-75 px-4 text-danger border-0"  type="submit" style={{cursor:"pointer" , background:"#d2d2d2"}}>
+              Đăng nhập
             </Button>
+             <div>
+              <p className="m-0">Bạn chưa có tài khoản?
+              <b onClick={()=>{setAccount(true)}} className="text-primary">Đăng ký tài khoản</b>
+              </p>
+              <p>
+                Bạn quên mật khẩu?
+                <Link to={"/register"} className="text-decoration-none">Quên mật khẩu</Link>
+              </p>
+          
+             </div>
+          </div>
           </Form>
-          <p className="mt-1">Bạn chưa có tài khoản</p>
-          <Link to={"/register"}>Đăng ký tài khoản</Link>
+         
         </Col>
       </Container>
     </>

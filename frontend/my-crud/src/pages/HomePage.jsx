@@ -8,6 +8,8 @@ import { MdAddShoppingCart } from "react-icons/md";
 import { toast } from "react-toastify";
 import { RepositoryFactory } from "../services/FactoryService";
 import ProductComponent from "../components/ProductComponent";
+import { Container } from "react-bootstrap";
+import CarouselComponent from "../components/CarouselComponent";
 
 export default function HomePage() {
   const [products, setProducts] = useState([]);
@@ -61,7 +63,10 @@ export default function HomePage() {
 
   return (
       <>
-      <ProductComponent products = {products}></ProductComponent>
+      <Container style={{maxWidth :"1600px"}}>
+        <CarouselComponent></CarouselComponent>
+        <ProductComponent products = {products}></ProductComponent>
+      </Container>
       </>
   );
 }
