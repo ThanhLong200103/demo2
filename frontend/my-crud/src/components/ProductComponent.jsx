@@ -5,7 +5,7 @@ export default function ProductComponent({ products }) {
   console.log(products);
   return (
     <>
-      <Container fluid>
+      <Container fluid style={{cursor:"pointer"}}>
         <Row className="d-flex justify-content-center  mb-4  mt-4 ">
           {products.map((product) => (
             <Col

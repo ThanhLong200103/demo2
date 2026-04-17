@@ -10,6 +10,8 @@ import "../styles/form.css";
 export default function LoginComponent({setShowLogin}) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showForgotPassword ,setShowForgotPassword] = useState(false)
+
   const dispatch = useDispatch();
   const n = useNavigate();
   const handleSubmit = async (e) => {
@@ -53,10 +55,66 @@ export default function LoginComponent({setShowLogin}) {
   return (
     <>
      
-      <div 
-      onClick={(e) => e.stopPropagation()} 
-    >
-      <div className="login-modal  position-absolute text-center rounded shadow ">
+      <div onClick={(e) => e.stopPropagation()} className="" >
+      {
+        showForgotPassword ?
+        <div className="login-modal  text-center rounded shadow ">
+          <div>
+            <div>
+            <p className="mb-2 tileLogin">Khôi phục mật khẩu</p>
+            <p style={{ fontSize: "14px" }}>Nhập email của bạn</p>
+          </div>
+          <div className="border-top">
+            <Form>
+               <Form.Group
+                className="mb-3  form-group"
+                controlId="formBasicEmail"
+              >
+                <Form.Control
+                  className="form-control"
+                  type="email"
+                  value={email}
+                  placeholder=" "
+                  onChange={(e) => setEmail(e.target.value)}
+                  style={{ borderRadius: 0 }}
+                />
+                <Form.Label className="form-label">Email</Form.Label>
+              </Form.Group>
+               <div className="textFromLogin">
+                This site is protected by reCAPTCHA and the Google
+                <a
+                  href="https://policies.google.com/privacy"
+                  style={{ color: "#2962ff" }}
+                >
+                  Privacy Policy
+                </a>
+                and{" "}
+                <a
+                  href="https://policies.google.com/terms"
+                  style={{ color: "#2962ff" }}
+                >
+                  Terms of Service
+                </a>{" "}
+                apply.
+              </div>
+              <Button
+                
+                type="submit"
+                className="w-100 mt-3  border-0 "
+                style={{background:"rgb(245,245,245)",color:"#d30000" ,cursor:"pointer"}}
+                onClick={handleSubmit}
+              >
+                Khôi phục mật khẩu
+              </Button>
+            </Form>
+             <div className="mt-3 " style={{fontSize:"12px"}}>
+               <p className="textFromLogin m-0">Bạn đã nhớ mật khẩu?  <b onClick={()=>{setShowForgotPassword(false)}} className="text-decoration-none text-danger fw-light">Trở về đăng nhập</b></p>
+            </div>
+          </div>
+          </div>
+        </div>
+         :
+        <div className="login-modal   text-center rounded shadow ">
         <div>
           <div>
             <p className="mb-2 tileLogin">ĐĂNG NHẬP TÀI KHOẢN</p>
@@ -121,11 +179,12 @@ export default function LoginComponent({setShowLogin}) {
             </Form>
             <div className="mt-3 " style={{fontSize:"12px"}}>
               <p className="textFromLogin m-0">Khách hàng mới? <b onClick={()=>{onclickRegister()}} className="text-decoration-none text-danger fw-light">Tạo tài khoản</b></p>
-               <p className="textFromLogin m-0">Quên mật khẩu? <Link className="text-decoration-none text-danger">Khôi phục mật khẩu</Link></p>
+               <p className="textFromLogin m-0">Quên mật khẩu?  <b onClick={()=>{setShowForgotPassword(true)}} className="text-decoration-none text-danger fw-light">Quên mật khẩu?</b></p>
             </div>
           </div>
         </div>
       </div>
+      }
     </div>
     </>
   );

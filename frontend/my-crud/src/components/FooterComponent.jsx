@@ -6,7 +6,7 @@ import "../styles/maxWidth.css"
 export default function FooterComponent() {
   return (
     <>
-      <Container fluid style={{background :"#f5f5f5"}} className="">
+      <Container fluid style={{background :"#f5f5f5"}} className="z-0  bottom-0">
         <div className="maxWidth">
           <Row className="  d-flex justify-content-between  " >
           <Col
@@ -43,37 +43,38 @@ export default function FooterComponent() {
                   <b>Phương thức thanh toán</b>
                   <ul className="list-unstyled d-flex  flex-wrap">
                     <li className="m-1">
-                      <img
+                      <img 
+                        className="mt-2"
                         src="//theme.hstatic.net/200000690725/1001078549/14/payment_1_img.png?v=1069"
                         alt="GHN"
                       />
                     </li>
                     <li className="m-2">
-                      <img
+                      <img className="h-75 w-100"
                         src="//theme.hstatic.net/200000690725/1001078549/14/payment_2_img.png?v=1069"
                         alt="ninija"
                       />
                     </li>
                     <li className="m-2">
-                      <img
+                      <img className="h-75 w-100"
                         src="//theme.hstatic.net/200000690725/1001078549/14/payment_3_img.png?v=1069"
                         alt="Ahamove"
                       />
                     </li>
                     <li className="m-2">
-                      <img
+                      <img className="h-75 w-100"
                         src="//theme.hstatic.net/200000690725/1001078549/14/payment_4_img.png?v=1069"
                         alt="J&T"
                       />
                     </li>
                     <li className="m-2">
-                      <img
+                      <img className="h-75 w-100"
                         src="//theme.hstatic.net/200000690725/1001078549/14/payment_5_img.png?v=1069"
                         alt="J&T"
                       />
                     </li>
                     <li className="m-2">
-                      <img
+                      <img className="h-75 w-100"
                         src="//theme.hstatic.net/200000690725/1001078549/14/payment_6_img.png?v=1069"
                         alt="J&T"
                       />
@@ -113,10 +114,11 @@ export default function FooterComponent() {
               <div className="mt-1 mb-1">
                 <b>Phương thức vận chuyển</b>
                 <ul className="list-unstyled d-flex  ">
-                  <li className="m-1">
+                  <li className="m-1 ">
                     <img
                       src="//theme.hstatic.net/200000690725/1001078549/14/shipment_1_img.png?v=1069"
                       alt="GHN"
+                      
                     />
                   </li>
                   <li className="m-1">

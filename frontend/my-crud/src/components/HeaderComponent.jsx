@@ -22,6 +22,11 @@ import CustomCartItem from "../pages/CartPage";
 import "../styles/maxWidth.css"
 import { RiArrowDropDownLine } from "react-icons/ri";
 import NotificationComponent from "./notificationComponent";
+import { TfiAlignJustify } from "react-icons/tfi";
+import { openSideBar } from "../redux/features/sideBar";
+import { SlMenu } from "react-icons/sl";
+import { openCart } from "../redux/features/cart";
+import { openSearch } from "../redux/features/search";
 export default function HeaderComponent(params) {
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -29,6 +34,8 @@ export default function HeaderComponent(params) {
   const [userId, setId] = useState(null);
   const [profile, setProfile] = useState(null);
   const [showLogin , setShowLogin] = useState(false);
+
+
   // const [showCart , setShowCart] = useState(false);
 
 
@@ -46,6 +53,7 @@ export default function HeaderComponent(params) {
       };
       checkMe();
     }
+    // console.log(showSideBar)
   }, [token]);
 
   const handleLogOut = async () => {
@@ -61,10 +69,13 @@ export default function HeaderComponent(params) {
       console.log(error);
     }
   };
+  const handleSideBar = ()=>{
+    dispatch(openSideBar(true))
+  }
   return (
     <>
-      <Container fluid className=" top-0 border-bottom " >
-        <Row className="align-items-center d-flex justify-content-between bg-dark text-white px-2 pt-2 " >
+      <Container fluid className=" top-0 border-bottom " style={{minHeight:"80px"}} >
+        <Row className="align-items-center d-flex justify-content-between bg-dark text-white px-2 pt-2  d-none d-lg-block" >
           <div className="bg-dark text-white">
     <div className="maxWidth d-flex justify-content-between align-items-center px-2">
       <div>
@@ -91,18 +102,24 @@ export default function HeaderComponent(params) {
   </div>
         </Row>
 
-       <div className="maxWidth bg-white">
+       <div className="maxWidth bg-white mb-md-2  mb-xs-2  d-xs-block">
          <Row className="align-items-center d-flex justify-content-between pt-1 px-2 " style={{}}>
-          <Col md={2} className="d-flex justify-content-center " >
-          <Button className="bg-white border-0" as={Link} to={`/`}>
+          <Col className=" d-lg-none " xs ={2}>
+        <Button className="bg-white border-0 text-black" onClick={()=>{handleSideBar()}}>
+           <SlMenu />
+          </Button>
+          </Col>
+          <Col xs={4} md={2} className="d-flex justify-content-center " >
+          <Button className="bg-white border-0 w-100 " as={Link} to={`/` }>
               <img
               src="//theme.hstatic.net/200000690725/1001078549/14/logo.png?v=1069"
               alt="Torano"
-              className="img-fluid "
+              className="img-fluid " style={{maxHeight:"70px"}}
+             
             />
           </Button>
           </Col >
-          <Col md={8} className="d-flex justify-content-center flex-wrap  ">
+          <Col md={6} lg={8} xs={4}  className="d-flex justify-content-center flex-wrap text-center  d-none d-lg-block ">
           <Button className="mt-1 bg-white text-dark border-0" as={Link} to={`/`}>
             Sản phẩm mới
           </Button>
@@ -125,8 +142,8 @@ export default function HeaderComponent(params) {
             Cảnh báo lừa đảo
           </Button>
           </Col>
-          <Col md={2} className="d-flex justify-content-end  ">
-            <Button className="bg-white border-0 text-dark" as={Link} to={`/search`} >
+          <Col md={2} xs={4} lg={1} className="d-flex justify-content-end  ">
+            <Button className="bg-white border-0 text-dark" onClick={()=>{dispatch(openSearch(true))}} >
               <IoSearchOutline className="fs-4" />
             </Button>
              {profile ? <Button className="bg-white border-0 text-dark" as={Link} to={`/index`} state={profile}>
@@ -136,7 +153,7 @@ export default function HeaderComponent(params) {
               {showLogin && <LoginComponent setShowLogin={setShowLogin}/>}
             </Button>}
             
-            <Button className="bg-white border-0 text-dark position-relative " as={Link} to={`/cart`} >
+            <Button className="bg-white border-0 text-dark position-relative " onClick={()=>{dispatch(openCart(true))}} >
               <MdOutlineShoppingBag className="fs-3 "/>
               <span className="CartCation">0</span>
             </Button>

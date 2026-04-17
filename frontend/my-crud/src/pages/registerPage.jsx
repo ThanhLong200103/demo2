@@ -60,7 +60,7 @@ export default function RegisterPage({ setAccount }) {
   return (
     <>
       <Container className="d-flex justify-content-center mb-5">
-        <Col md={8} xs={6}>
+        <Col md={8}>
           <Form onSubmit={handleRegister} className="mb-3 formAccount">
             <Form.Group className="mb-3 " controlId="formGroupName">
               <Form.Control

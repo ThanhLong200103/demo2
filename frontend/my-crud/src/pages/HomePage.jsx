@@ -63,8 +63,8 @@ export default function HomePage() {
 
   return (
       <>
-      <Container style={{maxWidth :"1600px"}}>
-        <CarouselComponent></CarouselComponent>
+      <Container style={{maxWidth :"1600px"}} className="position-relative">
+        {/* <CarouselComponent></CarouselComponent> */}
         <ProductComponent products = {products}></ProductComponent>
       </Container>
       </>

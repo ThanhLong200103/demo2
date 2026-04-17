@@ -9,6 +9,7 @@ import "../styles/inputAccount.css"
 export default function LoginPage({setAccount}) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showForgotPassword ,setShowForgotPassword] = useState(false)
   const dispatch = useDispatch();
   const navigation = useNavigate();
 
@@ -65,6 +66,43 @@ export default function LoginPage({setAccount}) {
 
   return (
     <>
+      {
+        showForgotPassword ?  <Container className="d-flex justify-content-center mb-5 formAccount">
+       <Col md={8}>
+        <Form>
+          <Form.Group>
+             <Form.Control
+                type="text"
+                placeholder="Vui lòng nhập email của bạn"
+                value={email}
+                className="inputAccount"
+                onChange={(e) => setEmail(e.target.value)}
+              />
+          </Form.Group>
+           <div >
+              
+						This site is protected by reCAPTCHA and the Google 
+						<a href="https://policies.google.com/privacy" className="text-decoration-none"> Privacy Policy </a> 
+						and 
+            <a href="https://policies.google.com/terms" className="text-decoration-none"> Terms of Service </a> apply.
+					
+            </div>
+             <div className="d-flex gap-4  mt-4 flex-wrap " style={{maxWidth :"990px"}}>
+             <Button className="h-75 px-4 text-white border-0"  type="submit" style={{cursor:"pointer" , background:"#d2d2d2"}}>
+              GỬI EMAIL
+            </Button>
+             <div>
+              <p className="m-0">Quay lại  </p>
+              <b onClick={()=>{setShowForgotPassword(false)}} className="text-primary">đăng nhập </b>
+              
+             
+          
+             </div>
+          </div>
+
+        </Form>
+       </Col>
+      </Container> :
       <Container className="d-flex justify-content-center mb-5 formAccount">
         <Col md={8}>
           <Form onSubmit={handleSubmit}>
@@ -107,7 +145,7 @@ export default function LoginPage({setAccount}) {
               </p>
               <p>
                 Bạn quên mật khẩu?
-                <Link to={"/register"} className="text-decoration-none">Quên mật khẩu</Link>
+                 <b onClick={()=>{setShowForgotPassword(true)}} className="text-primary">Quên mật khẩu?</b>
               </p>
           
              </div>
@@ -116,6 +154,8 @@ export default function LoginPage({setAccount}) {
          
         </Col>
       </Container>
+      }
+      
     </>
   );
 }

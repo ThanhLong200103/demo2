@@ -60,9 +60,9 @@ body {
   font-size: 14px;
   line-height: 1.6;
   width: 100%;
-
   margin: 0 auto;
   font-family: 'Quicksand';
+ 
 
 font-style: normal;
 
@@ -118,3 +118,5 @@ code {
   padding: 4px 8px;
   background: var(--code-bg);
 }
+
+
