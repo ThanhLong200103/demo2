@@ -6,7 +6,7 @@ import "../styles/maxWidth.css"
 export default function FooterComponent() {
   return (
     <>
-      <Container fluid style={{background :"#f5f5f5"}} className="z-0  bottom-0">
+      <Container fluid style={{background :"#f5f5f5"}} className="z-0  bottom-0 ">
         <div className="maxWidth">
           <Row className="  d-flex justify-content-between  " >
           <Col

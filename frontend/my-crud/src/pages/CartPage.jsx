@@ -3,7 +3,7 @@ import { Container, Row, Col, Card, Button, Form, Badge } from "react-bootstrap"
 import { FaUser, FaTrash, FaPlus, FaMinus, FaShoppingCart, FaCreditCard } from "react-icons/fa";
 import axiosClient from "../api/axios";
 import { Link } from "react-router-dom";
-import OrderPage from "./orderPage";
+// import OrderPage from "./orderPage";
 import { toast } from "react-toastify";
 import { RepositoryFactory } from "../services/FactoryService";
 

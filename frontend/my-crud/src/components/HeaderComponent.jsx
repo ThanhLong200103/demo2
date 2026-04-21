@@ -20,6 +20,7 @@ import { IoSearchOutline } from "react-icons/io5";
 import LoginComponent from "./LoginComponent";
 import CustomCartItem from "../pages/CartPage";
 import "../styles/maxWidth.css"
+import "../styles/navHover.css"
 import { RiArrowDropDownLine } from "react-icons/ri";
 import NotificationComponent from "./notificationComponent";
 import { TfiAlignJustify } from "react-icons/tfi";
@@ -31,6 +32,8 @@ export default function HeaderComponent(params) {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { token, isAuthenticated } = useSelector((state) => state.auth);
+  const {countItem } = useSelector((state) => state.cart);
+
   const [userId, setId] = useState(null);
   const [profile, setProfile] = useState(null);
   const [showLogin , setShowLogin] = useState(false);
@@ -102,8 +105,8 @@ export default function HeaderComponent(params) {
   </div>
         </Row>
 
-       <div className="maxWidth bg-white mb-md-2  mb-xs-2  d-xs-block">
-         <Row className="align-items-center d-flex justify-content-between pt-1 px-2 " style={{}}>
+       <div className="maxWidth container-fluid bg-white mb-md-2 mb-xs-2 d-xs-block">
+         <Row className="align-items-center d-flex justify-content-between pt-1 px-2" style={{}}>
           <Col className=" d-lg-none " xs ={2}>
         <Button className="bg-white border-0 text-black" onClick={()=>{handleSideBar()}}>
            <SlMenu />
@@ -126,15 +129,128 @@ export default function HeaderComponent(params) {
           <Button className="mt-1 bg-white text-dark border-0" as={Link} to={`/sale`}>
             Danh mục sale
           </Button>
-          <Button className="mt-1 bg-white text-dark border-0" as={Link} to={`/shirts`}>
-            Áo Nam <RiArrowDropDownLine className="fs-4" />
-          </Button>
-          <Button className="m-1 bg-white text-dark border-0" as={Link} to={`/pants`}>
+          <div className="d-inline-block position-relative parentShowShirt">
+            <Button className="mt-1 bg-white text-dark border-0" as={Link} to={`/shirts`} >
+              Áo Nam <RiArrowDropDownLine className="fs-4" />
+            </Button>
+            <ul  className="list-unstyled position-absolute  z-1 text-start bg-white  showShirt" style={{minWidth:"300px"}}>
+               <li className="m-3">
+                      <Link
+                        to="/shirts/polo"
+                        className="text-black text-decoration-none"
+                      >
+                        Áo Polo
+                      </Link>
+                    </li>
+                    <li className="m-3">
+                      <Link
+                        to="/shirts/thun"
+                        className="text-black text-decoration-none"
+                      >
+                        Áo Thun
+                      </Link>
+                    </li>
+                    <li className="m-3">
+                      <Link
+                        to="/shirts/somi"
+                        className="text-black text-decoration-none"
+                      >
+                        Áo sơ mi
+                      </Link>
+                    </li>
+                    <li className="m-3">
+                      <Link
+                        to="/shirts/ni"
+                        className="text-black text-decoration-none"
+                      >
+                        Áo - Quần Nỉ
+                      </Link>
+                    </li>
+                    <li className="m-3">
+                      <Link
+                        to="/shirts/blazer"
+                        className="text-black text-decoration-none"
+                      >
+                        Áo Blazer
+                      </Link>
+                    </li>
+                    <li className="m-3">
+                      <Link
+                        to="/shirts/len"
+                        className="text-black text-decoration-none"
+                      >
+                        Áo Len
+                      </Link>
+                    </li>
+                    <li className="m-3">
+                      <Link
+                        to="/shirts/khoac"
+                        className="text-black text-decoration-none"
+                      >
+                        Áo Khoác
+                      </Link>
+                    </li>
+            </ul>
+          </div>
+          <div className="d-inline-block position-relative parentShowShirt">
+            <Button className="m-1 bg-white text-dark border-0" as={Link} to={`/pants`}>
              Quần nam <RiArrowDropDownLine className="fs-4"/>
-          </Button>
-          <Button className="mt-1 bg-white text-dark border-0" as={Link} to={`/accessories`}>
+                 </Button>
+              <ul
+                    className="list-unstyled position-absolute  z-1 text-start bg-white  showShirt" style={{minWidth:"300px"}}
+                  >
+                    <li className="m-3">
+                      <Link
+                        to="/pants/short"
+                        className="text-black text-decoration-none"
+                      >
+                        Quần Short
+                      </Link>
+                    </li>
+                    <li className="m-3">
+                      <Link
+                        to="/pants/jeans"
+                        className="text-black text-decoration-none"
+                      >
+                        Quần Jeans
+                      </Link>
+                    </li>
+                    <li className="m-3">
+                      <Link
+                        to="/pants/au"
+                        className="text-black text-decoration-none"
+                      >
+                        Quần Âu
+                      </Link>
+                    </li>
+                    <li className="m-3">
+                      <Link
+                        to="/pants/gio"
+                        className="text-black text-decoration-none"
+                      >
+                        Quần Gió
+                      </Link>
+                    </li>
+                  </ul>
+      
+          </div>
+         <div className="d-inline-block position-relative parentShowShirt">
+           <Button className="mt-1 bg-white text-dark border-0" as={Link} to={`/accessories`}>
             Phụ kiện <RiArrowDropDownLine className="fs-4"/>
           </Button>
+           <ul
+                  className="list-unstyled position-absolute  z-1 text-start bg-white  showShirt" style={{minWidth:"300px"}}
+                  >
+                    <li className="m-3">
+                      <Link
+                        to="/accessories/belt"
+                        className="text-black text-decoration-none"
+                      >
+                        Thắt Lưng
+                      </Link>
+                    </li>
+                  </ul>
+         </div>
           <Button className="mt-1 bg-white text-dark border-0" as={Link} to={`/stores`}>
             Hệ thống cửa hàng
           </Button>
@@ -155,7 +271,7 @@ export default function HeaderComponent(params) {
             
             <Button className="bg-white border-0 text-dark position-relative " onClick={()=>{dispatch(openCart(true))}} >
               <MdOutlineShoppingBag className="fs-3 "/>
-              <span className="CartCation">0</span>
+              <span className="CartCation">{countItem}</span>
             </Button>
           </Col>
         </Row>

@@ -7,13 +7,15 @@ import SideBarComponent from "./components/SideBarComponent";
 import { useSelector } from "react-redux";
 import CartComponent from "./components/CartComponent";
 import SearchComponent from "./components/searchComponent";
+import DetailComponent from "./components/detailComponent";
+
 function App() {
 
 
   const { showSideBar } = useSelector((state) => state.sideBar);
   const { showCart } = useSelector((state) => state.cart);
   const { showSearch } = useSelector((state) => state.search);
-
+  const { showDetail } = useSelector((state) => state.detail);
 
 
   return (
@@ -25,6 +27,7 @@ function App() {
     <SideBarComponent isOpen={showSideBar} />
     <CartComponent open = {showCart}/>
     <SearchComponent OpenS={ showSearch}></SearchComponent>
+    {/* <DetailComponent showDetail={showDetail} ></DetailComponent> */}
     </>
   )
 }

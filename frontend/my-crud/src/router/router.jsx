@@ -12,6 +12,8 @@ import PurchaseHistoryPage from "../pages/purchaseHistoryPage";
 import VnpayPage from "../pages/VnpayPage";
 import PaymentSuccess from "../pages/PaymentSuccess";
 import PaymentFail from "../pages/PaymentFail";
+
+import DetailProductPage from "../pages/detailProductPage";
 import AccountPage from "../pages/accoutPage";
 
 export default function AppRouter() {
@@ -31,6 +33,7 @@ export default function AppRouter() {
             <Route path="/payment-success" element = {<PaymentSuccess></PaymentSuccess>}></Route>
             <Route path="/payment-failed" element = {<PaymentFail></PaymentFail>}></Route>
             <Route path="/account" element = {<AccountPage></AccountPage>}></Route>
+            <Route path="/products/:id" element={<DetailProductPage></DetailProductPage>}></Route>
         </Routes>
     )
 };
