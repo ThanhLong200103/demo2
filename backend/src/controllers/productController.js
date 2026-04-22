@@ -1,3 +1,4 @@
+const attributeService = require("../services/attributeService");
 const ProductService = require("../services/productService");
 const CacthAsync = require("../utils/cachAsync");
 class ProductController {
@@ -38,5 +39,21 @@ class ProductController {
     });
     res.json(data);
   });
+  getAttributes = CacthAsync(
+    async(req , res) =>{
+      const {productId} = req.query;
+      // console.log(productId)
+      const data = await attributeService.getAttributes(productId)
+      res.json(data)
+    }
+  )
+  getOneAttributes = CacthAsync(
+    async(req , res) =>{
+      const {productId , sizeAttribute , colorAttribute} = req.query;
+      // console.log(productId)
+      const data = await attributeService.getOneAttributes({productId , sizeAttribute , colorAttribute})
+      res.json(data)
+    }
+  )
 }
 module.exports = new ProductController();

@@ -37,17 +37,17 @@ class ProductModel {
     );
     return existingItem;
   };
-  getProducUpdateCart = async (id ,connection = db) => {
+  getProducUpdateCartAttributes = async (id ,connection = db) => {
     const [existingItem] = await connection.execute(
-      "SELECT * FROM  products WHERE id = ? AND status = 'active' FOR UPDATE",
+      "SELECT * FROM  attributes WHERE id = ? FOR UPDATE",
       [id],
     );
     return existingItem[0];
   };
-  editQuantityProduct = async (idProduct, quantity, connection = db) => {
+  editQuantityProductAttributes = async (attributesId, quantity, connection = db) => {
     const [row] = await connection.execute(
-      "UPDATE products SET quantity= quantity +?  WHERE id = ?",
-      [quantity, idProduct],
+      "UPDATE attributes SET quantity= quantity +?  WHERE id = ?",
+      [quantity, attributesId],
     );
     return row[0];
   };

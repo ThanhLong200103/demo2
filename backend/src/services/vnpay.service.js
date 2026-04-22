@@ -213,6 +213,7 @@ class VnPayService {
         {
           order_id: orderId,
           product_id: item.product_id,
+           attribute_id:item.attributes_id,
           quantity: item.quantity,
           price: item.price,
         },

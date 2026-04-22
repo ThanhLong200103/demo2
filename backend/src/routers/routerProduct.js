@@ -8,7 +8,8 @@ router.post("/api/product/create",[authMiddleware,validateProduct],ProductContro
 router.get("/api/product/:id",authMiddleware,ProductController.getProduct)
 router.put("/api/product/edit/:id",[authMiddleware,validateProduct],ProductController.editProduct)
 router.delete("/api/product/delete/:id",authMiddleware,ProductController.deleteProduct)
-
+router.get("/api/attributes" ,ProductController.getAttributes)
+router.get("/api/attribute" ,ProductController.getOneAttributes)
 let initProductRoutes = (app) => {
   app.use('/', router);
 };

@@ -12,9 +12,11 @@ class CartItemService {
   createCartItem = async (data, conn) => {
       const productId = data.productId;
       const cartId = data.cartId;
+      const attributesId = data.attributesId
       const checkProduct = await cartItem.checkproductID(
         productId,
         cartId,
+        attributesId,
         conn,
       );
       console.log("CHECK PRODUCT:", checkProduct);
@@ -38,8 +40,9 @@ class CartItemService {
       const data = await cartItem.getcart(id, conn);
       const idProduct = data.product_id;
       const quantity = data.quantity;
-      const updateQuantityProduct = await ProductModel.editQuantityProduct(
-        idProduct,
+      const 	attributesId = data.attributes_id 
+      const updateQuantityProduct = await ProductModel.editQuantityProductAttributes(
+        attributesId,
         quantity,
         conn,
       );
@@ -53,15 +56,15 @@ class CartItemService {
         throw new Error("Đã đặt số lượng nhất định vui lòng xóa giỏ hàng",422);
       }
       const upateCart = await cartItem.editCartItem(data, conn);
-      const idProduct = row.product_id;
+      const attributesId = row.attributes_id;
       const quantity = data.quantityProduct;
-      const getProduct = await ProductModel.getProducUpdateCart(idProduct, conn);
+      const getProduct = await ProductModel.getProducUpdateCartAttributes(attributesId, conn);
       console.log("GET Quantity PRODUCT:", getProduct.quantity);
       if(getProduct.quantity<1){
         throw new Error("Số lượng sản phẩm không đủ" ,422);
       }
-      const updateQuantityProduct = await ProductModel.editQuantityProduct(
-        idProduct,
+      const updateQuantityProduct = await ProductModel.editQuantityProductAttributes(
+        attributesId,
         quantity,
         conn,
       );

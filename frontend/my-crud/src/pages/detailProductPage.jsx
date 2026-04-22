@@ -14,20 +14,45 @@ import { useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import axiosClient from "../api/axios";
 export default function DetailProductPage() {
-    const[products, setProducts] = useState([])
-    const[productItem , setProductItem]= useState({})
-    const [quantityHandle , setQuantityHanlde] = useState(1)
+    const [products, setProducts] = useState([])
+    const [productItem, setProductItem] = useState({})
+    const [productAttributes, setProductAttributes] = useState([])
+    const [quantityHandle, setQuantityHanlde] = useState(1)
+    const [sizes , setSize] = useState([])
+    const [colors , setColor] = useState([])
+    const [selectedColor, setSelectedColor] = useState(null);
+  const [selectedSize, setSelectedSize] = useState(null);
+  const[attributesOne, setAttributesId] = useState(null)
     const { id } = useParams();
+    // console.log(id)
     useEffect(
       ()=>{
         const getProduct = async  ()=>{
           try {
                const res = await RepositoryFactory.get("product").getAll();
                const product = await RepositoryFactory.get("product").getById(id)
+               const attributes = await RepositoryFactory.get("product").getAttributes({
+                "productId":id
+               })
              setProducts(res)
              setProductItem(product[0])
-             console.log(res)
-             console.log(product)
+             setProductAttributes(attributes)
+            //  console.log(res)
+            //  console.log(product)
+             console.log("Attributes :",attributes)
+             const allSizes = attributes.map(element => element.size);
+             const allColor = attributes.map(element=>element.color)
+             const uniqueSizes = [...new Set(allSizes)];
+             const uniqueColors = [...new Set (allColor)]
+             setSize(uniqueSizes);
+             setColor(uniqueColors)
+             console.log("Danh sách size duy nhất: ", uniqueSizes);
+             console.log("Danh sách color duy nhất: ", uniqueColors);
+
+             setSelectedColor(uniqueColors[0])
+             setSelectedSize(uniqueSizes[0])
+
+
           } catch (error) {
             console.log(error)
           }
@@ -35,6 +60,23 @@ export default function DetailProductPage() {
 
         getProduct()
       },[]
+    )
+
+    useEffect(
+      ()=>{
+        // console.log("tt",selectedSize,selectedColor)
+
+        const getOneAtribute = async ()=>{
+          const data = await RepositoryFactory.get("product").getOneAttributes({
+            productId:id,
+            sizeAttribute:selectedSize,
+            colorAttribute:selectedColor
+          })
+          setAttributesId(data)
+          console.log("data Attribute One :",data)
+        }
+        getOneAtribute();
+      },[selectedSize , selectedColor]
     )
 
     const handleReduce= ()=>{
@@ -62,6 +104,7 @@ export default function DetailProductPage() {
       await axiosClient.post("/cartitem/create", {
         productId : productItem.id,
         quantity : quantityHandle,
+        attributesId:attributesOne.id,
         cartId,
       });
 
@@ -149,7 +192,7 @@ export default function DetailProductPage() {
                   <span className="pe-2 border-end"> Mã sản phẩm : <b className="fw-bold">Test</b> </span>
                   <span className="px-2 border-end">
                     {" "}
-                    Tình trạng :<b className="fw-bold">{productItem.quantity>0 ? "Còn hàng" :"Hết hàng"}</b>
+                    Tình trạng :<b className="fw-bold">{attributesOne?.quantity>0 ? "Còn hàng" :"Hết hàng"}</b>
                   </span>
                   <span className="ps-2">
                     Thương hiệu : <b className="fw-bold">TORANO</b>
@@ -183,18 +226,27 @@ export default function DetailProductPage() {
                         lg={10}
                         className="d-flex flex-wrap gap-2"
                       >
-                        <div
-                          className="border border-dark rounded px-4 py-2"
-                          style={{ cursor: "pointer" }}
-                        >
-                          Đen
-                        </div>
-                        <div
-                          className="border rounded px-4 py-2"
-                          style={{ cursor: "pointer" }}
-                        >
-                          Xanh da trời đậm 1
-                        </div>
+                        <div className="d-flex flex-wrap gap-2">
+         {colors.map((color) => (
+            <div key={color} className="relative">
+              <input
+                type="radio"
+                id={`color-${color}`}
+                name="color"
+                value={color}
+                checked={selectedColor === color}
+                onChange={() => setSelectedColor(color)}
+                className="d-none"
+              />
+              <label
+                htmlFor={`color-${color}`}
+                className={`inline-block px-4 py-2  border border-gray-300 rounded-md cursor-pointer transition-all peer-checked:border-2 peer-checked:border-gray-900 peer-checked:font-bold ${selectedColor === color ? 'bg-danger text-white' : 'bg-white'}`} style={{borderRadius:"10px"}}
+              >
+                {color}
+              </label>
+            </div>
+          ))}
+        </div>
                       </Col>
                     </Row>
 
@@ -205,60 +257,31 @@ export default function DetailProductPage() {
                       <Col xs={8} md={9} lg={10}>
                      
                         <div className="d-flex flex-wrap gap-2 mb-2">
-                          <div
-                            className="border rounded d-flex justify-content-center align-items-center"
-                            style={{
-                              cursor: "pointer",
-                              width: "80px",
-                              height: "45px",
-                            }}
-                          >
-                            S
-                          </div>
-                          <div
-                            className="border rounded d-flex justify-content-center align-items-center"
-                            style={{
-                              cursor: "pointer",
-                              width: "80px",
-                              height: "45px",
-                            }}
-                          >
-                            M
-                          </div>
-                          <div
-                            className="border rounded d-flex justify-content-center align-items-center"
-                            style={{
-                              cursor: "pointer",
-                              width: "80px",
-                              height: "45px",
-                            }}
-                          >
-                            L
-                          </div>
+                          
+                          {sizes.map((size) => (
+            <div key={size} className="relative">
+              <input
+                type="radio"
+                id={`size-${size}`}
+                name="size"
+                value={size}
+                checked={setSelectedSize === size}
+                onChange={() => setSelectedSize(size)}
+                className="d-none"
+              />
+              <label
+                htmlFor={`size-${size}`}
+                className={`inline-block px-4 py-2  border border-gray-300 rounded-md cursor-pointer transition-all peer-checked:border-2 peer-checked:border-gray-900 peer-checked:font-bold ${selectedSize === size ? 'bg-danger text-white' : 'bg-white'}`} style={{borderRadius:"10px"}}
+              >
+                {size}
+              </label>
+            </div>
+          ))}
                         </div>
 
                         <div className="d-flex justify-content-between align-items-end">
                           <div className="d-flex flex-wrap gap-2">
-                            <div
-                              className="border rounded d-flex justify-content-center align-items-center"
-                              style={{
-                                cursor: "pointer",
-                                width: "80px",
-                                height: "45px",
-                              }}
-                            >
-                              XL
-                            </div>
-                            <div
-                              className="border rounded d-flex justify-content-center align-items-center"
-                              style={{
-                                cursor: "pointer",
-                                width: "80px",
-                                height: "45px",
-                              }}
-                            >
-                              XXL
-                            </div>
+                           
                           </div>
                           <a
                             href="#"

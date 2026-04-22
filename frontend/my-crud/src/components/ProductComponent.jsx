@@ -1,16 +1,17 @@
 import { Button, Col, Container, Row } from "react-bootstrap";
-import { MdOutlineAddShoppingCart, MdOutlineShoppingBag } from "react-icons/md";
+import { MdAddShoppingCart, MdOutlineAddShoppingCart, MdOutlineShoppingBag } from "react-icons/md";
 import { IoEyeSharp } from "react-icons/io5";
 import "../styles/hoverProduct.css";
 import { useDispatch } from "react-redux";
 import { openDetail } from "../redux/features/detail";
 import axiosClient from "../api/axios";
 import { indexCountItem } from "../redux/features/cart";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 export default function ProductComponent({ products }) {
   const d = useDispatch();
+  const n  = useNavigate();
   const quantity = 1;
-  console.log(products);
+  // console.log(products);
   const handleCreateCart = async (productId, quantity) => {
     try {
       const response = await axiosClient.get("/cart");
@@ -34,6 +35,10 @@ export default function ProductComponent({ products }) {
       toast.error("Lỗi khi thêm sản phẩm vào giỏ hàng");
     }
   };
+
+  const handleClickProduct = (id)=>{
+    n(`products/${id}`)
+  }
   return (
     <>
       <Container fluid style={{ cursor: "pointer" }}>
@@ -53,9 +58,9 @@ export default function ProductComponent({ products }) {
                   style={{ width: "100%", height: "100%" }}
                   className="img1"
                 />
-                <div className="position-absolute img2  top-0 h-100 w-100 ">
+                <div className="position-absolute img2  top-0 h-100 w-100 d-md-none d-lg-block ">
                   <div className=" position-relative top-0 h-100 w-100 text-center">
-                    <Button as={Link} to={`products/${product.id}`} className="border-0 bg-white w-100 h-100">
+                    <Button onClick={()=>{handleClickProduct(product.id)}} className="border-0 bg-white w-100 h-100">
                       <img
                         src={
                           "//product.hstatic.net/200000690725/product/2f9a4efd-a421-4626-bc7f-2f8abad98f3b_339ece4bffb048b3947389caf46108f3_master.jpg"
@@ -72,17 +77,17 @@ export default function ProductComponent({ products }) {
                     </Button>
 
                     <div
-                      className="position-absolute gap-2 ms-4 mb-3  d-xs-none d-sm-none d-md-none d-lg-flex"
-                      style={{ top: "80%" }}
+                      className="position-absolute gap-2 ms-2 mb-3  d-xs-none d-sm-none d-md-none d-lg-flex"
+                      style={{ bottom: "10px", left: "10px" }}
                     >
                       <Button
-                        className="text-center px-2  text-black bg-white "
-                        style={{ maxHeight: "60px" }}
+                        className="text-start px-1  text-black bg-white  w-100"
+                        style={{ maxHeight: "40px" }}
                         onClick={() => {
                           handleCreateCart(product.id, quantity);
                         }}
                       >
-                        <MdOutlineShoppingBag className="p-0 mb-1" />
+                        <MdOutlineShoppingBag className="p-0 mb-1 " />
                         Thêm vào giỏ
                       </Button>
                       <Button
@@ -105,7 +110,7 @@ export default function ProductComponent({ products }) {
                 </p>
               </div>
 
-              <div className="pt-1 d-flex flex-column flex-grow-1">
+              <div className="pt-1 d-flex flex-column flex-grow-1 position-relative">
                 <div className="d-flex justify-content-between">
                   <p className="mb-1">+ màu sắc</p>
                   <p className="mb-1">+ kích thước</p>
@@ -121,6 +126,9 @@ export default function ProductComponent({ products }) {
                   </p>
                   <p className="p-1 text-decoration-line-through">
                     100,000,000 đ
+                  </p>
+                  <p className="position-absolute bottom-1  d-lg-none d-md-block  " style={{right:"0"}}>
+                    <MdAddShoppingCart />
                   </p>
                 </div>
               </div>

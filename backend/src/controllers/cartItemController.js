@@ -39,9 +39,9 @@ class CartItemController {
   createCartItem = async (req , res )=>{
     try{
         const result = await runInTransaction(async (conn) => {
-          const{productId  , quantity ,cartId} = req.body;
-          console.log(productId , quantity ,cartId)
-          return await CartItemService.createCartItem({productId ,cartId ,quantity}, conn)
+          const{productId  , quantity ,cartId ,attributesId} = req.body;
+          // console.log(productId , quantity ,cartId)
+          return await CartItemService.createCartItem({productId ,cartId ,attributesId ,quantity}, conn)
         });
         res.json(result)
     }catch(err){

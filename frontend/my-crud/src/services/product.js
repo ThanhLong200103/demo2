@@ -15,4 +15,10 @@ export default class ProductService extends BaseService {
     async delete(id) {
     return await this.http.delete(`/product/delete/${id}`);
     }   
+    async getAttributes(data){
+      return await this.http.get(`/attributes`, { params: data })
+    }
+    async getOneAttributes(data){
+      return await this.http.get(`/attribute`, { params: data })
+    }
 }

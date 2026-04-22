@@ -68,7 +68,7 @@ export default function CartComponent({open}) {
             const response = await CartService.getCart();
             console.log("Cart data:", response);
             const cartItemData =  await CartService.getCartItem(response.id);
-            console.log(cartItemData);
+            console.log("1111",cartItemData);
             setCart(cartItemData);
              d(indexCountItem(cartItemData.length))
           } catch (error) { 
@@ -151,9 +151,11 @@ export default function CartComponent({open}) {
                     
                             <Col xs={8} md={8} className="">
                               <h6 className="fw-bold mb-1 ">{c.name}</h6>
-                              <div className="text-danger fw-bold">
-                                {(c.price*c.quantity)?.toLocaleString()} <small>đ</small>
+                              <div className="text-danger fw-bold d-flex">
+                                {(c.price*c.quantity)?.toLocaleString()  } <small>đ</small>
+                                
                               </div>
+                            
                             </Col>
         
            
@@ -172,6 +174,10 @@ export default function CartComponent({open}) {
                                 <Button variant="link" className="text-dark p-0" onClick={() => handelIncrease(c.id, c.quantity)}>
                                   <FaPlus size={12} />
                                 </Button>
+                              </div>
+                              <div className="d-flex w-75 gap-4">
+                                <p> Size: {c.size }</p>
+                                <p>Màu Sắc: {c.color}</p>
                               </div>
                             </Row>
         

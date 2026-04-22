@@ -4,17 +4,17 @@ const cart = require("./cart");
 class CartItem {
   getAllCartItem = async (cart_id) => {
     const [row] = await db.execute(
-      "SELECT p.price , p.quantity as quantityProduct, p.img,p.name , c.quantity , c.id FROM products p  INNER JOIN  cartitem c on p.id = c.product_id  WHERE c.status = 'active' AND  c.cart_id = ?",
+      "SELECT p.price , a.quantity as quantityProduct, p.img,p.name , c.quantity , c.id ,a.size , a.color  FROM products p  INNER JOIN  cartitem c on p.id = c.product_id JOIN  attributes a on a.id = c.attributes_id  WHERE c.status = 'active' AND  c.cart_id = ?",
       [cart_id],
     );
     console.log("ROW:", row);
     return row;
   };
   createCartItem = async (data, connection = db) => {
-    const { productId, quantity, cartId } = data;
+    const { productId, quantity, cartId ,attributesId } = data;
     const [result] = await connection.execute(
-      "INSERT INTO cartitem (cart_id, product_id, quantity) VALUES (?,?,?)",
-      [cartId, productId, quantity],
+      "INSERT INTO cartitem (cart_id, product_id, quantity ,attributes_id) VALUES (?,?,?,?)",
+      [cartId, productId, quantity ,attributesId ],
     );
     return result;
   };
@@ -33,22 +33,22 @@ class CartItem {
     );
     return row;
   };
-  checkproductID = async (productId, cartId, connection = db) => {
+  checkproductID = async (productId, cartId ,attributesId, connection = db) => {
     const [existingItem] = await connection.execute(
-      "SELECT * FROM  cartitem WHERE product_id = ? AND cart_id = ? AND status = 'active' FOR UPDATE",
-      [productId, cartId],
+      "SELECT * FROM  cartitem WHERE product_id = ? AND cart_id = ?  AND status = 'active' AND attributes_id = ? FOR UPDATE",
+      [productId, cartId ,attributesId],
     );
     return existingItem;
   };
-  getProductForUpdate = async (productId, connection = db) => {
+  getProductForUpdate = async (attributesId, connection = db) => {
     const [rows] = await connection.execute(
-      "SELECT quantity FROM products WHERE id = ? FOR UPDATE",
-      [productId],
+      "SELECT quantity FROM attributes WHERE id = ? FOR UPDATE",
+      [attributesId],
     );
     return rows[0];
   };
   updownQuanTiTyProduct = async (data, connection = db) => {
-    const product = await this.getProductForUpdate(data.productId, connection);
+    const product = await this.getProductForUpdate(data.attributesId, connection);
     const quantityProduct = product.quantity - data.quantity;
     console.log(product);
     console.log("QUANTITY PRODUCT:", quantityProduct);
@@ -56,17 +56,17 @@ class CartItem {
       throw new Error("Out of stock");
     }
     else {
-       const productId = data.productId;
+       const attributesId = data.attributesId;
     const [existingItem] = await connection.execute(
-      "UPDATE products SET quantity = ? WHERE id=?",
-      [quantityProduct, productId],
+      "UPDATE attributes SET quantity = ? WHERE id = ? ",
+      [quantityProduct, attributesId],
     );
     return existingItem;
     }
   };
   getcart = async (id, connection = db) => {
     const [rows] = await connection.execute(
-      "SELECT quantity , product_id FROM cartitem  WHERE id=? FOR UPDATE",
+      "SELECT quantity , product_id ,	attributes_id  FROM cartitem  WHERE id= ? FOR UPDATE",
       [id],
     );
     return rows[0];
@@ -77,7 +77,7 @@ class CartItem {
   getCartItemsByIds = async (ids, connection = db) => {
     if (!ids || ids.length === 0) return [];
     const placeholders = ids.map(() => "?").join(",");
-    const query = `SELECT c.product_id ,c.quantity ,p.price FROM cartitem  c INNER JOIN   products p on p.id = c.product_id   WHERE c.id IN (${placeholders}) FOR UPDATE`;
+    const query = `SELECT c.product_id ,a.quantity ,p.price , c.attributes_id FROM cartitem  c INNER JOIN   products p on p.id = c.product_id JOIN attributes a on a.id = c.attributes_id    WHERE c.id IN (${placeholders}) FOR UPDATE`;
     const [rows] = await connection.execute(query, ids);
     return rows;
   };
