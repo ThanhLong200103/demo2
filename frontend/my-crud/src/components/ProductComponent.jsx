@@ -12,29 +12,29 @@ export default function ProductComponent({ products }) {
   const n  = useNavigate();
   const quantity = 1;
   // console.log(products);
-  const handleCreateCart = async (productId, quantity) => {
-    try {
-      const response = await axiosClient.get("/cart");
+  // const handleCreateCart = async (productId, quantity) => {
+  //   try {
+  //     const response = await axiosClient.get("/cart");
 
-      const cartId = response.id;
-      console.log(cartId, productId, quantity);
-      await axiosClient.post("/cartitem/create", {
-        productId,
-        quantity,
-        cartId,
-      });
+  //     const cartId = response.id;
+  //     console.log(cartId, productId, quantity);
+  //     await axiosClient.post("/cartitem/create", {
+  //       productId,
+  //       quantity,
+  //       cartId,
+  //     });
 
-      alert("Added to cart!");
-      // d(indexCountItem(countItem+1))
-      setProducts(
-        products.map((p) =>
-          p.id === productId ? { ...p, quantity: p.quantity - quantity } : p,
-        ),
-      );
-    } catch (err) {
-      toast.error("Lỗi khi thêm sản phẩm vào giỏ hàng");
-    }
-  };
+  //     alert("Added to cart!");
+  //     // d(indexCountItem(countItem+1))
+  //     setProducts(
+  //       products.map((p) =>
+  //         p.id === productId ? { ...p, quantity: p.quantity - quantity } : p,
+  //       ),
+  //     );
+  //   } catch (err) {
+  //     toast.error("Lỗi khi thêm sản phẩm vào giỏ hàng");
+  //   }
+  // };
 
   const handleClickProduct = (id)=>{
     n(`products/${id}`)
@@ -60,7 +60,7 @@ export default function ProductComponent({ products }) {
                 />
                 <div className="position-absolute img2  top-0 h-100 w-100 d-md-none d-lg-block ">
                   <div className=" position-relative top-0 h-100 w-100 text-center">
-                    <Button onClick={()=>{handleClickProduct(product.id)}} className="border-0 bg-white w-100 h-100">
+                    <Button as={Link} to={`products/${product.id}`} className="border-0 bg-white w-100 h-100">
                       <img
                         src={
                           "//product.hstatic.net/200000690725/product/2f9a4efd-a421-4626-bc7f-2f8abad98f3b_339ece4bffb048b3947389caf46108f3_master.jpg"
@@ -83,8 +83,8 @@ export default function ProductComponent({ products }) {
                       <Button
                         className="text-start px-1  text-black bg-white  w-100"
                         style={{ maxHeight: "40px" }}
-                        onClick={() => {
-                          handleCreateCart(product.id, quantity);
+                      onClick={() => {
+                          d(openDetail({showDetail:true , productId:product.id}));
                         }}
                       >
                         <MdOutlineShoppingBag className="p-0 mb-1 " />
@@ -94,7 +94,7 @@ export default function ProductComponent({ products }) {
                         className="text-white bg-black border-0"
                         style={{ maxHeight: "60px" }}
                         onClick={() => {
-                          d(openDetail(true));
+                           d(openDetail({showDetail:true , productId:product.id}));
                         }}
                       >
                         <IoEyeSharp />
@@ -127,7 +127,10 @@ export default function ProductComponent({ products }) {
                   <p className="p-1 text-decoration-line-through">
                     100,000,000 đ
                   </p>
-                  <p className="position-absolute bottom-1  d-lg-none d-md-block  " style={{right:"0"}}>
+                  <p className="position-absolute bottom-1  d-lg-none d-md-block  " style={{right:"0"}} 
+                   onClick={() => {
+                          d(openDetail({showDetail:true , productId:product.id}));
+                        }}>
                     <MdAddShoppingCart />
                   </p>
                 </div>

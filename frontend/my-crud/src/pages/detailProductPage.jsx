@@ -10,189 +10,169 @@ import { AiFillTwitterCircle } from "react-icons/ai";
 import ProductComponent from "../components/ProductComponent";
 import { useEffect, useState } from "react";
 import { RepositoryFactory } from "../services/FactoryService";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import axiosClient from "../api/axios";
 export default function DetailProductPage() {
-    const [products, setProducts] = useState([])
-    const [productItem, setProductItem] = useState({})
-    const [productAttributes, setProductAttributes] = useState([])
-    const [quantityHandle, setQuantityHanlde] = useState(1)
-    const [sizes , setSize] = useState([])
-    const [colors , setColor] = useState([])
-    const [selectedColor, setSelectedColor] = useState(null);
+  const [products, setProducts] = useState([]);
+  const [productItem, setProductItem] = useState({});
+  const [productAttributes, setProductAttributes] = useState([]);
+  const [quantityHandle, setQuantityHanlde] = useState(1);
+  const [totalPrice, setTotalPrice] = useState(0);
+  const [sizes, setSize] = useState([]);
+  const [colors, setColor] = useState([]);
+  const [selectedColor, setSelectedColor] = useState(null);
   const [selectedSize, setSelectedSize] = useState(null);
-  const[attributesOne, setAttributesId] = useState(null)
-    const { id } = useParams();
-    // console.log(id)
-    useEffect(
-      ()=>{
-        const getProduct = async  ()=>{
-          try {
-               const res = await RepositoryFactory.get("product").getAll();
-               const product = await RepositoryFactory.get("product").getById(id)
-               const attributes = await RepositoryFactory.get("product").getAttributes({
-                "productId":id
-               })
-             setProducts(res)
-             setProductItem(product[0])
-             setProductAttributes(attributes)
-            //  console.log(res)
-            //  console.log(product)
-             console.log("Attributes :",attributes)
-             const allSizes = attributes.map(element => element.size);
-             const allColor = attributes.map(element=>element.color)
-             const uniqueSizes = [...new Set(allSizes)];
-             const uniqueColors = [...new Set (allColor)]
-             setSize(uniqueSizes);
-             setColor(uniqueColors)
-             console.log("Danh sách size duy nhất: ", uniqueSizes);
-             console.log("Danh sách color duy nhất: ", uniqueColors);
+  const [attributesOne, setAttributesId] = useState(null);
+  const { id } = useParams();
+  const productId = id;
+  // console.log(id)
 
-             setSelectedColor(uniqueColors[0])
-             setSelectedSize(uniqueSizes[0])
+  const [mainImg, setMainImg] = useState(null);
 
+  const thumbnails = [
+    productItem.img,
+    "//product.hstatic.net/200000690725/product/tp038---bt019-den_3__aad19632f25a4e49913e1d80e2a5919c_compact.jpg",
+    "//product.hstatic.net/200000690725/product/tp038---bt019-den_12__096f638857f6470d82c09e80ec8e6971_compact.jpg",
+    "//product.hstatic.net/200000690725/product/tp038-42_52761813873_o_20dead3d93b34d1188bea7b4ce83cd3d_compact.jpg",
+    "//product.hstatic.net/200000690725/product/tp038-43_52761730015_o_888bb61714e74a46b53ce1448cd8d7a9_compact.jpg",
+    "//product.hstatic.net/200000690725/product/tp038-44_52761813818_o_3c7be9734f504ab2a937d3a5f62f80d2_compact.jpg",
+  ];
+  useEffect(() => {
+    const getProduct = async () => {
+      try {
+        const res = await RepositoryFactory.get("product").getAll();
+        const product = await RepositoryFactory.get("product").getById(id);
+        const attributes = await RepositoryFactory.get("product").getAttributes(
+          {
+            productId: id,
+          },
+        );
+        setProducts(res);
+        setProductItem(product[0]);
+        setProductAttributes(attributes);
+        setMainImg(product[0].img);
+        setTotalPrice(product[0]?.price);
+        //  console.log(res)
+        //  console.log(product)
+        console.log("Attributes :", attributes);
+        const allSizes = attributes.map((element) => element.size);
+        const allColor = attributes.map((element) => element.color);
+        const uniqueSizes = [...new Set(allSizes)];
+        const uniqueColors = [...new Set(allColor)];
+        setSize(uniqueSizes);
+        setColor(uniqueColors);
+        console.log("Danh sách size duy nhất: ", uniqueSizes);
+        console.log("Danh sách color duy nhất: ", uniqueColors);
 
-          } catch (error) {
-            console.log(error)
-          }
-        }
-
-        getProduct()
-      },[]
-    )
-
-    useEffect(
-      ()=>{
-        // console.log("tt",selectedSize,selectedColor)
-
-        const getOneAtribute = async ()=>{
-          const data = await RepositoryFactory.get("product").getOneAttributes({
-            productId:id,
-            sizeAttribute:selectedSize,
-            colorAttribute:selectedColor
-          })
-          setAttributesId(data)
-          console.log("data Attribute One :",data)
-        }
-        getOneAtribute();
-      },[selectedSize , selectedColor]
-    )
-
-    const handleReduce= ()=>{
-      if(quantityHandle <=1){
-        toast.warning("Không thể thực hiện")
-      }else{
-        setQuantityHanlde((item)=>item-1);
-        
+        setSelectedColor(uniqueColors[0]);
+        setSelectedSize(uniqueSizes[0]);
+      } catch (error) {
+        console.log(error);
       }
-    }
-    const hanldeIncrease = ()=>{
-       if(quantityHandle>=productItem.quantity){
-        toast.warning("Số lượng còn lại không đủ")
-      }else{
-        setQuantityHanlde((item)=>item+1);
-      }
-    }
+    };
 
-    const handleCreateCart = async ()=>{
-       try {
+    getProduct();
+  }, []);
+
+  useEffect(() => {
+    // console.log("tt",selectedSize,selectedColor)
+
+    const getOneAtribute = async () => {
+      const data = await RepositoryFactory.get("product").getOneAttributes({
+        productId: id,
+        sizeAttribute: selectedSize,
+        colorAttribute: selectedColor,
+      });
+      setAttributesId(data);
+      console.log("data Attribute One :", data);
+    };
+    getOneAtribute();
+    setTotalPrice((e) => productItem?.price * quantityHandle);
+  }, [selectedSize, selectedColor, quantityHandle, productItem]);
+
+  const handleReduce = () => {
+    if (quantityHandle <= 1) {
+      toast.warning("Không thể thực hiện");
+    } else {
+      setQuantityHanlde((item) => item - 1);
+    }
+  };
+  const hanldeIncrease = () => {
+    if (quantityHandle >= productItem.quantity) {
+      toast.warning("Số lượng còn lại không đủ");
+    } else {
+      setQuantityHanlde((item) => item + 1);
+    }
+  };
+
+  const handleCreateCart = async () => {
+    try {
       const response = await axiosClient.get("/cart");
 
       const cartId = response.id;
       console.log(cartId, productItem, quantityHandle);
       await axiosClient.post("/cartitem/create", {
-        productId : productItem.id,
-        quantity : quantityHandle,
-        attributesId:attributesOne.id,
+        productId: productItem.id,
+        quantity: quantityHandle,
+        attributesId: attributesOne.id,
         cartId,
       });
 
-      toast.success("Thêm sản phẩm thành công")
+      toast.success("Thêm sản phẩm thành công");
       // d(indexCountItem(countItem+1))
-      
     } catch (err) {
       toast.error("Lỗi khi thêm sản phẩm vào giỏ hàng");
-      console.log(err)
+      console.log(err);
     }
-    }
-    const handleOder = ()=>{
-      
-    }
+  };
+  const handleOder = () => {};
   return (
     <>
       <Container fluid className="">
         <div className="maxWidth">
           <Row className="d-flex">
             <Col md={12} lg={4}>
-              <div
-                className="w-100 mb-3 mt-5  "
-                style={{ height: "auto", overflow: "hidden" }}
-              >
+              <div className="w-100 mb-3 mt-5" style={{ overflow: "hidden" }}>
                 <img
                   className="w-100 h-100"
                   style={{ objectFit: "cover" }}
-                  src={productItem.img}
-                  alt="product1"
+                  src={mainImg}
+                  alt="product"
                 />
               </div>
-              <div className="mt-2  text-center">
-                <ul className="list-unstyled row row-cols-6 g-1">
-                  <li className="col">
+
+              {/* Thumbnail */}
+              <ul className="list-unstyled row row-cols-6 g-1">
+                {thumbnails.map((img, index) => (
+                  <li className="col" key={index}>
                     <img
                       className="img-fluid border"
-                      src={productItem.img}
+                      src={img}
                       alt=""
+                      onClick={() => setMainImg(img)}
+                      style={{ cursor: "pointer" }}
                     />
                   </li>
-                  <li className="col">
-                    <img
-                      className="img-fluid border"
-                      src="//product.hstatic.net/200000690725/product/tp038---bt019-den_3__aad19632f25a4e49913e1d80e2a5919c_compact.jpg"
-                      alt=""
-                    />
-                  </li>
-                  <li className="col">
-                    <img
-                      className="img-fluid border"
-                      src="//product.hstatic.net/200000690725/product/tp038---bt019-den_12__096f638857f6470d82c09e80ec8e6971_compact.jpg"
-                      alt=""
-                    />
-                  </li>
-                  <li className="col">
-                    <img
-                      className="img-fluid border"
-                      src="//product.hstatic.net/200000690725/product/tp038-42_52761813873_o_20dead3d93b34d1188bea7b4ce83cd3d_compact.jpg"
-                      alt=""
-                    />
-                  </li>
-                  <li className="col">
-                    <img
-                      className="img-fluid border"
-                      src="//product.hstatic.net/200000690725/product/tp038-43_52761730015_o_888bb61714e74a46b53ce1448cd8d7a9_compact.jpg"
-                      alt=""
-                    />
-                  </li>
-                  <li className="col">
-                    <img
-                      className="img-fluid border"
-                      src="//product.hstatic.net/200000690725/product/tp038-44_52761813818_o_3c7be9734f504ab2a937d3a5f62f80d2_compact.jpg"
-                      alt=""
-                    />
-                  </li>
-                </ul>
-              </div>
+                ))}
+              </ul>
             </Col>
-            <Col md={12} lg={8}  className="border-start">
-              <div style={{ width: "70%" }} className="mt-2">
+            <Col md={12} lg={6} className="border-start">
+              <div className="mt-2 ">
                 <div>
                   <h1>{productItem.name}</h1>
                 </div>
                 <div>
-                  <span className="pe-2 border-end"> Mã sản phẩm : <b className="fw-bold">Test</b> </span>
+                  <span className="pe-2 border-end">
+                    {" "}
+                    Mã sản phẩm : <b className="fw-bold">Test</b>{" "}
+                  </span>
                   <span className="px-2 border-end">
                     {" "}
-                    Tình trạng :<b className="fw-bold">{attributesOne?.quantity>0 ? "Còn hàng" :"Hết hàng"}</b>
+                    Tình trạng :
+                    <b className="fw-bold">
+                      {attributesOne?.quantity > 0 ? "Còn hàng" : "Hết hàng"}
+                    </b>
                   </span>
                   <span className="ps-2">
                     Thương hiệu : <b className="fw-bold">TORANO</b>
@@ -204,8 +184,10 @@ export default function DetailProductPage() {
                     style={{ background: "#f5f5f5", borderRadius: "5px" }}
                   >
                     <span className="me-5 fw-bold ">Giá :</span>
-                    <span className="text-danger fw-bold">{productItem.price?.toLocaleString()}</span>
-                    <b>100,000,000đ</b> 
+                    <span className="text-danger fw-bold">
+                      {totalPrice.toLocaleString()}
+                    </span>
+                    <b>100,000,000đ</b>
                     <span
                       className="bg-danger px-2 border-0 text-white"
                       style={{ borderRadius: "10px" }}
@@ -227,26 +209,27 @@ export default function DetailProductPage() {
                         className="d-flex flex-wrap gap-2"
                       >
                         <div className="d-flex flex-wrap gap-2">
-         {colors.map((color) => (
-            <div key={color} className="relative">
-              <input
-                type="radio"
-                id={`color-${color}`}
-                name="color"
-                value={color}
-                checked={selectedColor === color}
-                onChange={() => setSelectedColor(color)}
-                className="d-none"
-              />
-              <label
-                htmlFor={`color-${color}`}
-                className={`inline-block px-4 py-2  border border-gray-300 rounded-md cursor-pointer transition-all peer-checked:border-2 peer-checked:border-gray-900 peer-checked:font-bold ${selectedColor === color ? 'bg-danger text-white' : 'bg-white'}`} style={{borderRadius:"10px"}}
-              >
-                {color}
-              </label>
-            </div>
-          ))}
-        </div>
+                          {colors.map((color) => (
+                            <div key={color} className="relative">
+                              <input
+                                type="radio"
+                                id={`color-${color}`}
+                                name="color"
+                                value={color}
+                                checked={selectedColor === color}
+                                onChange={() => setSelectedColor(color)}
+                                className="d-none"
+                              />
+                              <label
+                                htmlFor={`color-${color}`}
+                                className={`inline-block px-4 py-2  border border-gray-300 rounded-md cursor-pointer transition-all peer-checked:border-2 peer-checked:border-gray-900 peer-checked:font-bold ${selectedColor === color ? "bg-danger text-white" : "bg-white"}`}
+                                style={{ borderRadius: "10px" }}
+                              >
+                                {color}
+                              </label>
+                            </div>
+                          ))}
+                        </div>
                       </Col>
                     </Row>
 
@@ -255,34 +238,31 @@ export default function DetailProductPage() {
                         <span className="fw-bold">Kích thước:</span>
                       </Col>
                       <Col xs={8} md={9} lg={10}>
-                     
                         <div className="d-flex flex-wrap gap-2 mb-2">
-                          
                           {sizes.map((size) => (
-            <div key={size} className="relative">
-              <input
-                type="radio"
-                id={`size-${size}`}
-                name="size"
-                value={size}
-                checked={setSelectedSize === size}
-                onChange={() => setSelectedSize(size)}
-                className="d-none"
-              />
-              <label
-                htmlFor={`size-${size}`}
-                className={`inline-block px-4 py-2  border border-gray-300 rounded-md cursor-pointer transition-all peer-checked:border-2 peer-checked:border-gray-900 peer-checked:font-bold ${selectedSize === size ? 'bg-danger text-white' : 'bg-white'}`} style={{borderRadius:"10px"}}
-              >
-                {size}
-              </label>
-            </div>
-          ))}
+                            <div key={size} className="relative">
+                              <input
+                                type="radio"
+                                id={`size-${size}`}
+                                name="size"
+                                value={size}
+                                checked={setSelectedSize === size}
+                                onChange={() => setSelectedSize(size)}
+                                className="d-none"
+                              />
+                              <label
+                                htmlFor={`size-${size}`}
+                                className={`inline-block px-4 py-2  border border-gray-300 rounded-md cursor-pointer transition-all peer-checked:border-2 peer-checked:border-gray-900 peer-checked:font-bold ${selectedSize === size ? "bg-danger text-white" : "bg-white"}`}
+                                style={{ borderRadius: "10px" }}
+                              >
+                                {size}
+                              </label>
+                            </div>
+                          ))}
                         </div>
 
                         <div className="d-flex justify-content-between align-items-end">
-                          <div className="d-flex flex-wrap gap-2">
-                           
-                          </div>
+                          <div className="d-flex flex-wrap gap-2"></div>
                           <a
                             href="#"
                             className="text-dark"
@@ -312,9 +292,9 @@ export default function DetailProductPage() {
                             height: "45px",
                             fontSize: "1.2rem",
                           }}
-                          onClick={()=>{handleReduce()
-                          }
-                          }
+                          onClick={() => {
+                            handleReduce();
+                          }}
                         >
                           -
                         </Button>
@@ -332,10 +312,9 @@ export default function DetailProductPage() {
                             height: "45px",
                             fontSize: "1.2rem",
                           }}
-                          onClick={()=>{
-                            hanldeIncrease()
-                          }
-                          }
+                          onClick={() => {
+                            hanldeIncrease();
+                          }}
                         >
                           +
                         </Button>
@@ -347,9 +326,8 @@ export default function DetailProductPage() {
                   <Button
                     className=" py-2 bg-white text-danger border-danger"
                     style={{ width: "45%" }}
-
-                    onClick={()=>{
-                      handleCreateCart()
+                    onClick={() => {
+                      handleCreateCart();
                     }}
                   >
                     THÊM VÀO GIỎ
@@ -357,14 +335,20 @@ export default function DetailProductPage() {
                   <Button
                     className=" py-2 bg-danger border-danger"
                     style={{ width: "45%" }}
-                    onClick={()=>{
-                      handleOder()
+                    onClick={() => {
+                      handleOder();
                     }}
+                    as={Link}
+                    to={"/order"}
+                    state={{totalPrice ,productId ,quantityHandle ,  priceProduct : productItem?.price ,attributeId :attributesOne?.id , nameProduct :productItem?.name, imgProduct:productItem?.img ,selectedColor ,selectedSize}}
                   >
                     MUA NGAY
                   </Button>
                 </div>
-                <button className="w-100 border-0  bg-black text-white py-3 mt-4" style={{borderRadius:"5px"}}>
+                <button
+                  className="w-100 border-0  bg-black text-white py-3 mt-4"
+                  style={{ borderRadius: "5px" }}
+                >
                   CLICK VÀO ĐÂY ĐỂ NHẬN ƯU ĐÃI
                 </button>
               </div>
@@ -400,22 +384,32 @@ export default function DetailProductPage() {
               </div>
               <div className="mb-4">
                 <ul className="list-unstyled d-flex flex-wrap text-start">
-                  <li className="col-lg-4 col-md-12 p-2">Miễn phí giao hàng cho đơn hàng từ 500K</li>
-                  <li  className="col-lg-4 col-md-12 p-2">Hàng phân phối chính hãng 100%</li>
-                  <li className="col-lg-4 col-md-12 p-2">TỔNG ĐÀI 24/7 : 0964942121 </li>
-                  <li  className="col-lg-4 col-md-12 p-2">
+                  <li className="col-lg-4 col-md-12 p-2">
+                    Miễn phí giao hàng cho đơn hàng từ 500K
+                  </li>
+                  <li className="col-lg-4 col-md-12 p-2">
+                    Hàng phân phối chính hãng 100%
+                  </li>
+                  <li className="col-lg-4 col-md-12 p-2">
+                    TỔNG ĐÀI 24/7 : 0964942121{" "}
+                  </li>
+                  <li className="col-lg-4 col-md-12 p-2">
                     ĐỔI SẢN PHẨM DỄ DÀNG (Trong vòng 7 ngày khi còn nguyên tem
                     mác)
                   </li>
-                  <li className="col-lg-4 col-md-12 p-2">Kiểm tra, thanh toán khi nhận hàng COD</li>
-                  <li className="col-lg-4 col-md-12 p-2">Hỗ trợ bảo hành, đổi sản phẩm tại tất cả store TORANO</li>
+                  <li className="col-lg-4 col-md-12 p-2">
+                    Kiểm tra, thanh toán khi nhận hàng COD
+                  </li>
+                  <li className="col-lg-4 col-md-12 p-2">
+                    Hỗ trợ bảo hành, đổi sản phẩm tại tất cả store TORANO
+                  </li>
                 </ul>
               </div>
             </Col>
           </Row>
           <Row>
-            <Col className="col-12 text-center my-4" >
-            <h2>Sản phẩm liên quan</h2>
+            <Col className="col-12 text-center my-4">
+              <h2>Sản phẩm liên quan</h2>
             </Col>
             <ProductComponent products={products}></ProductComponent>
           </Row>

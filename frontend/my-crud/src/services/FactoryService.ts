@@ -3,14 +3,15 @@ import CartService from "./cart";
 import OrderService from "./order";
 import ProductService from "./product";
 import PayService from "./Vnpay";
-
+import CategoryService from "./category";
 
 const repositories = {
   user: new AuthService(),
   product: new ProductService(),
   order :new OrderService(),
   cart : new CartService(),
-  vnpay : new PayService()
+  vnpay : new PayService(),
+  category :new CategoryService()
 };
 
 export const RepositoryFactory = {

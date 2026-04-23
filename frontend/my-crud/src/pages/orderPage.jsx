@@ -7,12 +7,13 @@ import { RepositoryFactory } from "../services/FactoryService";
 
 export default function OrderPage() {
   const location = useLocation();
-  const { totalPrice, selectedIds } = location.state || {};
+  const { totalPrice, selectedIds ,productId ,quantityHandle ,priceProduct ,attributeId ,nameProduct ,imgProduct ,selectedColor ,selectedSize } = location.state || {};
+  console.log(location.state)
   const [orderItems, setOrderItems] = useState([]);
   const [paymentMethod, setPaymentMethod] = useState("COD");
   const navigate = useNavigate();
   //  console.log(location)
-  //   console.log(totalPrice, selectedIds);
+    console.log(totalPrice, selectedIds);
   useEffect(() => {
     const checkItemOder = async () => {
       try {
@@ -38,6 +39,10 @@ export default function OrderPage() {
       const pay = await RepositoryFactory.get("order").create({
         cartItemIds: selectedIds,
         totalPrice: totalPrice,
+        productId:productId,
+        quantityProduct:quantityHandle,
+        priceProduct:priceProduct,
+        attributeId:attributeId
       });
       console.log(pay);
       toast.success("Đặt hàng thành công");
@@ -56,6 +61,10 @@ export default function OrderPage() {
       const pay = await RepositoryFactory.get("vnpay").createPayment({
         cartItemIds: selectedIds,
         totalPrice: totalPrice,
+         productId:productId,
+        quantityProduct:quantityHandle,
+        priceProduct:priceProduct,
+        attributeId:attributeId
       });
       console.log(pay);
       const orderId = pay[0];
@@ -75,7 +84,7 @@ export default function OrderPage() {
   
     <div className="mb-4">
       <h5 className="mb-3">Sản phẩm đã chọn</h5>
-      {orderItems.map((item) => (
+      {selectedIds ? orderItems.map((item) => (
         <Card key={item.id} className="mb-2 border-0 shadow-sm">
           <Card.Body>
             <Row className="align-items-center">
@@ -85,6 +94,7 @@ export default function OrderPage() {
               <Col xs={5} md={6}>
                 <h6 className="mb-0">{item.name}</h6>
                 <small className="text-muted">Số lượng: {item.quantity}</small>
+                
               </Col>
               <Col xs={4} md={4} className="text-end text-danger fw-bold">
                 {(item.price * item.quantity).toLocaleString()} đ
@@ -92,7 +102,28 @@ export default function OrderPage() {
             </Row>
           </Card.Body>
         </Card>
-      ))}
+      )): 
+        <Card key={productId} className="mb-2 border-0 shadow-sm">
+          <Card.Body>
+            <Row className="align-items-center">
+              <Col xs={3} md={2}>
+                <img src={imgProduct} alt={nameProduct} className="img-fluid rounded" />
+              </Col>
+              <Col xs={5} md={6}>
+                <h6 className="mb-0">{nameProduct}</h6>
+                <small className="text-muted">Số lượng: {quantityHandle}</small>
+                <p className="d-flex gap-3">
+                  <small className="text-muted">Màu sắc: {selectedColor}</small>
+                  <small className="text-muted">Cỡ: {selectedSize}</small>
+                </p>
+              </Col>
+              <Col xs={4} md={4} className="text-end text-danger fw-bold">
+                {(priceProduct).toLocaleString()} đ
+              </Col>
+            </Row>
+          </Card.Body>
+        </Card>
+      }
     </div>
 
 

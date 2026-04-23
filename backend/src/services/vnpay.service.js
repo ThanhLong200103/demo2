@@ -11,6 +11,7 @@ const orderModel = require("../models/orderModel");
 const CartItemModel = require("../models/CartItem");
 const orderItemModel = require("../models/orderItemModel");
 const paymentModel = require("../models/paymentModel");
+const ProductModel = require("../models/ProductModel");
 
 class VnPayService {
   createPaymentUrl = (order, ipAddr) => {
@@ -208,22 +209,42 @@ class VnPayService {
       data.cartItemIds,
       conn,
     );
-    for (const item of cartItem) {
-      await orderItemModel.createOrderItem(
-        {
-          order_id: orderId,
-          product_id: item.product_id,
-           attribute_id:item.attributes_id,
-          quantity: item.quantity,
-          price: item.price,
-        },
-        conn,
-      );
-    }
-    const updateCartItem = await CartItemModel.UpdateByIds(
-      data.cartItemIds,
-      conn,
-    );
+     if(cartItem && cartItem.length > 0){
+            for (const item of cartItem) {
+            await orderItemModel.createOrderItem(
+              {
+                order_id: orderId,
+                product_id: item.product_id,
+                attribute_id:item.attributes_id,
+                quantity: item.quantity,
+                price: item.price,
+    
+              },
+              conn,
+            );
+          }
+          const updateCartItem = await CartItemModel.UpdateByIds(
+            data.cartItemIds,
+            conn,
+          );
+        }
+        else{
+          await orderItemModel.createOrderItem(
+            {
+               order_id: orderId,
+                product_id: data.productId,
+                attribute_id:data.attributeId,
+                quantity: data.quantityProduct,
+                price: data.priceProduct,
+            },conn,
+          );
+    
+           const quantityAttribute = await ProductModel.getProducUpdateCartAttributes(data.attributeId , conn);
+           if(quantityAttribute){
+            const quantity = -data.quantityProduct
+            await ProductModel.editQuantityProductAttributes(data.attributeId ,quantity , conn )
+           }
+        }
     const payment = await paymentModel.createPayment(
       { order_id: orderId, amount: total_price, method: "VNPay" },
       conn,

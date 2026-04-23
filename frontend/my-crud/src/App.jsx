@@ -15,7 +15,7 @@ function App() {
   const { showSideBar } = useSelector((state) => state.sideBar);
   const { showCart } = useSelector((state) => state.cart);
   const { showSearch } = useSelector((state) => state.search);
-  const { showDetail } = useSelector((state) => state.detail);
+  const { showDetail ,productId } = useSelector((state) => state.detail);
 
 
   return (
@@ -27,7 +27,7 @@ function App() {
     <SideBarComponent isOpen={showSideBar} />
     <CartComponent open = {showCart}/>
     <SearchComponent OpenS={ showSearch}></SearchComponent>
-    {/* <DetailComponent showDetail={showDetail} ></DetailComponent> */}
+    <DetailComponent showDetail={showDetail} productId={productId} ></DetailComponent>
     </>
   )
 }

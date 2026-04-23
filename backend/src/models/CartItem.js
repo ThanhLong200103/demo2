@@ -77,7 +77,7 @@ class CartItem {
   getCartItemsByIds = async (ids, connection = db) => {
     if (!ids || ids.length === 0) return [];
     const placeholders = ids.map(() => "?").join(",");
-    const query = `SELECT c.product_id ,a.quantity ,p.price , c.attributes_id FROM cartitem  c INNER JOIN   products p on p.id = c.product_id JOIN attributes a on a.id = c.attributes_id    WHERE c.id IN (${placeholders}) FOR UPDATE`;
+    const query = `SELECT c.product_id ,c.quantity ,p.price , c.attributes_id FROM cartitem  c INNER JOIN   products p on p.id = c.product_id JOIN attributes a on a.id = c.attributes_id    WHERE c.id IN (${placeholders}) FOR UPDATE`;
     const [rows] = await connection.execute(query, ids);
     return rows;
   };
@@ -96,5 +96,10 @@ class CartItem {
     const [rows] = await db.execute(query, ids);
     return rows;
   };
+
+  // Thanh toán trực tiếp
+  
+
+
 }
 module.exports = new CartItem();

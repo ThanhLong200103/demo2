@@ -17,10 +17,11 @@ class VnpayController {
 
   createPaymensVnpay = async (req, res) => {
     try {
-         const { cartItemIds ,totalPrice } = req.body ;
+               const { cartItemIds ,totalPrice ,productId ,quantityProduct ,priceProduct  ,attributeId} = req.body ;
+
       const userId = req.user.id;
         const data = await runInTransaction(async (conn) => {
-            return await VnPayService.createPaymentVnpay({cartItemIds ,totalPrice, userId }, conn);
+            return await VnPayService.createPaymentVnpay({cartItemIds ,totalPrice, userId  ,productId ,quantityProduct ,priceProduct  ,attributeId }, conn);
         });
         return res.json(data);
     } catch (error) {

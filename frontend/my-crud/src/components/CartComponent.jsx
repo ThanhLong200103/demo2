@@ -4,7 +4,7 @@ import "../styles/cart.css"
 import { useDispatch } from "react-redux";
 import { closeCart, indexCountItem } from "../redux/features/cart";
 // import { Link } from "react-router-dom";
-import React, { useEffect, useState, useMemo } from "react";
+import React, { useEffect, useState, useMemo, use } from "react";
 import { Container, Row, Col, Card, Button, Form, Badge } from "react-bootstrap";
 import { FaUser, FaTrash, FaPlus, FaMinus, FaShoppingCart, FaCreditCard } from "react-icons/fa";
 import axiosClient from "../api/axios";
@@ -43,8 +43,8 @@ export default function CartComponent({open}) {
           }
         }
       };
-      console.log(totalPrice)
-      console.log(selectedIds)
+      // console.log(totalPrice)
+      // console.log(selectedIds)
       const handleReduce = async (id, currentQty) => {
         if (currentQty <= 1) {
           toast.error("Số lượng không thể giảm thêm");
@@ -66,9 +66,9 @@ export default function CartComponent({open}) {
         const cartRun = async () => {
           try { 
             const response = await CartService.getCart();
-            console.log("Cart data:", response);
+            // console.log("Cart data:", response);
             const cartItemData =  await CartService.getCartItem(response.id);
-            console.log("1111",cartItemData);
+            // console.log("1111",cartItemData);
             setCart(cartItemData);
              d(indexCountItem(cartItemData.length))
           } catch (error) { 
@@ -78,17 +78,18 @@ export default function CartComponent({open}) {
         };
         cartRun();
       }, []);
+      // thêm cart thì thêm vào đc luôn nhưng gửi request liên tục
     
-      const handleDeleteCart = async (id) => {
-        try {
-          await CartService.deleteCartItem(id);
-          setCart((s) => s.filter((item) => item.id !== id));
-          setSelectedIds((s) => s.filter((itemId) => itemId !== id));
-        } catch (err) { 
-          console.log(err); 
-          toast.error("Lỗi khi xóa sản phẩm khỏi giỏ");
-        }
-      };
+      async function handleDeleteCart(id) {
+    try {
+      await CartService.deleteCartItem(id);
+      setCart((s) => s.filter((item) => item.id !== id));
+      setSelectedIds((s) => s.filter((itemId) => itemId !== id));
+    } catch (err) {
+      console.log(err);
+      toast.error("Lỗi khi xóa sản phẩm khỏi giỏ");
+    }
+  }
       const handelOrder =()=>{
         d(closeCart(false))
         setSelectedIds([])
@@ -102,8 +103,8 @@ export default function CartComponent({open}) {
     return(
         <>
 
-        <Container className={` cart ${open ? "active" :"" }  `}>
-            <Row style={{ overflow:"none",position:"relative" }}>
+        <Container className={` cart ${open ? "active" :"" }  `} >
+            <Row style={{position:"relative" }}>
           <div className="d-flex justify-content-between  py-1 border-bottom fs-3 px-4 fw-bold ">
             <Col className="mt-2">Giỏ hàng</Col>
             <Col className="text-end ">
@@ -120,7 +121,7 @@ export default function CartComponent({open}) {
         </Row>
        {cart.length > 0 ?
          <div style={{ backgroundColor: "#f8f9fa", minHeight: "100vh", pb: "100px" ,overflowY:"auto" }}>
-              <Container className="py-5">
+              <Container className="py-5" style={{ overflowY:"auto"}}>
                 <h3 className="mb-4 fw-bold"><FaShoppingCart className="me-2"/> Giỏ hàng của bạn</h3>
                 <Row className="justify-content-center">
                   <Col lg={9}>

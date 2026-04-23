@@ -16,7 +16,8 @@ class OrderService {
         data.cartItemIds,
         conn,
       );
-      for (const item of cartItem) {
+    if(cartItem && cartItem.length > 0){
+        for (const item of cartItem) {
         await OrderItemModel.createOrderItem(
           {
             order_id: orderId,
@@ -33,6 +34,24 @@ class OrderService {
         data.cartItemIds,
         conn,
       );
+    }
+    else{
+      await OrderItemModel.createOrderItem(
+        {
+           order_id: orderId,
+            product_id: data.productId,
+            attribute_id:data.attributeId,
+            quantity: data.quantityProduct,
+            price: data.priceProduct,
+        },conn,
+      );
+
+       const quantityAttribute = await ProductModel.getProducUpdateCartAttributes(data.attributeId , conn);
+       if(quantityAttribute){
+        const quantity = -data.quantityProduct
+        await ProductModel.editQuantityProductAttributes(data.attributeId ,quantity , conn )
+       }
+    }
       const payment = await paymentModel.createPayment(
         { order_id: orderId, amount: total_price, method: "COD" },
         conn,
@@ -86,6 +105,8 @@ class OrderService {
   updateOrder = async (data) => {
     const conn = await db.getConnection();
   }
+
+
 
   
 }

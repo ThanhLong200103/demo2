@@ -12,10 +12,12 @@ const app = express();
 const corsReact = require ("./src/config/cors")
 const cookieParser = require('cookie-parser');
 const initRouterError = require('./src/routers/routerErorr.js');
+const initCategoryRoutes = require('./src/routers/category.js');
 app.use(cors(corsReact));
 app.use(express.json()); 
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser())
+initCategoryRoutes(app)
 initPaymentRoutes(app);
 initUserRoutes(app);
 initProductRoutes(app);

@@ -4,13 +4,15 @@ import { createSlice } from '@reduxjs/toolkit';
 const detailProduct = createSlice(
     {
         name:"detailProduct",
-        initialState:{ showDetail: false },
+        initialState:{ showDetail: false , productId : null},
         reducers:{
             openDetail :(state ,action)=>{
-                state.showDetail = action.payload
+                state.showDetail = action.payload.showDetail,
+                state.productId = action.payload.productId
             },
             closeDetail :(state , action)=>{
-                state.showDetail = action.payload
+                state.showDetail = action.payload.showDetail,
+                state.productId = action.payload.productId
             }
         }
 

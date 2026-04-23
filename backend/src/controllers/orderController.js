@@ -5,11 +5,11 @@ const runInTransaction = require("../utils/runTransaction");
 class OrderController {
   CreateOrder = async (req, res) => {
     try {
-      const { cartItemIds ,totalPrice } = req.body ;
+      const { cartItemIds ,totalPrice ,productId ,quantityProduct ,priceProduct  ,attributeId} = req.body ;
       const userId = req.user.id;
 
       const data = await runInTransaction (async (conn) => {
-         return await OrderService.createOrder({cartItemIds ,totalPrice, userId }, conn);
+         return await OrderService.createOrder({cartItemIds ,totalPrice, userId ,productId ,quantityProduct ,priceProduct  ,attributeId }, conn);
        });
       res.json(data );
     } catch (error) {
