@@ -16,6 +16,7 @@ export default function HomePage() {
   const [show, setShow] = useState(false);
   const [id, setId] = useState(null);
   const quantity = 1
+
   // const tinh = 0-1 ;
   // console.log(tinh)
   useEffect(() => {

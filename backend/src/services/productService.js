@@ -22,5 +22,9 @@ class ProductService {
         const dele = await ProductModel.deleteProduct(id);
         return dele;
     }
+    searchProduct = async (name)=>{
+        const data = await ProductModel.searchProduct(name);
+        return data
+    }
 }
 module.exports = new  ProductService ();

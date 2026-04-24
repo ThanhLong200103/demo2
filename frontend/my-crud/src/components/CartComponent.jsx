@@ -1,8 +1,8 @@
 // import { Button, Col, Container, Row } from "react-bootstrap";
 import { IoCloseOutline } from "react-icons/io5";
 import "../styles/cart.css"
-import { useDispatch } from "react-redux";
-import { closeCart, indexCountItem } from "../redux/features/cart";
+import { useDispatch, useSelector } from "react-redux";
+import { closeCart, indexCountItem, setCartItem } from "../redux/features/cart";
 // import { Link } from "react-router-dom";
 import React, { useEffect, useState, useMemo, use } from "react";
 import { Container, Row, Col, Card, Button, Form, Badge } from "react-bootstrap";
@@ -17,6 +17,10 @@ export default function CartComponent({open}) {
     const d = useDispatch()
       const [cart, setCart] = useState([]);
       const [selectedIds, setSelectedIds] = useState([]);
+      const {isAuthenticated} = useSelector((state)=>state.auth)
+      const {cartItems} = useSelector((state)=>state.cart)
+
+      // console.log(isAuthenticated)
       const CartService = RepositoryFactory.get("cart");
     const totalPrice = useMemo(() => {
       return cart
@@ -63,28 +67,55 @@ export default function CartComponent({open}) {
       };
     
       useEffect(() => {
+       if(isAuthenticated){
         const cartRun = async () => {
           try { 
             const response = await CartService.getCart();
             // console.log("Cart data:", response);
             const cartItemData =  await CartService.getCartItem(response.id);
             // console.log("1111",cartItemData);
-            setCart(cartItemData);
-             d(indexCountItem(cartItemData.length))
+      
+            d(setCartItem(cartItemData))
+            d(indexCountItem(cartItems.length))
+            setCart(cartItems)
           } catch (error) { 
             console.error("Lỗi API Cart:", error); 
             toast.error("Lỗi khi tải giỏ hàng");
           }
         };
         cartRun();
-      }, []);
+      }
+      else{
+     
+        setCart([])
+        d(indexCountItem(0))
+      }
+      }, [isAuthenticated ,cartItems.length]);
       // thêm cart thì thêm vào đc luôn nhưng gửi request liên tục
-    
+
+    //  useEffect(
+    //   ()=>{
+         
+         
+    //       const setCarts = async ()=>{
+    //      const response = await CartService.getCart();
+    //         const cartItemData =  await CartService.getCartItem(response.id);
+    //         d(setCartItem(cartItemData))
+    //       setCart(cartItems)
+    //      d(indexCountItem(cartItems.length))
+    //      console.log(cartItems.length)
+    //     }
+
+    //     setCarts()
+        
+    //   },[cartItems.length]
+    //  )
       async function handleDeleteCart(id) {
     try {
       await CartService.deleteCartItem(id);
       setCart((s) => s.filter((item) => item.id !== id));
       setSelectedIds((s) => s.filter((itemId) => itemId !== id));
+     d(setCartItem(cartItems.filter(item => item.id !== id)));
     } catch (err) {
       console.log(err);
       toast.error("Lỗi khi xóa sản phẩm khỏi giỏ");
@@ -102,7 +133,12 @@ export default function CartComponent({open}) {
     
     return(
         <>
-
+        <div
+        className={`cart-overlay ${open ? "active" : ""} `}
+        onClick={() => {
+                  d(closeCart(false))
+                }}
+      ></div>
         <Container className={` cart ${open ? "active" :"" }  `} >
             <Row style={{position:"relative" }}>
           <div className="d-flex justify-content-between  py-1 border-bottom fs-3 px-4 fw-bold ">
@@ -120,7 +156,7 @@ export default function CartComponent({open}) {
           </div>
         </Row>
        {cart.length > 0 ?
-         <div style={{ backgroundColor: "#f8f9fa", minHeight: "100vh", pb: "100px" ,overflowY:"auto" }}>
+         <div style={{ backgroundColor: "#f8f9fa", minHeight: "80vh", pb: "100px"  }} className="cart-items">
               <Container className="py-5" style={{ overflowY:"auto"}}>
                 <h3 className="mb-4 fw-bold"><FaShoppingCart className="me-2"/> Giỏ hàng của bạn</h3>
                 <Row className="justify-content-center">

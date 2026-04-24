@@ -13,6 +13,9 @@ import { RepositoryFactory } from "../services/FactoryService";
 import { Link, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import axiosClient from "../api/axios";
+import CartService from "../services/cart";
+import { useDispatch } from "react-redux";
+import { setCartItem } from "../redux/features/cart";
 export default function DetailProductPage() {
   const [products, setProducts] = useState([]);
   const [productItem, setProductItem] = useState({});
@@ -26,6 +29,8 @@ export default function DetailProductPage() {
   const [attributesOne, setAttributesId] = useState(null);
   const { id } = useParams();
   const productId = id;
+
+  const d = useDispatch()
   // console.log(id)
 
   const [mainImg, setMainImg] = useState(null);
@@ -53,8 +58,8 @@ export default function DetailProductPage() {
         setProductAttributes(attributes);
         setMainImg(product[0].img);
         setTotalPrice(product[0]?.price);
-        //  console.log(res)
-        //  console.log(product)
+         console.log("all p",res)
+         console.log(product)
         console.log("Attributes :", attributes);
         const allSizes = attributes.map((element) => element.size);
         const allColor = attributes.map((element) => element.color);
@@ -73,7 +78,7 @@ export default function DetailProductPage() {
     };
 
     getProduct();
-  }, []);
+  }, [productId]);
 
   useEffect(() => {
     // console.log("tt",selectedSize,selectedColor)
@@ -118,8 +123,10 @@ export default function DetailProductPage() {
         attributesId: attributesOne.id,
         cartId,
       });
-
+      const cart = await RepositoryFactory.get("cart").getCartItem(cartId)
+      d(setCartItem(cart))
       toast.success("Thêm sản phẩm thành công");
+  
       // d(indexCountItem(countItem+1))
     } catch (err) {
       toast.error("Lỗi khi thêm sản phẩm vào giỏ hàng");

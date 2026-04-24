@@ -27,8 +27,10 @@ export default function PurchaseHistoryPage() {
   }, [orderItem]);
   const handleCancel = async (itemId) => {
     try {
-      const idOrderItem = itemId;
-      const cancel = await OrderService.cancelOrder(idOrderItem);
+      
+      const cancel = await OrderService.cancelOrder({
+  idOrderItem: itemId
+});
       console.log(cancel);
       toast.success("Hủy đơn hàng thành công");
       setOrderItem((prevItems) =>
@@ -57,6 +59,11 @@ export default function PurchaseHistoryPage() {
                 <Col md={6}>
                   <h6>{item.name}</h6>
                   <p>Số lượng: {item.quantity}</p>
+                  <div className="d-flex gap-3">
+                    <p>Size : {item.size} </p>
+                    <p>Color : {item.color} </p>
+
+                  </div>
                   <div className="mb-0">
                     Trạng thái:{" "}
                     <Badge

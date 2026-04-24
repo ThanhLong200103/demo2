@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react";
 import { Button, Col, Container, Form } from "react-bootstrap";
-import {  useLocation } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { useLocation } from "react-router-dom";
 
 export default function IndexPagew() {
   const location = useLocation();
+  const { isAuthenticated } = useSelector((state) => state.auth);
   console.log(location);
   const [data, setData] = useState({
     name: "",
@@ -16,15 +18,16 @@ export default function IndexPagew() {
       [e.target.name]: e.target.value,
     });
   };
-  const handleUpdateUser =  async ()=>{
+  const handleUpdateUser = async () => {};
+  useEffect(() => {
+    setData(location.state);
+  }, [data]);
+  useEffect(() => {
+     const handleChange = (e) => {
+    e.target.value = ""
+  };
+  }, [isAuthenticated]);
 
-  }
-  useEffect(
-    ()=>{
-        setData(location.state)
-    },[data]
-  )
-  
   return (
     <>
       <Container className="d-flex justify-content-center mt-5">

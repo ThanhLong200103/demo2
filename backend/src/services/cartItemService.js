@@ -57,11 +57,14 @@ class CartItemService {
       }
       const upateCart = await cartItem.editCartItem(data, conn);
       const attributesId = row.attributes_id;
-      const quantity = data.quantityProduct;
+      const quantity = data.quantityProduct;  
       const getProduct = await ProductModel.getProducUpdateCartAttributes(attributesId, conn);
       console.log("GET Quantity PRODUCT:", getProduct.quantity);
-      if(getProduct.quantity<1){
+      
+      if(quantity<0 && getProduct.quantity < 1){
+        
         throw new Error("Số lượng sản phẩm không đủ" ,422);
+      
       }
       const updateQuantityProduct = await ProductModel.editQuantityProductAttributes(
         attributesId,

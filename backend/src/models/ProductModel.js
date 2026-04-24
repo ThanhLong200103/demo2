@@ -51,5 +51,14 @@ class ProductModel {
     );
     return row[0];
   };
+searchProduct = async (name) => {
+  const [rows] = await db.execute(
+    "SELECT * FROM products WHERE name LIKE ? AND status = 'active'",
+    [`%${name}%`]
+  );
+  return rows;
+};
+
+
 }
 module.exports = new ProductModel();

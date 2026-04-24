@@ -47,7 +47,7 @@ export default function ProductComponent({ products }) {
             <Col
               md={4}
               xs={6}
-              lg={2}
+              lg={3}
               className="bg-white d-flex flex-column"
               key={product.id}
             >
@@ -60,7 +60,7 @@ export default function ProductComponent({ products }) {
                 />
                 <div className="position-absolute img2  top-0 h-100 w-100 d-md-none d-lg-block ">
                   <div className=" position-relative top-0 h-100 w-100 text-center">
-                    <Button as={Link} to={`products/${product.id}`} className="border-0 bg-white w-100 h-100">
+                    <Button as={Link} to={`/products/${product.id}`} className="border-0 bg-white w-100 h-100">
                       <img
                         src={
                           "//product.hstatic.net/200000690725/product/2f9a4efd-a421-4626-bc7f-2f8abad98f3b_339ece4bffb048b3947389caf46108f3_master.jpg"
@@ -77,12 +77,12 @@ export default function ProductComponent({ products }) {
                     </Button>
 
                     <div
-                      className="position-absolute gap-2 ms-2 mb-3  d-xs-none d-sm-none d-md-none d-lg-flex"
+                      className="position-absolute  ms-2 mb-3 w-75 gap-5 justify-content-center d-xs-none d-sm-none d-md-none d-lg-flex"
                       style={{ bottom: "10px", left: "10px" }}
                     >
                       <Button
-                        className="text-start px-1  text-black bg-white  w-100"
-                        style={{ maxHeight: "40px" }}
+                        className="text-start   text-black bg-white  "
+                        style={{ maxHeight: "60px "}}
                       onClick={() => {
                           d(openDetail({showDetail:true , productId:product.id}));
                         }}

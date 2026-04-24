@@ -55,5 +55,13 @@ class ProductController {
       res.json(data)
     }
   )
+  searchProduct = CacthAsync(
+    async(req,res)=>{
+       const { name } = req.query; 
+      console.log("Name:",name)
+      const data = await ProductService.searchProduct(name);
+      res.json(data)
+    }
+  )
 }
 module.exports = new ProductController();

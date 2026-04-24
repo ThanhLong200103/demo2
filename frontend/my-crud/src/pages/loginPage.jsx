@@ -6,7 +6,7 @@ import { loginSuccess } from "../redux/features/authAccess";
 import { toast } from "react-toastify";
 import { RepositoryFactory } from "../services/FactoryService";
 import "../styles/inputAccount.css"
-export default function LoginPage({setAccount}) {
+export default function LoginPage({setAccount , showDetail,productId }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showForgotPassword ,setShowForgotPassword] = useState(false)

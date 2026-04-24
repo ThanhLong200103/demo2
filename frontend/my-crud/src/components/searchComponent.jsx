@@ -13,16 +13,30 @@ import { IoCloseOutline } from "react-icons/io5";
 import { useDispatch } from "react-redux";
 import { closeSearch } from "../redux/features/search";
 import { CiSearch } from "react-icons/ci";
+import { useEffect, useState } from "react";
+import { RepositoryFactory } from "../services/FactoryService";
 export default function SearchComponent({ OpenS }) {
   const d = useDispatch();
+  const[name ,setName] = useState(null)
+  const [product , setProduct] = useState([])
+   useEffect(
+          ()=>{
+              const getProduct = async ()=>{
+                  const data = await RepositoryFactory.get("product").searchProduct(name)
+                  console.log(data);
+                  setProduct(data)
+              }
+              getProduct()
+          },[name]
+      )
   return (
     <>
     <div
         className={`search-overlay ${OpenS ? "active" : ""} `}
         onClick={()=>{}}
       ></div>
-      <Container fluid className={`search ${OpenS ? "active" : ""}`}>
-        <Container className="d-flex justify-content-between " style={{minHeight:"200px"}}>
+      <Container fluid className={`search ${OpenS ? "active" : ""}`} style={{minHeight:"200px"}} >
+        <Container className="d-flex justify-content-between " >
           <Row>
             <Col>
               <Button className="bg-white border-0 w-100  " as={Link} to={`/`}>
@@ -42,12 +56,14 @@ export default function SearchComponent({ OpenS }) {
                   type="text"
                   placeholder="Tìm kiếm sản phẩm ..."
                   name="search"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
                   className="mt-3 " style={{  marginRight: "300px",borderRadius:"0"}}
                   
                 >
                  
                 </FormControl>
-                   <Button className="position-absolute bs-2 border-0 border-bottom border-end border-top text-black bg-white" style={{right:"0" ,top:"0" ,borderRadius:"0"}}>
+                   <Button className="position-absolute bs-2 border-0 border-bottom border-end border-top text-black bg-white" style={{right:"0" ,top:"0" ,borderRadius:"0"}} as={Link} to={`/search/${name}`}>
                     <CiSearch/>
                 </Button>
               </FormGroup>
@@ -62,6 +78,29 @@ export default function SearchComponent({ OpenS }) {
             >
               <IoCloseOutline />
             </Button>
+          </Row>
+        </Container>
+        <Container className="h-25">
+          <Row>
+            
+            {
+              product.length>0 ? <Col>
+              <ul>
+              {
+              product.map((p)=>(
+              <li className="d-flex">
+             <p>{ p.name}</p>
+             <p><img src={p.img} alt=""  className="w-25 "/></p>
+              </li>
+              ))
+              }
+              </ul>
+              </Col>: <Col>
+              <p>Không tìm thấy sản phẩm </p>
+              </Col>
+
+            }
+            
           </Row>
         </Container>
       </Container>

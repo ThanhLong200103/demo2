@@ -39,30 +39,23 @@ export default function HeaderComponent(params) {
   const [categorys, setCategorys] = useState([]);
 
   // const [showCart , setShowCart] = useState(false);
-
-  useEffect(() => {
-    if (token) {
-      const checkMe = async () => {
-        try {
-          const user = await RepositoryFactory.get("user").profile();
-          console.log(user.id);
-          setId(user.id);
-          setProfile(user);
-          const category =
-            await RepositoryFactory.get("category").getCategory();
-           console.log(category);
+  useEffect(
+    ()=>{
+      
         // if (!category) return [];
-          const buildTree = (data) => {
+          const buildTree = async () => {
             const map = {};
             const tree = [];
-
+             const category =
+            await RepositoryFactory.get("category").getCategory();
+           console.log(category);
             // B1: tạo map id → object
-            data.forEach((item) => {
+            category.forEach((item) => {
               map[item.id] = { ...item, children: [] };
             });
 
             // B2: build cây
-            data.forEach((item) => {
+            category.forEach((item) => {
               if (item.parent_id === null) {
                 tree.push(map[item.id]); // node cha
               } else {
@@ -73,7 +66,18 @@ export default function HeaderComponent(params) {
             setCategorys(tree);
             console.log(tree)
           };
-          buildTree(category);
+          buildTree();
+    },[]
+  )
+  useEffect(() => {
+    if (token) {
+      const checkMe = async () => {
+        try {
+          const user = await RepositoryFactory.get("user").profile();
+          console.log(user.id);
+          setId(user.id);
+          setProfile(user);
+         
        
         } catch (error) {
           console.log("Token expired, attempting refresh..." ,error);
@@ -197,7 +201,8 @@ export default function HeaderComponent(params) {
     <Button
       className="mt-1 bg-white text-dark border-0"
       as={Link}
-      to={`/${c.name}`}
+      to={`/collections/${c.name}`}
+      state={{ idCategory: c.id }}
     >
       {c.name} <RiArrowDropDownLine className="fs-4" />
     </Button>
@@ -209,7 +214,8 @@ export default function HeaderComponent(params) {
         {c.children.map((child) => (
           <li key={child.id} className="m-3">
             <Link
-              to={`/category/${child.id}`}
+              to={`/collections/${child.name}`}
+              state={{ idCategory: child.id }}
               className="text-black text-decoration-none"
             >
               {child.name}
@@ -245,16 +251,7 @@ export default function HeaderComponent(params) {
               >
                 <IoSearchOutline className="fs-4" />
               </Button>
-              {profile ? (
-                <Button
-                  className="bg-white border-0 text-dark"
-                  as={Link}
-                  to={`/index`}
-                  state={profile}
-                >
-                  <LuUserRound className="fs-4 " />
-                </Button>
-              ) : (
+              
                 <Button
                   className="bg-white border-0 text-dark position-relative"
                   onClick={() => {
@@ -262,9 +259,9 @@ export default function HeaderComponent(params) {
                   }}
                 >
                   <LuUserRound className="fs-4 " />
-                  {showLogin && <LoginComponent setShowLogin={setShowLogin} />}
+                  {showLogin && <LoginComponent setShowLogin={setShowLogin}  />}
                 </Button>
-              )}
+              
 
               <Button
                 className="bg-white border-0 text-dark position-relative "

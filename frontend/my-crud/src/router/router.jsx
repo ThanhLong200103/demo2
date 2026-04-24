@@ -16,6 +16,8 @@ import PaymentFail from "../pages/PaymentFail";
 import DetailProductPage from "../pages/detailProductPage";
 import AccountPage from "../pages/accoutPage";
 import BuyNowPage from "../pages/buyNowPage";
+import CategoryPage from "../pages/categoryPage";
+import SearchPage from "../pages/searchPage";
 
 export default function AppRouter() {
     return(
@@ -35,7 +37,10 @@ export default function AppRouter() {
             <Route path="/payment-failed" element = {<PaymentFail></PaymentFail>}></Route>
             <Route path="/account" element = {<AccountPage></AccountPage>}></Route>
             <Route path="/products/:id" element={<DetailProductPage></DetailProductPage>}></Route>
-            <Route  path="/buyNow" element={<BuyNowPage></BuyNowPage>}></Route>
+            <Route path="/buyNow" element={<BuyNowPage></BuyNowPage>}></Route>
+            <Route path="/collections/:name" element={<CategoryPage></CategoryPage>}></Route>
+            <Route path="/search/:name" element={<SearchPage></SearchPage>}></Route>
+
         </Routes>
     )
 };

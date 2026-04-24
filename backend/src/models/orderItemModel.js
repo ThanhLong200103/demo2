@@ -21,10 +21,11 @@ class OrderItemModel {
 
   getOrderItemHistory = async (id) => {
     const [rows] = await db.execute(
-      `SELECT o.id, o.quantity, o.price, p.name, p.img ,o.status
+      `SELECT o.id, o.quantity, o.price, p.name, p.img ,o.status ,a.size ,a.color
            FROM order_items o
-           INNER JOIN products p ON o.product_id = p.id
-           WHERE order_id = ?`,
+           INNER JOIN products p ON o.product_id = p.id 
+           INNER JOIN attributes a ON o.attribute_id = a.id
+           WHERE o.order_id = ?`,
       [id],
     );
     return rows;
@@ -40,9 +41,10 @@ class OrderItemModel {
   };
   getCancelOrderItem = async (id, orderId, connection = db) => {
     const [rows] = await connection.execute(
-      `SELECT o.id, o.quantity, o.price, p.name, p.img ,o.product_id ,o.order_id
+      `SELECT o.id, o.quantity, o.price, p.name, p.img ,o.product_id ,o.order_id ,o.attribute_id
            FROM order_items o
            INNER JOIN products p ON o.product_id = p.id
+           INNER JOIN attributes a ON o.attribute_id = a.id
            WHERE o.id = ? AND o.order_id = ? FOR UPDATE`,
       [id, orderId],
     );

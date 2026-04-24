@@ -21,4 +21,7 @@ export default class ProductService extends BaseService {
     async getOneAttributes(data){
       return await this.http.get(`/attribute`, { params: data })
     }
+    async searchProduct (name){
+      return await this.http.get('/searchProduct', { params: { name } })
+    }
 }

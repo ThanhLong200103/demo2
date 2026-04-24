@@ -1,12 +1,14 @@
 import { useEffect, useState } from "react"
 import { Button, Container, Row } from "react-bootstrap"
 import "../styles/maxWidth.css"
-import { Link, useNavigate } from "react-router-dom"
+import { Link, useLocation, useNavigate } from "react-router-dom"
 import LoginPage from "./loginPage"
 import RegisterPage from "./registerPage"
 export default function AccountPage() {
     const[account , setAccount] = useState(true)
-
+    const localtion = useLocation()
+    const{showDetail , productId} = localtion.state ||{}
+    console.log(localtion)
     return(
         <>
         <Container >
@@ -15,7 +17,7 @@ export default function AccountPage() {
                 <span className="fw-bold fs-4 pt-1">|</span>
             <h4 className="ps-3 fw-bold"><Button className="border-0 bg-white  fs-4 fw-bold" onClick={()=>{setAccount(true)}}><p className={account ?"text-black":"text-secondary"}>Đăng ký</p></Button></h4>
           </div> 
-         {account ? <RegisterPage setAccount={setAccount}></RegisterPage>: <LoginPage setAccount={setAccount}></LoginPage>}
+         {account ? <RegisterPage setAccount={setAccount} showDetail={showDetail} productId = {productId}   ></RegisterPage>: <LoginPage setAccount={setAccount}></LoginPage>}
         </Container>
         </>
     )

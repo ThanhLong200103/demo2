@@ -9,7 +9,7 @@ export default class OrderService extends BaseService {
   async getItemOrder(ids) {
     return await this.http.post("/order/getItemOrder", { ids });
   }
-  async cancelOrder(data) {
+  async   cancelOrder(data) {
     return await this.http.post("/order/cancel", data);
   }
 }

@@ -90,9 +90,9 @@ class OrderService {
       }
       const orderItems = allCancelOrderItems.flat().filter(Boolean);
 
-      console.log("ALL CANCEL ORDER ITEMS:", orderItems[0].id ,orderItems[0].quantity , orderItems[0].product_id , orderItems[0].order_id);
+      console.log("ALL CANCEL ORDER ITEMS:", orderItems[0].id ,orderItems[0].quantity , orderItems[0].attribute_id , orderItems[0].order_id);
       const cancelOrderItem = await OrderItemModel.cancelOrderItem(orderItems[0].id, conn);
-      const updateQuantityProduct = await ProductModel.editQuantityProduct(orderItems[0].product_id, orderItems[0].quantity, conn);
+      const updateQuantityProduct = await ProductModel.editQuantityProductAttributes(orderItems[0].attribute_id, orderItems[0].quantity, conn);
       const checkOrder = await OrderItemModel.checkOrder(orderItems[0].order_id , conn);
       console.log("CHECK ORDER:", checkOrder.length);
       if(checkOrder.length ==0){

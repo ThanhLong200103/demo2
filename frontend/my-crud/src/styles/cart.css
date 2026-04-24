@@ -15,7 +15,7 @@
   max-width: 500px;
 }
 
-.sidebar-overlay {
+.cart-overlay {
   position: fixed;
   top: 0;
   left: 0;
@@ -28,8 +28,16 @@
   transition: opacity 0.3s ease, visibility 0.3s ease;
 }
 
-.sidebar-overlay.active {
+.cart-overlay.active {
   opacity: 1;
   visibility: visible;
+}
+
+.cart-items {
+  max-height: 400px;      
+  overflow-y: auto;       
+  padding-right: 8px;    
+  scrollbar-width: none;       
+  -ms-overflow-style: none
 }
 

@@ -7,17 +7,44 @@ import { closeSideBar } from "../redux/features/sideBar";
 import "../styles/sideBar.css";
 import { IoIosAdd } from "react-icons/io";
 import { Link } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { CgMathMinus } from "react-icons/cg";
+import { RepositoryFactory } from "../services/FactoryService";
+
 export default function SideBarComponent({ isOpen }) {
   const d = useDispatch();
-  const [showShirt, setShowShirt] = useState(true);
-  const [showTrousers, setShowTrousers] = useState(true);
-  const [showAccessory, setShowAccessory] = useState(true);
-
+  // const [show, setShow] = useState(true);
+  const [showId, setShowId] = useState();
+  const [categorys, setCategorys] = useState([]);
   const hanleCloseSideBar = () => {
     d(closeSideBar(false));
   };
+  useEffect(() => {
+    // if (!category) return [];
+    const buildTree = async () => {
+      const map = {};
+      const tree = [];
+      const category = await RepositoryFactory.get("category").getCategory();
+      console.log(category);
+      // B1: tạo map id → object
+      category.forEach((item) => {
+        map[item.id] = { ...item, children: [] };
+      });
+
+      // B2: build cây
+      category.forEach((item) => {
+        if (item.parent_id === null) {
+          tree.push(map[item.id]); // node cha
+        } else {
+          map[item.parent_id]?.children.push(map[item.id]);
+        }
+      });
+
+      setCategorys(tree);
+      console.log(tree);
+    };
+    buildTree();
+  }, []);
   return (
     <>
       <div
@@ -57,179 +84,46 @@ export default function SideBarComponent({ isOpen }) {
                     Danh mục sale
                   </Link>
                 </li>
-                <li className="py-3 fs-4 position-relative">
-                  <Link
-                    to="/shirts"
-                    className="text-black text-decoration-none"
-                  >
-                    Áo nam
-                  </Link>
-                  <span
-                    className="position-absolute top-0 bottom-0 mt-3 me-3"
-                    style={{ right: "0" }}
-                    onClick={() => {
-                      setShowShirt((item) => !item);
-                    }}
-                  >
-                    {showShirt ?  <IoIosAdd />:<CgMathMinus /> }
-                  </span>
-                  <ul
-                    className={`list-unstyled fw-light fs-5  ${showShirt && "d-none"}`}
-                  >
-                    <li className="m-3">
-                      <Link
-                        to="/shirts/polo"
-                        className="text-black text-decoration-none"
+                {categorys.map((category) => (
+                  <li className="py-3 fs-4 position-relative" key={category.id}>
+                    <Link
+                      to={`/collections/${category.name}`}
+                      state={{ idCategory: category.id }}
+                      className="text-black text-decoration-none"
+                    >
+                      {category.name}
+                    </Link>
+                    <span
+                      className="position-absolute top-0 bottom-0 mt-3 me-3"
+                      style={{ right: "0" }}
+                      onClick={() => {
+                        // setShow((item) => !item);
+                        setShowId((prev) =>
+                          prev === category.id ? null : category.id,
+                        );
+                      }}
+                    >
+                      {showId === category.id ? <IoIosAdd /> : <CgMathMinus />}
+                    </span>
+                    {category.children && category.children.length > 0 && (
+                      <ul
+                        className={`list-unstyled fw-light fs-5  ${showId !== category.id && "d-none"}`}
                       >
-                        Áo Polo
-                      </Link>
-                    </li>
-                    <li className="m-3">
-                      <Link
-                        to="/shirts/thun"
-                        className="text-black text-decoration-none"
-                      >
-                        Áo Thun
-                      </Link>
-                    </li>
-                    <li className="m-3">
-                      <Link
-                        to="/shirts/somi"
-                        className="text-black text-decoration-none"
-                      >
-                        Áo sơ mi
-                      </Link>
-                    </li>
-                    <li className="m-3">
-                      <Link
-                        to="/shirts/ni"
-                        className="text-black text-decoration-none"
-                      >
-                        Áo - Quần Nỉ
-                      </Link>
-                    </li>
-                    <li className="m-3">
-                      <Link
-                        to="/shirts/blazer"
-                        className="text-black text-decoration-none"
-                      >
-                        Áo Blazer
-                      </Link>
-                    </li>
-                    <li className="m-3">
-                      <Link
-                        to="/shirts/len"
-                        className="text-black text-decoration-none"
-                      >
-                        Áo Len
-                      </Link>
-                    </li>
-                    <li className="m-3">
-                      <Link
-                        to="/shirts/khoac"
-                        className="text-black text-decoration-none"
-                      >
-                        Áo Khoác
-                      </Link>
-                    </li>
-                  </ul>
-                </li>
-                <li className="py-3 fs-4 position-relative text-black ">
-                  <Link to="/pants" className="text-black text-decoration-none">
-                    Quần nam
-                  </Link>
-                  <span
-                    className="position-absolute top-0 bottom-0 mt-3 me-3"
-                    style={{ right: "0" }}
-                    onClick={() => {
-                      setShowTrousers((item) => !item);
-                    }}
-                  >
-                    {showTrousers ? <IoIosAdd />:<CgMathMinus />}
-                  </span>
-
-                  <ul
-                    className={`list-unstyled fw-light fs-5 ${showTrousers && "d-none"}`}
-                  >
-                    <li className="m-3">
-                      <Link
-                        to="/pants/short"
-                        className="text-black text-decoration-none"
-                      >
-                        Quần Short
-                      </Link>
-                    </li>
-                    <li className="m-3">
-                      <Link
-                        to="/pants/jeans"
-                        className="text-black text-decoration-none"
-                      >
-                        Quần Jeans
-                      </Link>
-                    </li>
-                    <li className="m-3">
-                      <Link
-                        to="/pants/au"
-                        className="text-black text-decoration-none"
-                      >
-                        Quần Âu
-                      </Link>
-                    </li>
-                    <li className="m-3">
-                      <Link
-                        to="/pants/gio"
-                        className="text-black text-decoration-none"
-                      >
-                        Quần Gió
-                      </Link>
-                    </li>
-                  </ul>
-                </li>
-                <li className="py-3 fs-4  position-relative">
-                  <Link
-                    to="/accessories"
-                    className="text-black text-decoration-none"
-                  >
-                    Phụ kiện
-                  </Link>
-                  <span
-                    className="position-absolute top-0 bottom-0 mt-3 me-3"
-                    style={{ right: "0" }}
-                    onClick={() => {
-                      setShowAccessory((item) => !item);
-                    }}
-                  >
-                    {showAccessory ? <IoIosAdd />:<CgMathMinus />}
-                  </span>
-                <ul
-                    className={`list-unstyled fw-light fs-5 ${showAccessory && "d-none"}`}
-                  >
-                    <li className="m-3">
-                      <Link
-                        to="/accessories/belt"
-                        className="text-black text-decoration-none"
-                      >
-                        Thắt Lưng
-                      </Link>
-                    </li>
-                  </ul>
-                </li>
-                <li className="py-3 fs-4">
-                  <Link
-                    to="/stores"
-                    className="text-black text-decoration-none"
-                  >
-                    Hệ thống cửa hàng
-                  </Link>
-                </li>
-                <li className="py-3 fs-4">
-                  <Link
-                    to="/warnings"
-                    className="text-black text-decoration-none"
-                  >
-                    CẢNH BÁO LỪA ĐẢO
-                  </Link>
-                </li>
+                        {category.children.map((c) => (
+                          <li className="m-3">
+                            <Link
+                              to={`/collections/${c.name}`}
+                              state={{ idCategory: c.id }}
+                              className="text-black text-decoration-none"
+                            >
+                              {c.name}
+                            </Link>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </li>
+                ))}
               </ul>
             </div>
           </Col>

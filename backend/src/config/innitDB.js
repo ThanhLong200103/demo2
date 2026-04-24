@@ -19,6 +19,7 @@ const initDB = async () => {
         img VARCHAR(255) NOT NULL,
         status ENUM('active', 'inactive', 'out_of_stock') DEFAULT 'active',
         category_id INT NULL,
+        
         CONSTRAINT FK_Product_Category FOREIGN KEY (category_id) REFERENCES category(id) ON DELETE SET NULL
       );
     `);
@@ -121,7 +122,7 @@ const initDB = async () => {
         CONSTRAINT FK_Payment_Order FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE
       )
     `);
-
+   
     console.log("Database initialized successfully!");
   } catch (err) {
     console.error("Init DB error:", err.message);

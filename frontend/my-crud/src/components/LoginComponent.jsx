@@ -1,17 +1,19 @@
 import { useState } from "react";
 import { Button, Form, Modal } from "react-bootstrap";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import { RepositoryFactory } from "../services/FactoryService";
-import { loginSuccess } from "../redux/features/authAccess";
+import { loginSuccess, logout } from "../redux/features/authAccess";
 import { Link, useNavigate } from "react-router-dom";
 import "../styles/Login.css";
 import "../styles/form.css";
-export default function LoginComponent({setShowLogin}) {
+import { RiShutDownLine } from "react-icons/ri";
+export default function LoginComponent({setShowLogin }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showForgotPassword ,setShowForgotPassword] = useState(false)
-
+  const {isAuthenticated} = useSelector((state)=>state.auth)
+  // console.log("auth: ",isAuthenticated)
   const dispatch = useDispatch();
   const n = useNavigate();
   const handleSubmit = async (e) => {
@@ -25,7 +27,10 @@ export default function LoginComponent({setShowLogin}) {
       console.log(data);
       localStorage.setItem("accessToken", data.accessToken);
       dispatch(loginSuccess({ token: data.accessToken }));
-      setShow(false);
+      // setShow(false);
+      setShowLogin(false);
+      setEmail("");
+      setPassword("");
     } catch (error) {
       console.log(error);
       const status = error.response?.status;
@@ -42,9 +47,7 @@ export default function LoginComponent({setShowLogin}) {
         if (!validationErrors?.email && !validationErrors?.password) {
           toast.error(apiData?.message || "Đã có lỗi xảy ra");
         }
-      } else {
-        toast.error(apiData?.message || "Đã có lỗi xảy ra");
-      }
+      } 
     }
   };
 
@@ -52,11 +55,42 @@ export default function LoginComponent({setShowLogin}) {
     setShowLogin(false)
     n("/account")
   }
+  const handleLogout = async()=>{
+    try {
+      await RepositoryFactory.get("user").logout()
+      dispatch(logout())
+      localStorage.removeItem("accessToken")
+      toast.success("Đã đăng xuất")
+    } catch (error) {
+      toast.warning("Hãy thử lại sau")
+    }
+  } 
+  const handleProfile = async ()=>{
+    const profile = await RepositoryFactory.get("user").profile()
+    n("/index",{
+      state:{name :profile.name , email :profile.email ,phone :profile.phone}
+    })
+  }
   return (
     <>
      
       <div onClick={(e) => e.stopPropagation()} className="" >
+       
       {
+        isAuthenticated ? <div className="login-modal  text-center rounded shadow  p-0">
+         <div className="d-flex gap-0 ">
+           <p className="pt-2 w-50" onClick={()=>{ handleProfile()          
+          }}>
+           profile
+          </p>
+          <p className="pt-2 w-50 border-start" onClick={()=>{handleLogout ()}}>
+           <RiShutDownLine />
+          </p  >
+         </div>
+          <p className="border-top pt-3" onClick={()=>{n("/history")}} >Giao dịch</p>
+          </div>
+          
+          :
         showForgotPassword ?
         <div className="login-modal  text-center rounded shadow ">
           <div>
@@ -142,7 +176,7 @@ export default function LoginComponent({setShowLogin}) {
               >
                 <Form.Control
                   className="form-control"
-                  type="email"
+                  type="password"
                   value={password}
                   placeholder=" "
                   onChange={(e) => setPassword(e.target.value)}
