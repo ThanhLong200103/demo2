@@ -53,7 +53,7 @@ export default function DetailComponent({ showDetail, productId }) {
           {
             productId: id,
           },
-        );
+        ); q
         setProducts(res);
         setProductItem(product[0]);
         setProductAttributes(attributes);

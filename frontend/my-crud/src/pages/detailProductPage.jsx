@@ -418,7 +418,7 @@ export default function DetailProductPage() {
             <Col className="col-12 text-center my-4">
               <h2>Sản phẩm liên quan</h2>
             </Col>
-            <ProductComponent products={products}></ProductComponent>
+            {/* <ProductComponent products={products}></ProductComponent> */}
           </Row>
         </div>
       </Container>

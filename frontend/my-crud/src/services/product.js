@@ -1,7 +1,10 @@
 import BaseService from "./BaseService";
 export default class ProductService extends BaseService {
-  async getAll() {
-    return await this.http.get("/products");
+  async getAll(limit , cursor) {
+    return await this.http.get("/products" , {  params: {
+    limit: limit,
+    cursor: cursor
+  } });
   }
   async getById(id) {
     return await this.http.get(`/product/${id}`);

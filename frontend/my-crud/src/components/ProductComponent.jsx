@@ -7,7 +7,8 @@ import { openDetail } from "../redux/features/detail";
 import axiosClient from "../api/axios";
 import { indexCountItem } from "../redux/features/cart";
 import { Link, useNavigate } from "react-router-dom";
-export default function ProductComponent({ products }) {
+import { useEffect } from "react";
+export default function ProductComponent({ products ,cursor }) {
   const d = useDispatch();
   const n  = useNavigate();
   const quantity = 1;
@@ -39,6 +40,11 @@ export default function ProductComponent({ products }) {
   const handleClickProduct = (id)=>{
     n(`products/${id}`)
   }
+  useEffect(
+    ()=>{
+      console.log(cursor)
+    }
+  )
   return (
     <>
       <Container fluid style={{ cursor: "pointer" }}>

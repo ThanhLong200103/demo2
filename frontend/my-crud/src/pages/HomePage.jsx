@@ -8,22 +8,32 @@ import { MdAddShoppingCart } from "react-icons/md";
 import { toast } from "react-toastify";
 import { RepositoryFactory } from "../services/FactoryService";
 import ProductComponent from "../components/ProductComponent";
-import { Container } from "react-bootstrap";
+import { Container, Row } from "react-bootstrap";
 import CarouselComponent from "../components/CarouselComponent";
 
 export default function HomePage() {
   const [products, setProducts] = useState([]);
   const [show, setShow] = useState(false);
   const [id, setId] = useState(null);
+  const [cursor , setCursor] = useState ({});
   const quantity = 1
+  const limit = 12
 
   // const tinh = 0-1 ;
   // console.log(tinh)
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const res = await RepositoryFactory.get("product").getAll();
-        setProducts(res); 
+        const res = await RepositoryFactory.get("product").getAll({
+          limit:limit,
+          cursor:null
+        });
+        setProducts(res[0]);
+        setCursor({
+          next : res[1],
+          prev:res[2]
+        })
+        // console.log(res)
       } catch (err) {
         console.log("Fetch error:", err);
       }
@@ -66,7 +76,17 @@ export default function HomePage() {
       <>
       <Container style={{maxWidth :"1600px"}} className="position-relative">
         {/* <CarouselComponent></CarouselComponent> */}
-        <ProductComponent products = {products}></ProductComponent>
+        <ProductComponent products = {products} cursor={cursor}></ProductComponent>
+      </Container>
+      <Container className="mb-5">
+        <Row className="d-flex justify-content-center gap-4">
+          <Button className=" border-0 text-danger" style={{maxWidth:"100px" ,background :"#f5f5f5"}}>
+            Prev
+          </Button>
+          <Button className=" border-0 text-danger" style={{maxWidth:"100px" ,background :"#f5f5f5"}}>
+            Next
+          </Button>
+        </Row>
       </Container>
       </>
   );
