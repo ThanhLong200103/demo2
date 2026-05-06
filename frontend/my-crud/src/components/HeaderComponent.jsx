@@ -25,9 +25,11 @@ import { RiArrowDropDownLine } from "react-icons/ri";
 import NotificationComponent from "./notificationComponent";
 import { TfiAlignJustify } from "react-icons/tfi";
 import { openSideBar } from "../redux/features/sideBar";
+import { GrLanguage } from "react-icons/gr";
 import { SlMenu } from "react-icons/sl";
-import { openCart } from "../redux/features/cart";
+import { indexCountItem, openCart } from "../redux/features/cart";
 import { openSearch } from "../redux/features/search";
+import { useTranslation } from "react-i18next";
 export default function HeaderComponent(params) {
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -37,38 +39,39 @@ export default function HeaderComponent(params) {
   const [profile, setProfile] = useState(null);
   const [showLogin, setShowLogin] = useState(false);
   const [categorys, setCategorys] = useState([]);
-
+  const localCartItem = JSON.parse(localStorage.getItem("pendingCart")) || [];
+  const { t, i18n } = useTranslation("header");
+  const changeLanguage = (lng) => {
+    i18n.changeLanguage(lng);
+  };
+  const [showLanguage , setShowLanguage] = useState(true)
   // const [showCart , setShowCart] = useState(false);
-  useEffect(
-    ()=>{
-      
-        // if (!category) return [];
-          const buildTree = async () => {
-            const map = {};
-            const tree = [];
-             const category =
-            await RepositoryFactory.get("category").getCategory();
-           console.log(category);
-            // B1: tạo map id → object
-            category.forEach((item) => {
-              map[item.id] = { ...item, children: [] };
-            });
+  useEffect(() => {
+    // if (!category) return [];
+    const buildTree = async () => {
+      const map = {};
+      const tree = [];
+      const category = await RepositoryFactory.get("category").getCategory();
+      console.log(category);
+      // B1: tạo map id → object
+      category.forEach((item) => {
+        map[item.id] = { ...item, children: [] };
+      });
 
-            // B2: build cây
-            category.forEach((item) => {
-              if (item.parent_id === null) {
-                tree.push(map[item.id]); // node cha
-              } else {
-                map[item.parent_id]?.children.push(map[item.id]);
-              }
-            });
+      // B2: build cây
+      category.forEach((item) => {
+        if (item.parent_id === null) {
+          tree.push(map[item.id]); // node cha
+        } else {
+          map[item.parent_id]?.children.push(map[item.id]);
+        }
+      });
 
-            setCategorys(tree);
-            console.log(tree)
-          };
-          buildTree();
-    },[]
-  )
+      setCategorys(tree);
+      console.log(tree);
+    };
+    buildTree();
+  }, []);
   useEffect(() => {
     if (token) {
       const checkMe = async () => {
@@ -77,14 +80,13 @@ export default function HeaderComponent(params) {
           console.log(user.id);
           setId(user.id);
           setProfile(user);
-         
-       
         } catch (error) {
-          console.log("Token expired, attempting refresh..." ,error);
-          
+          console.log("Token expired, attempting refresh...", error);
         }
       };
       checkMe();
+    } else {
+      dispatch(indexCountItem(localCartItem.length));
     }
     // console.log(showSideBar)
   }, [token]);
@@ -116,17 +118,14 @@ export default function HeaderComponent(params) {
           <div className="bg-dark text-white">
             <div className="maxWidth d-flex justify-content-between align-items-center px-2">
               <div>
-                Hotline mua hàng:
+                {t("header.customer")}
                 <a
                   href="tel:0964942121"
                   className="text-white ms-1 text-decoration-none "
                 >
-                  0964942121
+                  {t("header.hotline")}
                 </a>
-                <span className="pe-2">
-                  {" "}
-                  (8:30-21:30, Tất cả các ngày trong tuần){" "}
-                </span>
+                <span className="pe-2"> {t("header.hotlineDescription")} </span>
                 |
                 <span>
                   <a
@@ -134,7 +133,7 @@ export default function HeaderComponent(params) {
                     className="text-decoration-none ps-2 text-white"
                   >
                     {" "}
-                    Liên hệ{" "}
+                    {t("header.contact")}{" "}
                   </a>
                 </span>
               </div>
@@ -143,7 +142,7 @@ export default function HeaderComponent(params) {
                   <IoMdNotificationsOutline className="fs-5  " />
                   <span className=" Notification ">0</span>
                 </div>
-                Thông báo của tôi
+                {t("header.notification")}
                 {/* <NotificationComponent ></NotificationComponent> */}
               </div>
             </div>
@@ -186,60 +185,63 @@ export default function HeaderComponent(params) {
                 as={Link}
                 to={`/`}
               >
-                Sản phẩm mới
+                {t("header.productNew")}
               </Button>
               <Button
                 className="mt-1 bg-white text-dark border-0"
                 as={Link}
                 to={`/sale`}
               >
-                Danh mục sale
+                {t("header.categories Sale")}
               </Button>
-             
-                {categorys.map((c) => (
-  <div key={c.id} className="d-inline-block position-relative parentShowShirt">
-    <Button
-      className="mt-1 bg-white text-dark border-0"
-      as={Link}
-      to={`/collections/${c.name}`}
-      state={{ idCategory: c.id }}
-    >
-      {c.name} <RiArrowDropDownLine className="fs-4" />
-    </Button>
-    {c.children && c.children.length > 0 && (
-      <ul
-        className="list-unstyled position-absolute z-1 text-start bg-white showShirt"
-        style={{ minWidth: "200px" }}
-      >
-        {c.children.map((child) => (
-          <li key={child.id} className="m-3">
-            <Link
-              to={`/collections/${child.name}`}
-              state={{ idCategory: child.id }}
-              className="text-black text-decoration-none"
-            >
-              {child.name}
-            </Link>
-          </li>
-        ))}
-      </ul>
-    )}
-  </div>
-))}
-              
+
+              {categorys.map((c) => (
+                <div
+                  key={c.id}
+                  className="d-inline-block position-relative parentShowShirt"
+                >
+                  <Button
+                    className="mt-1 bg-white text-dark border-0"
+                    as={Link}
+                    to={`/collections/${c.name}`}
+                    state={{ idCategory: c.id }}
+                  >
+                    {c.name} <RiArrowDropDownLine className="fs-4" />
+                  </Button>
+                  {c.children && c.children.length > 0 && (
+                    <ul
+                      className="list-unstyled position-absolute z-1 text-start bg-white showShirt"
+                      style={{ minWidth: "200px" }}
+                    >
+                      {c.children.map((child) => (
+                        <li key={child.id} className="m-3">
+                          <Link
+                            to={`/collections/${child.name}`}
+                            state={{ idCategory: child.id }}
+                            className="text-black text-decoration-none"
+                          >
+                            {child.name}
+                          </Link>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+              ))}
+
               <Button
                 className="mt-1 bg-white text-dark border-0"
                 as={Link}
                 to={`/stores`}
               >
-                Hệ thống cửa hàng
+                {t("header.Store system")}
               </Button>
               <Button
                 className="mt-1 bg-white text-dark border-0"
                 as={Link}
                 to={`/warnings`}
               >
-                Cảnh báo lừa đảo
+                {t("header.scam warning")}
               </Button>
             </Col>
             <Col md={2} xs={4} lg={1} className="d-flex justify-content-end  ">
@@ -251,17 +253,16 @@ export default function HeaderComponent(params) {
               >
                 <IoSearchOutline className="fs-4" />
               </Button>
-              
-                <Button
-                  className="bg-white border-0 text-dark position-relative"
-                  onClick={() => {
-                    setShowLogin((item) => !item);
-                  }}
-                >
-                  <LuUserRound className="fs-4 " />
-                  {showLogin && <LoginComponent setShowLogin={setShowLogin}  />}
-                </Button>
-              
+
+              <Button
+                className="bg-white border-0 text-dark position-relative"
+                onClick={() => {
+                  setShowLogin((item) => !item);
+                }}
+              >
+                <LuUserRound className="fs-4 " />
+                {showLogin && <LoginComponent setShowLogin={setShowLogin} />}
+              </Button>
 
               <Button
                 className="bg-white border-0 text-dark position-relative "
@@ -272,6 +273,19 @@ export default function HeaderComponent(params) {
                 <MdOutlineShoppingBag className="fs-3 " />
                 <span className="CartCation">{countItem}</span>
               </Button>
+              <div className="position-relative ">
+                <Button className="bg-white text-dark border-0 fs-5" onClick={()=>{setShowLanguage(item=>!item)}}>
+                  <GrLanguage />
+                </Button>
+                <div className={`position-absolute d-flex flex-column ${showLanguage && "d-none"}`} style={{minWidth:"100px" ,left:"-36px" ,right:""}}>
+                  <button className="text-black"  style={{background :"#f5f5f5"}} onClick={() => changeLanguage("vi")}>
+                    Tiếng Việt
+                  </button>
+                  <button className="text-black" style={{background :"#f5f5f5"}} onClick={() => changeLanguage("en")}>
+                    English
+                  </button>
+                </div>
+              </div>
             </Col>
           </Row>
         </div>

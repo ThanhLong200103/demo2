@@ -10,14 +10,14 @@ import { AiFillTwitterCircle } from "react-icons/ai";
 import ProductComponent from "../components/ProductComponent";
 import { useEffect, useState } from "react";
 import { RepositoryFactory } from "../services/FactoryService";
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import axiosClient from "../api/axios";
 import CartService from "../services/cart";
-import { useDispatch } from "react-redux";
-import { setCartItem } from "../redux/features/cart";
+import { useDispatch, useSelector } from "react-redux";
+import { indexCountItem, setCartItem, setCartLocal } from "../redux/features/cart";
 export default function DetailProductPage() {
-  const [products, setProducts] = useState([]);
+  // const [products, setProducts] = useState([]); // removed: related products section is commented out
   const [productItem, setProductItem] = useState({});
   const [productAttributes, setProductAttributes] = useState([]);
   const [quantityHandle, setQuantityHanlde] = useState(1);
@@ -29,11 +29,12 @@ export default function DetailProductPage() {
   const [attributesOne, setAttributesId] = useState(null);
   const { id } = useParams();
   const productId = id;
-
+ const { isAuthenticated } = useSelector((state) => state.auth);
+  const { cartLocal } = useSelector((state) => state.cart);
   const d = useDispatch()
+  const navigation = useNavigate();
   // console.log(id)
-
-  const [mainImg, setMainImg] = useState(null);
+const [mainImg, setMainImg] = useState(null);
 
   const thumbnails = [
     productItem.img,
@@ -46,19 +47,18 @@ export default function DetailProductPage() {
   useEffect(() => {
     const getProduct = async () => {
       try {
-        const res = await RepositoryFactory.get("product").getAll();
+        // const res = await RepositoryFactory.get("product").getAll();
         const product = await RepositoryFactory.get("product").getById(id);
         const attributes = await RepositoryFactory.get("product").getAttributes(
           {
             productId: id,
           },
         );
-        setProducts(res);
+        // setProducts(res);
         setProductItem(product[0]);
         setProductAttributes(attributes);
         setMainImg(product[0].img);
         setTotalPrice(product[0]?.price);
-         console.log("all p",res)
          console.log(product)
         console.log("Attributes :", attributes);
         const allSizes = attributes.map((element) => element.size);
@@ -113,6 +113,7 @@ export default function DetailProductPage() {
 
   const handleCreateCart = async () => {
     try {
+      if (isAuthenticated) {
       const response = await axiosClient.get("/cart");
 
       const cartId = response.id;
@@ -126,14 +127,78 @@ export default function DetailProductPage() {
       const cart = await RepositoryFactory.get("cart").getCartItem(cartId)
       d(setCartItem(cart))
       toast.success("Thêm sản phẩm thành công");
-  
+  } else {
+    if (attributesOne.quantity > 0) {
+        const rawData = localStorage.getItem("pendingCart");
+        let cart = [];
+        
+      
+        try {
+          const parsed = JSON.parse(rawData);
+          cart = Array.isArray(parsed) ? parsed : [];
+        } catch (e) {
+          cart = [];
+        }
+    
+        const newItem = {
+          productId: productItem.id,
+          quantity: quantityHandle,
+          attributesId: attributesOne.id,
+         img: productItem.img,
+          name: productItem.name,
+          price: productItem.price ,
+          size: selectedSize,
+          color: selectedColor
+        };
+    
+        const existingItemIndex = cart.findIndex(
+          (item) => item.productId === newItem.productId && item.attributesId === newItem.attributesId
+        );
+    
+        if (existingItemIndex > -1) {
+          const totalNewQuantity = cart[existingItemIndex].quantity + newItem.quantity;
+          
+          
+          if (totalNewQuantity > attributesOne.quantity) {
+            toast.warning(`Bạn đã có ${cart[existingItemIndex].quantity} sản phẩm trong giỏ. Kho chỉ còn ${attributesOne.quantity}`);
+            return; 
+          }
+          
+          cart[existingItemIndex].quantity = totalNewQuantity;
+        } else {
+          cart.push(newItem);
+        }
+    
+        localStorage.setItem("pendingCart", JSON.stringify(cart));
+        const updatedCart = JSON.parse(localStorage.getItem("pendingCart")) || [];
+        d(setCartLocal({ cartLocal: updatedCart }));
+        d(setCartItem(updatedCart));
+        d(indexCountItem(updatedCart.length));
+    console.log("Cart data from localStorage 111:", JSON.parse(localStorage.getItem("pendingCart")));
+
+        toast.success("Đã thêm vào giỏ hàng tạm");
+        
+        
+      } else {
+        toast.warning("Sản phẩm hiện tại đã hết hàng");
+      }
+  }
       // d(indexCountItem(countItem+1))
     } catch (err) {
       toast.error("Lỗi khi thêm sản phẩm vào giỏ hàng");
       console.log(err);
     }
   };
-  const handleOder = () => {};
+  const handleOder = () => {
+    if(isAuthenticated){
+    navigation("/order", { state: { totalPrice, productId, quantityHandle, priceProduct: productItem?.price, attributeId: attributesOne?.id, nameProduct: productItem?.name, imgProduct: productItem?.img, selectedColor, selectedSize } });
+
+    }
+    else{
+        navigation("/account");
+      toast.warning("Vui lòng đăng nhập để mua hàng");
+    }
+  };
   return (
     <>
       <Container fluid className="">
@@ -253,7 +318,7 @@ export default function DetailProductPage() {
                                 id={`size-${size}`}
                                 name="size"
                                 value={size}
-                                checked={setSelectedSize === size}
+                                checked={selectedSize === size}
                                 onChange={() => setSelectedSize(size)}
                                 className="d-none"
                               />
@@ -345,9 +410,9 @@ export default function DetailProductPage() {
                     onClick={() => {
                       handleOder();
                     }}
-                    as={Link}
-                    to={"/order"}
-                    state={{totalPrice ,productId ,quantityHandle ,  priceProduct : productItem?.price ,attributeId :attributesOne?.id , nameProduct :productItem?.name, imgProduct:productItem?.img ,selectedColor ,selectedSize}}
+                  //   as={Link}
+                  //   to={"/order"}
+                  //   state={{totalPrice ,productId ,quantityHandle ,  priceProduct : productItem?.price ,attributeId :attributesOne?.id , nameProduct :productItem?.name, imgProduct:productItem?.img ,selectedColor ,selectedSize}}
                   >
                     MUA NGAY
                   </Button>

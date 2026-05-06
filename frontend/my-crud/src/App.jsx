@@ -8,7 +8,7 @@ import { useSelector } from "react-redux";
 import CartComponent from "./components/CartComponent";
 import SearchComponent from "./components/searchComponent";
 import DetailComponent from "./components/detailComponent";
-
+import './i18n/i18n';
 function App() {
 
 

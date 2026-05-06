@@ -1,6 +1,8 @@
 const CartItemService = require("../services/cartItemService");
 const cartItem = require("../models/CartItem")
 const runInTransaction = require("../utils/runTransaction");
+const CacthAsync = require("../utils/cachAsync");
+
 class CartItemController {
   getCartItemAll = async (req, res) => {
     try {
@@ -36,18 +38,18 @@ class CartItemController {
       res.status(500).json({ error: err.message });
     }
   }
-  createCartItem = async (req , res )=>{
-    try{
+  createCartItem = CacthAsync(
+    async (req , res )=>{
+    
         const result = await runInTransaction(async (conn) => {
           const{productId  , quantity ,cartId ,attributesId} = req.body;
           // console.log(productId , quantity ,cartId)
           return await CartItemService.createCartItem({productId ,cartId ,attributesId ,quantity}, conn)
         });
         res.json(result)
-    }catch(err){
-      res.status(500).json({ error: err.message });
-    }
-  }
+      }
+  );
+  
   getCartItem = async (req,res)=>{
     try{
       const {id} = req.params

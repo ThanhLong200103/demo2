@@ -30,7 +30,26 @@ export default function LoginComponent({setShowLogin }) {
       // setShow(false);
       setShowLogin(false);
       setEmail("");
-      setPassword("");
+      setPassword(""); 
+      if(data.accessToken){
+        if(localStorage.getItem("pendingCart")){
+          const pendingCart = JSON.parse(localStorage.getItem("pendingCart"));
+          const reponse = await RepositoryFactory.get("cart").getCart();
+          for (const item of pendingCart) {
+            console.log("item: ", item , reponse.id);
+            const cartItem = await RepositoryFactory.get("cart").createCartItem(
+              {
+                productId: item.productId,
+                quantity: item.quantity,
+                attributesId: item.attributesId,
+                cartId: reponse.id
+              }
+            )
+            console.log(cartItem)
+          }
+          localStorage.removeItem("pendingCart");
+        }
+      }
     } catch (error) {
       console.log(error);
       const status = error.response?.status;

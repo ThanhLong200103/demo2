@@ -1,12 +1,13 @@
 const db = require("../config/db");
 
 class ProductModel {
-  getAllProduct = async (limit ,cursor ,direction ) => {
+  getAllProduct = async (limit ,cursor ,direction ,page ) => {
     let sql = "SELECT id , name , price , img , category_id FROM  products  WHERE status = 'active' "
     // const [row] = await db.query(
     //   "SELECT id , name , price , img , category_id FROM  products  WHERE status = 'active' ",
     // );
     let params = []
+     const offset = (page - 1) * limit;
     if (cursor) {
  
       const decoded = JSON.parse(
@@ -34,14 +35,18 @@ class ProductModel {
   }
   
 
-  sql += `LIMIT ?`;
+  sql += `LIMIT ? `;
   params.push(limit);
-
+  if(page != null){
+    sql += ` OFFSET ?`;
+   params.push(offset);
+  }
+  
   const [rows] = await db.query(sql, params);
   if (direction === 'prev' && cursor) {
         rows.reverse();
     }
-  console.log(rows[0].id)
+  // console.log(rows[0].id)
   const nextCursor = rows.length
     ? Buffer.from(
         JSON.stringify({

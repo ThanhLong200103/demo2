@@ -1,0 +1,13 @@
+{
+    "header": {
+        "notification": "My Notifications",
+        "contact": "Contact",
+        "customer": "Customer Service Hotline:",
+        "hotline": "0964942121",
+        "hotlineDescription": " (8:30-21:30, Every day of the week)",
+        "productNew": "New Products",
+        "categories Sale": "Bestselling Categories",
+        "Store system": "Store System",
+        "scam warning":"Scam Warning"
+    }
+}

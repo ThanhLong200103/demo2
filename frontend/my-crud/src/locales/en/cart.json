@@ -1,0 +1,13 @@
+{
+    "cart":{
+        "cartItem":"Cart",
+        "my cart":"My Cart",
+        "all products":"All Products",
+        "total":"Total",
+        "product":"Product",
+        "checkout":"Checkout",
+        "empty cart":"Your cart is empty...",
+        "back to products":"Back to Products",
+        "promotion":"Special Offers for You"
+    }
+}

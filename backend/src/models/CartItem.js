@@ -1,5 +1,6 @@
 const db = require("../config/db");
 const cart = require("./cart");
+const AppError = require("../utils/AppError");
 
 class CartItem {
   getAllCartItem = async (cart_id) => {
@@ -53,7 +54,7 @@ class CartItem {
     console.log(product);
     console.log("QUANTITY PRODUCT:", quantityProduct);
     if (quantityProduct < 0) {
-      throw new Error("Out of stock");
+      throw new AppError("Số lượng sản phẩm không đủ" ,422);
     }
     else {
        const attributesId = data.attributesId;

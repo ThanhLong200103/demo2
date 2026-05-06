@@ -1,10 +1,12 @@
 
 const OrderService = require("../services/order.service");
 const runInTransaction = require("../utils/runTransaction");
+const CacthAsync = require("../utils/cachAsync");
 
 class OrderController {
-  CreateOrder = async (req, res) => {
-    try {
+  CreateOrder = CacthAsync(
+    async (req, res) => {
+   
       const { cartItemIds ,totalPrice ,productId ,quantityProduct ,priceProduct  ,attributeId} = req.body ;
       const userId = req.user.id;
 
@@ -12,10 +14,9 @@ class OrderController {
          return await OrderService.createOrder({cartItemIds ,totalPrice, userId ,productId ,quantityProduct ,priceProduct  ,attributeId }, conn);
        });
       res.json(data );
-    } catch (error) {
-      res.status(500).json({ error: error.message });
-    }
-  };
+   
+  }
+  );
   getItemOrder = async (req, res) => {
     try {
       const { ids } = req.body;

@@ -4,6 +4,9 @@ const CartItemModel = require("../models/CartItem");
 const ProductModel = require("../models/ProductModel");
 const db = require("../config/db");
 const paymentModel = require("../models/paymentModel");
+const CartItem = require("../models/CartItem");
+const AppError = require("../utils/AppError");
+
 class OrderService {
   createOrder = async (data , conn) => {
      const user_id = data.userId;
@@ -16,6 +19,7 @@ class OrderService {
         data.cartItemIds,
         conn,
       );
+
     if(cartItem && cartItem.length > 0){
         for (const item of cartItem) {
         await OrderItemModel.createOrderItem(
@@ -29,6 +33,7 @@ class OrderService {
           },
           conn,
         );
+        const up = await CartItem.updownQuanTiTyProduct({ attributesId: item.attributes_id, quantity: item.quantity }, conn);
       }
       const updateCartItem = await CartItemModel.UpdateByIds(
         data.cartItemIds,
@@ -49,6 +54,9 @@ class OrderService {
        const quantityAttribute = await ProductModel.getProducUpdateCartAttributes(data.attributeId , conn);
        if(quantityAttribute){
         const quantity = -data.quantityProduct
+        if(quantityAttribute.quantity + quantity < 0){
+           throw new AppError("Số lượng sản phẩm không đủ" ,422);
+        }
         await ProductModel.editQuantityProductAttributes(data.attributeId ,quantity , conn )
        }
     }
@@ -98,6 +106,7 @@ class OrderService {
       if(checkOrder.length ==0){
        await OrderModel.cancelOrder(orderItems[0].order_id, conn);
       }
+
         // await conn.commit();
       return [cancelOrderItem, updateQuantityProduct];
   }

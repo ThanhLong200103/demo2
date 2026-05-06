@@ -2,8 +2,8 @@ const { releaseConnection } = require("../config/db");
 const ProductModel = require("../models/ProductModel");
 
 class ProductService {
-    getAllProduct = async (limit,cursor ,direction)=>{
-        const data = await ProductModel.getAllProduct(limit,cursor ,direction);
+    getAllProduct = async (limit,cursor ,direction, page)=>{
+        const data = await ProductModel.getAllProduct(limit,cursor ,direction, page);
         return data ;
     }
     getProduct = async (id)=>{

@@ -4,7 +4,7 @@ import { createSlice } from '@reduxjs/toolkit';
 const cartRedux = createSlice(
     {
         name:"cart",
-        initialState:{ showCart: false ,countItem:0 ,cartItems :[]},
+        initialState:{ showCart: false ,countItem:0 ,cartItems :[]  , cartLocal:JSON.parse(localStorage.getItem("pendingCart")) || []},
         reducers:{
             openCart :(state ,action)=>{
                 state.showCart = action.payload
@@ -17,11 +17,14 @@ const cartRedux = createSlice(
             },
             setCartItem : (state , action)=>{
                 state.cartItems = action.payload
+            },
+            setCartLocal : (state , action)=>{
+                state.cartLocal = action.payload.cartLocal
             }
         }
 
     }
 ) 
 
-export const {openCart , closeCart ,indexCountItem ,setCartItem } = cartRedux.actions
+export const {openCart , closeCart ,indexCountItem ,setCartItem ,setCartLocal } = cartRedux.actions
 export default cartRedux.reducer

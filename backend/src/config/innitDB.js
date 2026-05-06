@@ -122,7 +122,33 @@ const initDB = async () => {
         CONSTRAINT FK_Payment_Order FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE
       )
     `);
-   
+
+    await db.query(`
+  CREATE TABLE IF NOT EXISTS user_addresses (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    home_number VARCHAR(255) NOT NULL, 
+    district VARCHAR(255) NOT NULL,
+    province VARCHAR(255) NOT NULL,
+    is_default BOOLEAN  DEFAULT FALSE,
+    
+    CONSTRAINT FK_UserAddress_User 
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+  )
+`);
+await db.query(`
+  CREATE TABLE IF NOT EXISTS order_addresses (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    order_id INT NOT NULL,
+    home_number VARCHAR(255) NOT NULL, 
+    district VARCHAR(255) NOT NULL,
+    province VARCHAR(255) NOT NULL,
+
+    CONSTRAINT FK_OrderAddress_Order 
+    FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE
+  )
+`);
+
     console.log("Database initialized successfully!");
   } catch (err) {
     console.error("Init DB error:", err.message);

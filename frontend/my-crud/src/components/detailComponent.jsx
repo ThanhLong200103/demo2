@@ -17,10 +17,10 @@ import { IoCloseOutline } from "react-icons/io5";
 import { useDispatch, useSelector } from "react-redux";
 import { closeDetail } from "../redux/features/detail";
 import CartService from "../services/cart";
-import { setCartItem } from "../redux/features/cart";
-import { useNavigate } from "react-router-dom";
+import { indexCountItem, setCartItem, setCartLocal } from "../redux/features/cart";
+import { json, useNavigate } from "react-router-dom";
 export default function DetailComponent({ showDetail, productId }) {
-  const [products, setProducts] = useState([]);
+  // const [products, setProducts] = useState([]);
   const [productItem, setProductItem] = useState({});
   const [productAttributes, setProductAttributes] = useState([]);
   const [quantityHandle, setQuantityHanlde] = useState(1);
@@ -31,8 +31,10 @@ export default function DetailComponent({ showDetail, productId }) {
   const [attributesOne, setAttributesId] = useState(null);
   const [mainImg, setMainImg] = useState(null);
   const d = useDispatch();
+const localCartItem = JSON.parse(localStorage.getItem("pendingCart")) || [];
+
   const { isAuthenticated } = useSelector((state) => state.auth);
-  // console.log(isAuthenticated)
+//  console.log("authenticated:", isAuthenticated);
   const n = useNavigate();
   const thumbnails = [
     productItem.img,
@@ -46,15 +48,17 @@ export default function DetailComponent({ showDetail, productId }) {
     const getProduct = async () => {
       if (!productId) return;
       try {
-        const res = await RepositoryFactory.get("product").getAll();
+        // const res = await RepositoryFactory.get("product").getAll();
         const id = productId;
         const product = await RepositoryFactory.get("product").getById(id);
+        // console.log("Product :", product);
         const attributes = await RepositoryFactory.get("product").getAttributes(
           {
             productId: id,
           },
-        ); q
-        setProducts(res);
+        );
+        // console.log(attributes);
+        // setProducts(res);
         setProductItem(product[0]);
         setProductAttributes(attributes);
         setMainImg(product[0].img);
@@ -94,6 +98,7 @@ export default function DetailComponent({ showDetail, productId }) {
       console.log("data Attribute One :", data);
     };
     getOneAtribute();
+    setQuantityHanlde(1);
   }, [selectedSize, selectedColor, productId]);
 
   const handleReduce = () => {
@@ -104,7 +109,7 @@ export default function DetailComponent({ showDetail, productId }) {
     }
   };
   const hanldeIncrease = () => {
-    if (quantityHandle >= productItem.quantity) {
+    if (quantityHandle >= attributesOne.quantity) {
       toast.warning("Số lượng còn lại không đủ");
     } else {
       setQuantityHanlde((item) => item + 1);
@@ -113,6 +118,7 @@ export default function DetailComponent({ showDetail, productId }) {
 
   const handleCreateCart = async () => {
     try {
+      
       if (isAuthenticated) {
         const response = await axiosClient.get("/cart");
 
@@ -130,14 +136,62 @@ export default function DetailComponent({ showDetail, productId }) {
         // d(indexCountItem(countItem+1))
         d(closeDetail({ showDetail: false, productId: null }));
       } else {
-        n("/account", {
-          state: { showDetail, productId },
-        });
+  
+  if (attributesOne.quantity > 0) {
+    const rawData = localStorage.getItem("pendingCart");
+    let cart = [];
+    
+    try {
+      const parsed = JSON.parse(rawData);
+      cart = Array.isArray(parsed) ? parsed : [];
+    } catch (e) {
+      cart = [];
+    }
 
-          d(closeDetail({ showDetail: false, productId: null }));
-          toast.warning("Vui lòng đăng nhập trước !!!")
-       
+    const newItem = {
+          productId: productItem.id,
+          quantity: quantityHandle,
+          attributesId: attributesOne.id,
+         img: productItem.img,
+          name: productItem.name,
+          price: productItem.price ,
+          size: selectedSize,
+          color: selectedColor
+        };
+
+    const existingItemIndex = cart.findIndex(
+      (item) => item.productId === newItem.productId && item.attributesId === newItem.attributesId
+    );
+
+    if (existingItemIndex > -1) {
+      const totalNewQuantity = cart[existingItemIndex].quantity + newItem.quantity;
+      
+      
+      if (totalNewQuantity > attributesOne.quantity) {
+        toast.warning(`Bạn đã có ${cart[existingItemIndex].quantity} sản phẩm trong giỏ. Kho chỉ còn ${attributesOne.quantity}`);
+        return; 
       }
+      
+      cart[existingItemIndex].quantity = totalNewQuantity;
+    } else {
+      cart.push(newItem);
+    }
+
+    localStorage.setItem("pendingCart", JSON.stringify(cart));
+    const updatedCart = JSON.parse(localStorage.getItem("pendingCart")) || [];
+        d(setCartLocal({ cartLocal: updatedCart }));
+    d(setCartItem(updatedCart));
+    d(indexCountItem(updatedCart.length));
+    console.log("Cart data from localStorage:", JSON.parse(localStorage.getItem("pendingCart")));
+    toast.success("Đã thêm vào giỏ hàng tạm");
+    
+    
+    d(closeDetail({ showDetail: false, productId: null }));
+    
+  } else {
+    toast.warning("Sản phẩm hiện tại đã hết hàng");
+  }
+}
     } catch (err) {
       toast.error("Lỗi khi thêm sản phẩm vào giỏ hàng");
       console.log(err);
@@ -276,7 +330,7 @@ export default function DetailComponent({ showDetail, productId }) {
                                 id={`size-${size}`}
                                 name="size"
                                 value={size}
-                                checked={setSelectedSize === size}
+                                checked={selectedSize === size}
                                 onChange={() => setSelectedSize(size)}
                                 className="d-none"
                               />

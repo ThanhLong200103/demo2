@@ -49,7 +49,11 @@ export default function OrderPage() {
       navigate("/")
     } catch (error) {
       console.log(error);
+      if(error.status === 422){
+        toast.error(error.response.data.message);
+      } else{
       toast.error("Đặt hàng thất bại");
+      }
     }
   };
   const handleChange = (e) => {
@@ -73,7 +77,12 @@ export default function OrderPage() {
     navigate("/payment", { state: { orderId: orderId ,totalPrice: totalPrice } });
     } catch (error) {
       console.log(error);
-      toast.error("Thanh toán thất bại");
+      if(error.status === 422){
+        toast.error(error.response.data.message);
+      } else{
+      toast.error("Thanh toán thất bại số lượng hàng trong kho không đủ"); 
+      }
+      
     }
   }
   return (

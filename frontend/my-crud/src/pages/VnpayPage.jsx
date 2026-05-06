@@ -5,6 +5,7 @@ import { Button } from "react-bootstrap";
 import { toast } from "react-toastify";
 import { RepositoryFactory } from "../services/FactoryService";
 
+
 export default function VnpayPage(params) {
     const location = useLocation();
     console.log(location.state)

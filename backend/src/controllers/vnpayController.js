@@ -17,7 +17,7 @@ class VnpayController {
 
   createPaymensVnpay = async (req, res) => {
     try {
-               const { cartItemIds ,totalPrice ,productId ,quantityProduct ,priceProduct  ,attributeId} = req.body ;
+        const { cartItemIds ,totalPrice ,productId ,quantityProduct ,priceProduct  ,attributeId} = req.body ;
 
       const userId = req.user.id;
         const data = await runInTransaction(async (conn) => {

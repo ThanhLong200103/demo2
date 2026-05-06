@@ -40,14 +40,10 @@ export default function ProductComponent({ products ,cursor }) {
   const handleClickProduct = (id)=>{
     n(`products/${id}`)
   }
-  useEffect(
-    ()=>{
-      console.log(cursor)
-    }
-  )
+ 
   return (
     <>
-      <Container fluid style={{ cursor: "pointer" }}>
+      <Container fluid style={{ cursor: "pointer" ,minHeight:"110vh"}}>
         <Row className="d-flex justify-content-center  mb-4  mt-4 ">
           {products.map((product) => (
             <Col

@@ -3,6 +3,7 @@ const AppError = require("../utils/AppError");
 const db = require("../config/db");
 const ProductModel = require("../models/ProductModel");
 const Cart = require("../models/cart");
+const CartItem = require("../models/CartItem");
 class CartItemService {
   getAllCart = async (id) => {
     const cart_id = id;
@@ -20,20 +21,26 @@ class CartItemService {
         conn,
       );
       console.log("CHECK PRODUCT:", checkProduct);
-        const up = await cartItem.updownQuanTiTyProduct(data, conn);
-      console.log("UP:", up);
+      const product = await CartItem.getProductForUpdate(attributesId, conn);
+      const quantityProduct = product.quantity - data.quantity;
+      console.log("QUANTITY PRODUCT:", quantityProduct);
+       if (quantityProduct < 0) {
+            throw new AppError("Out of stock",422);
+       }
+        // const up = await cartItem.updownQuanTiTyProduct(data, conn); // xóa , check số lượng theo kiểu khác
+      // console.log("UP:", up);
       if (checkProduct.length > 0) {
         const quantity = checkProduct[0].quantity + data.quantity;
         const id = checkProduct[0].id;
         const edit = await cartItem.editCartItem({ quantity, id }, conn);
         console.log("EDIT:", edit);
 
-        return [edit, up];
+        return [edit];
       } else {
         const create = await cartItem.createCartItem(data, conn);
         console.log("CREATE:", create);
     
-        return [create, up];
+        return [create];
       }
   };
   deleteCartItem = async (id, conn) => {
@@ -41,13 +48,13 @@ class CartItemService {
       const idProduct = data.product_id;
       const quantity = data.quantity;
       const 	attributesId = data.attributes_id 
-      const updateQuantityProduct = await ProductModel.editQuantityProductAttributes(
-        attributesId,
-        quantity,
-        conn,
-      );
+      // const updateQuantityProduct = await ProductModel.editQuantityProductAttributes(
+      //   attributesId,
+      //   quantity,
+      //   conn,
+      // );
       const dele = await cartItem.deleteCartItem(id, conn);
-      return [updateQuantityProduct, dele];
+      return [dele];
   };
   updateCartItem = async (data, conn) => {
       const id = data.id;
@@ -66,14 +73,14 @@ class CartItemService {
         throw new Error("Số lượng sản phẩm không đủ" ,422);
       
       }
-      const updateQuantityProduct = await ProductModel.editQuantityProductAttributes(
-        attributesId,
-        quantity,
-        conn,
-      );
+      // const updateQuantityProduct = await ProductModel.editQuantityProductAttributes(
+      //   attributesId,
+      //   quantity,
+      //   conn,
+      // );
       
-      console.log([upateCart, updateQuantityProduct]);
-      return [upateCart, updateQuantityProduct];
+      console.log([upateCart]);
+      return [upateCart];
   };
   checkDelete = async (id) => {
     const data = await cartItem.getcart(id);

@@ -5,6 +5,7 @@ import { useDispatch } from "react-redux";
 import { loginSuccess } from "../redux/features/authAccess";
 import { toast } from "react-toastify";
 import { RepositoryFactory } from "../services/FactoryService";
+import axiosClient from "../api/axios";
 import "../styles/inputAccount.css"
 export default function LoginPage({setAccount , showDetail,productId }) {
   const [email, setEmail] = useState("");
@@ -12,6 +13,33 @@ export default function LoginPage({setAccount , showDetail,productId }) {
   const [showForgotPassword ,setShowForgotPassword] = useState(false)
   const dispatch = useDispatch();
   const navigation = useNavigate();
+
+  
+  const mergePendingCart = async (accessToken) => {
+    try {
+      if(accessToken){
+        if(localStorage.getItem("pendingCart")){
+          const pendingCart = JSON.parse(localStorage.getItem("pendingCart"));
+          const reponse = await RepositoryFactory.get("cart").getCart();
+          for (const item of pendingCart) {
+            console.log("item: ", item , reponse.id);
+            const cartItem = await RepositoryFactory.get("cart").createCartItem(
+              {
+                productId: item.productId,
+                quantity: item.quantity,
+                attributesId: item.attributesId,
+                cartId: reponse.id
+              }
+            )
+            console.log(cartItem)
+          }
+          localStorage.removeItem("pendingCart");
+        }
+      }
+    } catch (err) {
+      console.error("Lỗi khi merge pendingCart:", err);
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -24,6 +52,10 @@ export default function LoginPage({setAccount , showDetail,productId }) {
       console.log(data);
       localStorage.setItem("accessToken", data.accessToken);
       dispatch(loginSuccess({ token: data.accessToken }));
+
+      
+      await mergePendingCart(data.accessToken);
+
       navigation("/");
     } catch (error) {
       console.log(error);

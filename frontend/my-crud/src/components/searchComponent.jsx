@@ -15,10 +15,12 @@ import { closeSearch } from "../redux/features/search";
 import { CiSearch } from "react-icons/ci";
 import { useEffect, useState } from "react";
 import { RepositoryFactory } from "../services/FactoryService";
+import { useTranslation } from 'react-i18next';
 export default function SearchComponent({ OpenS }) {
   const d = useDispatch();
   const[name ,setName] = useState(null)
   const [product , setProduct] = useState([])
+  const { t } = useTranslation("search");
    useEffect(
           ()=>{
               const getProduct = async ()=>{
@@ -54,7 +56,7 @@ export default function SearchComponent({ OpenS }) {
               <FormGroup className="position-relative">
                 <FormControl
                   type="text"
-                  placeholder="Tìm kiếm sản phẩm ..."
+                  placeholder={t("search.placeholder")}
                   name="search"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
@@ -96,7 +98,7 @@ export default function SearchComponent({ OpenS }) {
               }
               </ul>
               </Col>: <Col>
-              <p>Không tìm thấy sản phẩm </p>
+              <p>{t("search.No results")}</p>
               </Col>
 
             }

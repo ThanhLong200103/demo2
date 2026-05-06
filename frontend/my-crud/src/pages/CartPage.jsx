@@ -6,11 +6,14 @@ import { Link } from "react-router-dom";
 // import OrderPage from "./orderPage";
 import { toast } from "react-toastify";
 import { RepositoryFactory } from "../services/FactoryService";
+import { useSelector } from "react-redux";
 
 const CustomCartItem = () => {
   const [cart, setCart] = useState([]);
   const [selectedIds, setSelectedIds] = useState([]);
   const CartService = RepositoryFactory.get("cart");
+  const { isAuthenticated } = useSelector((state) => state.auth);
+
 const totalPrice = useMemo(() => {
   return cart
     .filter((item) => selectedIds.includes(item.id)) 
@@ -58,11 +61,18 @@ const totalPrice = useMemo(() => {
   useEffect(() => {
     const cartRun = async () => {
       try { 
-        const response = await CartService.getCart();
+      if (isAuthenticated) {
+          const response = await CartService.getCart();
         console.log("Cart data:", response);
         const cartItemData =  await CartService.getCartItem(response.id);
-        console.log(cartItemData);
+        // console.log("cart:",cartItemData);
         setCart(cartItemData);
+      }
+      // else{
+      //   const rawData = localStorage.getItem("pendingCart");
+      //   setCart(rawData ? JSON.parse(rawData) : []);
+      //   console.log("Cart data from localStorage:", rawData );
+      // }
       } catch (error) { 
         console.error("Lỗi API Cart:", error); 
         toast.error("Lỗi khi tải giỏ hàng");

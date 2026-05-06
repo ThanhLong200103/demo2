@@ -3,10 +3,11 @@ const ProductService = require("../services/productService");
 const CacthAsync = require("../utils/cachAsync");
 class ProductController {
   getAllProduct = CacthAsync(async (req, res) => {
-    const limit = Math.min(21, Number(req.query.limit) || 10);
+    const limit = Math.min(21, Number(req.query.limit) || 12);
   const cursor = req.query.cursor;
-  const direction = req.query.direction
-    const data = await ProductService.getAllProduct(limit,cursor , direction);
+  const direction = req.query.direction;
+  const page = Number(req.query.page) || null;
+    const data = await ProductService.getAllProduct(limit,cursor , direction, page);
     res.json(data);
   });
   getProduct = CacthAsync(async (req, res) => {

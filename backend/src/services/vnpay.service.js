@@ -1,5 +1,7 @@
 const moment = require("moment");
 const qs = require("qs");
+const AppError = require("../utils/AppError");
+
 const {
   sortObject,
   generateSignature,
@@ -12,6 +14,7 @@ const CartItemModel = require("../models/CartItem");
 const orderItemModel = require("../models/orderItemModel");
 const paymentModel = require("../models/paymentModel");
 const ProductModel = require("../models/ProductModel");
+const CartItem = require("../models/CartItem");
 
 class VnPayService {
   createPaymentUrl = (order, ipAddr) => {
@@ -65,7 +68,7 @@ class VnPayService {
 
   vnpayIND = async (queryFromVnpay, conn) => {
     const vnp_Params = { ...queryFromVnpay };
-
+    console.log("VNPAY IPN Params:", vnp_Params);
     // 2. Lấy SecureHash ra
     const secureHash = vnp_Params["vnp_SecureHash"];
 
@@ -123,6 +126,16 @@ class VnPayService {
         orderId,
         conn,
       );
+      console.log("Order Items:", orderItems);
+      if(orderItems && orderItems.length > 0){
+        for(const item of orderItems){
+           const up = await CartItem.updownQuanTiTyProduct(
+          { attributesId: item.attribute_id, quantity: item.quantity },
+          conn,
+        );
+        }
+        
+      }
       await orderItemModel.updateStatusOrderItem(
         orderId,
         statusOrderItem,
@@ -209,42 +222,65 @@ class VnPayService {
       data.cartItemIds,
       conn,
     );
-     if(cartItem && cartItem.length > 0){
-            for (const item of cartItem) {
-            await orderItemModel.createOrderItem(
-              {
-                order_id: orderId,
-                product_id: item.product_id,
-                attribute_id:item.attributes_id,
-                quantity: item.quantity,
-                price: item.price,
-    
-              },
-              conn,
-            );
-          }
-          const updateCartItem = await CartItemModel.UpdateByIds(
-            data.cartItemIds,
-            conn,
-          );
-        }
-        else{
-          await orderItemModel.createOrderItem(
-            {
-               order_id: orderId,
-                product_id: data.productId,
-                attribute_id:data.attributeId,
-                quantity: data.quantityProduct,
-                price: data.priceProduct,
-            },conn,
-          );
-    
-           const quantityAttribute = await ProductModel.getProducUpdateCartAttributes(data.attributeId , conn);
-           if(quantityAttribute){
-            const quantity = -data.quantityProduct
-            await ProductModel.editQuantityProductAttributes(data.attributeId ,quantity , conn )
-           }
-        }
+    if (cartItem && cartItem.length > 0) {
+      for (const item of cartItem) {
+        await orderItemModel.createOrderItem(
+          {
+            order_id: orderId,
+            product_id: item.product_id,
+            attribute_id: item.attributes_id,
+            quantity: item.quantity,
+            price: item.price,
+          },
+          conn,
+        );
+        const product = await CartItem.getProductForUpdate(item.attributes_id, conn);
+      const quantityProduct = product.quantity - item.quantity;
+      console.log("QUANTITY PRODUCT:", quantityProduct);
+       if (quantityProduct < 0) {
+            throw new AppError("Out of stock",422);
+       }
+       
+      }
+      const updateCartItem = await CartItemModel.UpdateByIds(
+        data.cartItemIds,
+        conn,
+      );
+    } else {
+      await orderItemModel.createOrderItem(
+        {
+          order_id: orderId,
+          product_id: data.productId,
+          attribute_id: data.attributeId,
+          quantity: data.quantityProduct,
+          price: data.priceProduct,
+        },
+        conn,
+      );
+      const product = await CartItem.getProductForUpdate(data.attributeId, conn);
+      const quantityProduct = product.quantity - data.quantityProduct;
+      console.log("QUANTITY PRODUCT:", quantityProduct);
+       if (quantityProduct < 0) {
+            throw new AppError("Out of stock",422);
+       }
+
+      // const quantityAttribute =
+      //   await ProductModel.getProducUpdateCartAttributes(
+      //     data.attributeId,
+      //     conn,
+      //   );
+      // if (quantityAttribute) {
+      //   const quantity = -data.quantityProduct;
+      //    if(quantityAttribute.quantity + quantity < 0){
+      //      throw new Error("Số lượng sản phẩm không đủ" ,422);
+      //   }
+      //   await ProductModel.editQuantityProductAttributes(
+      //     data.attributeId,
+      //     quantity,
+      //     conn,
+      //   );
+      // }
+    }
     const payment = await paymentModel.createPayment(
       { order_id: orderId, amount: total_price, method: "VNPay" },
       conn,
