@@ -8,7 +8,9 @@ import { Link, useNavigate } from "react-router-dom";
 import "../styles/Login.css";
 import "../styles/form.css";
 import { RiShutDownLine } from "react-icons/ri";
+import { useTranslation } from 'react-i18next';
 export default function LoginComponent({setShowLogin }) {
+  const {t} = useTranslation("auth");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showForgotPassword ,setShowForgotPassword] = useState(false)
@@ -106,7 +108,7 @@ export default function LoginComponent({setShowLogin }) {
            <RiShutDownLine />
           </p  >
          </div>
-          <p className="border-top pt-3" onClick={()=>{n("/history")}} >Giao dịch</p>
+          <p className="border-top pt-3" onClick={()=>{n("/history")}} >{t("auth.loginComponent.history")}</p>
           </div>
           
           :
@@ -114,8 +116,8 @@ export default function LoginComponent({setShowLogin }) {
         <div className="login-modal  text-center rounded shadow ">
           <div>
             <div>
-            <p className="mb-2 tileLogin">Khôi phục mật khẩu</p>
-            <p style={{ fontSize: "14px" }}>Nhập email của bạn</p>
+            <p className="mb-2 tileLogin">{t("auth.loginComponent.TitleForgotPassword")}</p>
+            <p style={{ fontSize: "14px" }}>{t("auth.loginComponent.descriptionForgotPassword")}</p>
           </div>
           <div className="border-top">
             <Form>
@@ -157,11 +159,11 @@ export default function LoginComponent({setShowLogin }) {
                 style={{background:"rgb(245,245,245)",color:"#d30000" ,cursor:"pointer"}}
                 onClick={handleSubmit}
               >
-                Khôi phục mật khẩu
+                {t("auth.loginComponent.forgotPassword")}
               </Button>
             </Form>
              <div className="mt-3 " style={{fontSize:"12px"}}>
-               <p className="textFromLogin m-0">Bạn đã nhớ mật khẩu?  <b onClick={()=>{setShowForgotPassword(false)}} className="text-decoration-none text-danger fw-light">Trở về đăng nhập</b></p>
+               <p className="textFromLogin m-0">{t("auth.loginComponent.alreadyRememberPassword")} <b onClick={()=>{setShowForgotPassword(false)}} className="text-decoration-none text-danger fw-light">{t("auth.loginComponent.backToLogin")}</b></p>
             </div>
           </div>
           </div>
@@ -170,8 +172,8 @@ export default function LoginComponent({setShowLogin }) {
         <div className="login-modal   text-center rounded shadow ">
         <div>
           <div>
-            <p className="mb-2 tileLogin">ĐĂNG NHẬP TÀI KHOẢN</p>
-            <p style={{ fontSize: "14px" }}>Nhập email và mật khẩu của bạn</p>
+            <p className="mb-2 tileLogin">{t("auth.loginComponent.loginAccount")}</p>
+            <p style={{ fontSize: "14px" }}>{t("auth.loginComponent.enterCredentials")}</p>
           </div>
           <div className="border-top">
             <Form>
@@ -201,7 +203,7 @@ export default function LoginComponent({setShowLogin }) {
                   onChange={(e) => setPassword(e.target.value)}
                   style={{ borderRadius: 0 }}
                 />
-                <Form.Label className="form-label">Mật khẩu</Form.Label>
+                <Form.Label className="form-label">{t("auth.password")}</Form.Label>
               </Form.Group>
               <div className="textFromLogin">
                 This site is protected by reCAPTCHA and the Google
@@ -227,12 +229,12 @@ export default function LoginComponent({setShowLogin }) {
                 style={{background:"rgb(245,245,245)",color:"#d30000" ,cursor:"pointer"}}
                 onClick={handleSubmit}
               >
-                Đăng nhập
+                {t("auth.login")}
               </Button>
             </Form>
             <div className="mt-3 " style={{fontSize:"12px"}}>
-              <p className="textFromLogin m-0">Khách hàng mới? <b onClick={()=>{onclickRegister()}} className="text-decoration-none text-danger fw-light">Tạo tài khoản</b></p>
-               <p className="textFromLogin m-0">Quên mật khẩu?  <b onClick={()=>{setShowForgotPassword(true)}} className="text-decoration-none text-danger fw-light">Quên mật khẩu?</b></p>
+              <p className="textFromLogin m-0">{t("auth.loginComponent.newCustomer")} <b onClick={()=>{onclickRegister()}} className="text-decoration-none text-danger fw-light">{t("auth.register")}</b></p>
+               <p className="textFromLogin m-0">{t("auth.loginComponent.forgotPassword")}  <b onClick={()=>{setShowForgotPassword(true)}} className="text-decoration-none text-danger fw-light">{t("auth.loginComponent.forgotPassword")}</b></p>
             </div>
           </div>
         </div>

@@ -14,9 +14,12 @@ class UserController {
   login = CacthAsync(
     async (req, res, next) => {
       const { email, password } = req.body;
+        console.log("language:", req.language);
+
       const checkPass = await UserService.checkProfile(email);
       if (!checkPass) {
-        return next(new AppError("Tài khoản không tồn tại", 422));
+        return next(new AppError(req.t("auth:auth.The account does not exist"), 422));
+        
       }
 
       const validPass = await validatePass(checkPass.password, password);

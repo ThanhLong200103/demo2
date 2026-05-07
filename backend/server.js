@@ -9,23 +9,33 @@ const initUserRoutes = require("./src/routers/routerUser.js");
 const initProductRoutes = require("./src/routers/routerProduct.js");
 const initOrderRoutes = require("./src/routers/routerOrder.js");
 const app = express();
-const corsReact = require ("./src/config/cors")
+const corsReact = require("./src/config/cors")
 const cookieParser = require('cookie-parser');
 const initRouterError = require('./src/routers/routerErorr.js');
 const initCategoryRoutes = require('./src/routers/category.js');
+
+const { initI18n } = require("./src/i18n/i18n.js");
+const middleware = require("i18next-http-middleware");
+
 app.use(cors(corsReact));
-app.use(express.json()); 
+app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(cookieParser())
-initCategoryRoutes(app)
-initPaymentRoutes(app);
-initUserRoutes(app);
-initProductRoutes(app);
-initOrderRoutes(app);
-initRouterError(app);
-(async ()=>{
-    await initDB()
+app.use(cookieParser());
+
+(async () => {
+    const i18next = await initI18n();
+    // console.log("Dữ liệu i18next nhận được là:", i18next);
+    app.use(middleware.handle(i18next));
+
+    initCategoryRoutes(app);
+    initPaymentRoutes(app);
+    initUserRoutes(app);
+    initProductRoutes(app);
+    initOrderRoutes(app);
+    initRouterError(app);
+
+    await initDB();
     app.listen(port, () => {
-    console.log(`Server running on port ${port}`);
-});
+        console.log(`Server running on port ${port}`);
+    });
 })();

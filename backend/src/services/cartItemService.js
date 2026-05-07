@@ -25,7 +25,7 @@ class CartItemService {
       const quantityProduct = product.quantity - data.quantity;
       console.log("QUANTITY PRODUCT:", quantityProduct);
        if (quantityProduct < 0) {
-            throw new AppError("Out of stock",422);
+            throw new AppError(i18next.t("Notification:notification.Insufficient quantity of products"), 422);
        }
         // const up = await cartItem.updownQuanTiTyProduct(data, conn); // xóa , check số lượng theo kiểu khác
       // console.log("UP:", up);
@@ -70,7 +70,7 @@ class CartItemService {
       
       if(quantity<0 && getProduct.quantity < 1){
         
-        throw new Error("Số lượng sản phẩm không đủ" ,422);
+        throw new AppError(i18next.t("Notification:notification.Insufficient quantity of products"), 422);
       
       }
       // const updateQuantityProduct = await ProductModel.editQuantityProductAttributes(

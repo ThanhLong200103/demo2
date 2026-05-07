@@ -1,0 +1,35 @@
+{
+  "footer": {
+    "card": {
+      "title": "Men's Fashion TORANO",
+      "description": " The leading men's fashion system in Vietnam, aiming for a masculine, elegant, and youthful style.",
+      "Method": "Payment Method"
+    },
+    "contact": {
+      "title": "Contact Information",
+      "local": "Address: ",
+      "address": "  Floor 8, Building 311-313 Truong Chinh Street, Phuong Liet Ward, Hanoi City, Vietnam",
+      "phone": "Phone: ",
+      "number1": "0964942121",
+      "number2": "0904636356",
+      "email": "Email: ",
+      "mail": "cskh@torano.vn",
+      "Method": "Shipping Method"
+    },
+    "link": {
+      "search": "Search",
+      "about": "About",
+      "return": "Return Policy",
+      "privacy": "Privacy Policy",
+      "careers": "Careers",
+      "contact": "Contact"
+    },
+    "register": {
+      "title": "Subscribe to Newsletters",
+      "description": "Stay updated with new products, special offers, and other discount information.",
+      "placeholder": "Enter your email address",
+      "button": "Subscribe"
+    },
+    "text": "Copyright © 2026 Torano. Powered by Haravan"
+  }
+}

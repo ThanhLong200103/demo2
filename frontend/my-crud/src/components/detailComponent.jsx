@@ -31,6 +31,8 @@ export default function DetailComponent({ showDetail, productId }) {
   const [attributesOne, setAttributesId] = useState(null);
   const [mainImg, setMainImg] = useState(null);
   const d = useDispatch();
+  const i18nextlng = localStorage.getItem("i18nextLng")
+
 const localCartItem = JSON.parse(localStorage.getItem("pendingCart")) || [];
 
   const { isAuthenticated } = useSelector((state) => state.auth);
@@ -82,7 +84,7 @@ const localCartItem = JSON.parse(localStorage.getItem("pendingCart")) || [];
     };
 
     getProduct();
-  }, [productId]);
+  }, [productId ]);
 
   useEffect(() => {
     // console.log("tt",selectedSize,selectedColor)

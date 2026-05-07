@@ -5,7 +5,9 @@ class CategoryController
 {
     getCategory = CacthAsync(
         async (req,res)=>{
-        const data = await CategoryService.getCategory()
+        const locale = req.language || "vi";
+        console.log("LOCALE:", req.language);
+        const data = await CategoryService.getCategory(locale)
         res.json(data)
         }
     ) 

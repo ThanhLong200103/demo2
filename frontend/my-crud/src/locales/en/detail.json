@@ -1,0 +1,25 @@
+{
+    "detail":{
+        "productCode":"Product code",
+        "status":"Status",
+        "brand":"Brand",
+        "price":"Price",
+        "color":"Color",
+        "size":"Size",
+        "sizeGuide":"Size Guide",
+        "addToCart":"ADD TO CART",
+        "buyNow":"BUY NOW",
+        "quantity":"Quantity",
+        "offer":"CLICK HERE TO GET THE OFFER",
+        "share":"Share",
+        "text1":"Free shipping for orders over 500K",
+        "text2":"100% authentic products",
+        "text3":"24/7 SUPPORT : 0964942121",
+        "text4":"EASY PRODUCT EXCHANGE (Within 7 days with original tags)",
+        "text5":"Check and pay upon delivery COD",
+        "text6":"Support warranty, product exchange at all TORANO stores",
+        "product":"RELATED PRODUCTS",
+         "inStock":"In Stock",
+        "outOfStock":"Out of Stock"
+    }
+}

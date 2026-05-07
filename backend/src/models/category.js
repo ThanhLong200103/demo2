@@ -1,8 +1,13 @@
 const db = require("../config/db");
 class CategoryModel {
-    getCategory = async ()=>{
+    getCategory = async (locale)=>{
+        if(locale === "en"){
+             const [row] = await db.query("SELECT c.id, ct.name, c.parent_id FROM category c JOIN category_translations ct ON c.id = ct.category_id WHERE ct.language_code = 'en' AND 1");
+        return row  
+        }else {
         const [row] = await db.query("SELECT `id`, `name`, `parent_id` FROM `category` WHERE 1  ");
         return row  
+        }
     }
     getCategoryProduct = async (idCategory)=>{
         const [row] = await db.query("SELECT `id`, `name`, `parent_id` FROM category c WHERE c.id = ?   " ,[idCategory])

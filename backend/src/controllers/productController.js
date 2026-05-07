@@ -7,13 +7,17 @@ class ProductController {
   const cursor = req.query.cursor;
   const direction = req.query.direction;
   const page = Number(req.query.page) || null;
-    const data = await ProductService.getAllProduct(limit,cursor , direction, page);
+  const locale = req.language || "vi";
+  console.log("LOCALE:", req.language);
+    const data = await ProductService.getAllProduct(limit,cursor , direction, page, locale);
     res.json(data);
   });
   getProduct = CacthAsync(async (req, res) => {
     const { id } = req.params;
+    const locale = req.language || "vi";
     // console.log(id)
-    const data = await ProductService.getProduct(id);
+    // console.log("LOCALE:", req.language);
+    const data = await ProductService.getProduct(id, locale);
     res.json(data);
   });
   deleteProduct = CacthAsync(async (req, res) => {

@@ -7,13 +7,14 @@ import { toast } from "react-toastify";
 import { RepositoryFactory } from "../services/FactoryService";
 import axiosClient from "../api/axios";
 import "../styles/inputAccount.css"
+import { useTranslation } from 'react-i18next';
 export default function LoginPage({setAccount , showDetail,productId }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showForgotPassword ,setShowForgotPassword] = useState(false)
   const dispatch = useDispatch();
   const navigation = useNavigate();
-
+  const { t } = useTranslation("auth");
   
   const mergePendingCart = async (accessToken) => {
     try {
@@ -105,7 +106,7 @@ export default function LoginPage({setAccount , showDetail,productId }) {
           <Form.Group>
              <Form.Control
                 type="text"
-                placeholder="Vui lòng nhập email của bạn"
+                placeholder={t("auth.emailPlaceholder")}
                 value={email}
                 className="inputAccount"
                 onChange={(e) => setEmail(e.target.value)}
@@ -121,11 +122,11 @@ export default function LoginPage({setAccount , showDetail,productId }) {
             </div>
              <div className="d-flex gap-4  mt-4 flex-wrap " style={{maxWidth :"990px"}}>
              <Button className="h-75 px-4 text-white border-0"  type="submit" style={{cursor:"pointer" , background:"#d2d2d2"}}>
-              GỬI EMAIL
+              {t("auth.sendEmail")}
             </Button>
              <div>
-              <p className="m-0">Quay lại  </p>
-              <b onClick={()=>{setShowForgotPassword(false)}} className="text-primary">đăng nhập </b>
+              <p className="m-0">{t("auth.backToLogin")}  </p>
+              <b onClick={()=>{setShowForgotPassword(false)}} className="text-primary">{t("auth.login")}</b>
               
              
           
@@ -141,7 +142,7 @@ export default function LoginPage({setAccount , showDetail,productId }) {
             <Form.Group className="mb-3" controlId="formName">
               <Form.Control
                 type="text"
-                placeholder="Vui lòng nhập email của bạn"
+                placeholder={t("auth.emailPlaceholder")}
                 value={email}
                 className="inputAccount"
                 onChange={(e) => setEmail(e.target.value)}
@@ -152,7 +153,7 @@ export default function LoginPage({setAccount , showDetail,productId }) {
              
               <Form.Control
                 type="password"
-                placeholder="Vui lòng nhập mật khẩu"
+                placeholder={t("auth.passwordPlaceholder")}
                 value={password}
                  className="inputAccount"
                 onChange={(e) => setPassword(e.target.value)}
@@ -169,15 +170,15 @@ export default function LoginPage({setAccount , showDetail,productId }) {
 
            <div className="d-flex gap-4  mt-4 flex-wrap " style={{maxWidth :"990px"}}>
              <Button className="h-75 px-4 text-danger border-0"  type="submit" style={{cursor:"pointer" , background:"#d2d2d2"}}>
-              Đăng nhập
+              {t("auth.login")}
             </Button>
              <div>
-              <p className="m-0">Bạn chưa có tài khoản?
-              <b onClick={()=>{setAccount(true)}} className="text-primary">Đăng ký tài khoản</b>
+              <p className="m-0">{t("auth.noAccount")}
+              <b onClick={()=>{setAccount(true)}} className="text-primary">{t("auth.register")}</b>
               </p>
               <p>
-                Bạn quên mật khẩu?
-                 <b onClick={()=>{setShowForgotPassword(true)}} className="text-primary">Quên mật khẩu?</b>
+                {t("auth.forgotPasswordYou")}
+                 <b onClick={()=>{setShowForgotPassword(true)}} className="text-primary">{t("auth.forgotPassword")}</b>
               </p>
           
              </div>

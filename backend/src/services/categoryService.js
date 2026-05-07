@@ -1,7 +1,7 @@
 const CategoryModel = require("../models/category")
 class CategoryService {
-    getCategory = async ()=>{
-        const data = await CategoryModel.getCategory()
+    getCategory = async (locale)=>{
+        const data = await CategoryModel.getCategory(locale)
         return data
     }
     getCategoryProduct = async (idCategory)=>{

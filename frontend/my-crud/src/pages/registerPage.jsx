@@ -5,6 +5,7 @@ import { toast } from "react-toastify";
 import { Link, useNavigate } from "react-router-dom";
 import { RepositoryFactory } from "../services/FactoryService";
 import "../styles/inputAccount.css";
+import { useTranslation } from 'react-i18next';
 export default function RegisterPage({ setAccount }) {
   const [data, setData] = useState({
     name: "",
@@ -13,6 +14,7 @@ export default function RegisterPage({ setAccount }) {
     phone: "",
   });
   const navigate = useNavigate();
+  const { t } = useTranslation("auth");
   const handleChange = (e) => {
     setData({
       ...data,
@@ -65,7 +67,7 @@ export default function RegisterPage({ setAccount }) {
             <Form.Group className="mb-3 " controlId="formGroupName">
               <Form.Control
                 type="text"
-                placeholder="Họ"
+                placeholder={t("auth.lastName")}
                 value={data.name}
                 name="ho"
                 className="inputAccount"
@@ -75,7 +77,7 @@ export default function RegisterPage({ setAccount }) {
             <Form.Group className="mb-3 " controlId="formGroupName">
               <Form.Control
                 type="text"
-                placeholder="Tên"
+                placeholder={t("auth.firstName")}
                 value={data.name}
                 name="name"
                 className="inputAccount"
@@ -85,13 +87,13 @@ export default function RegisterPage({ setAccount }) {
             <Form.Group className="mb-3 d-flex gap-4" controlId="formGroupGender">
                 <Form.Check
                   type="radio"
-                  label="Nữ"
+                  label={t("auth.female")}
                   name="Gender"
                   id="radio-1"
                 />
                 <Form.Check
                   type="radio"
-                  label="Nam"
+                  label={t("auth.male")}
                   name="Gender"
                   id="radio-2"
                 />
@@ -100,10 +102,10 @@ export default function RegisterPage({ setAccount }) {
               
 
               <Form.Control
-                type="password"
+                type="text"
                 placeholder="mm/dd/yyyy"
                 name="ngaySinh"
-                value={data.password}
+                value={data.date}
                 onChange={handleChange}
                 className="inputAccount"
               />
@@ -121,9 +123,9 @@ export default function RegisterPage({ setAccount }) {
             <Form.Group className="mb-3" controlId="formGroupPhone">
               <Form.Control
                 type="text"
-                placeholder="Mật khẩu"
+                placeholder={t("auth.password")}
                 name="password"
-                value={data.phone}
+                value={data.password}
                 onChange={handleChange}
                 className="inputAccount"
               />
@@ -139,11 +141,11 @@ export default function RegisterPage({ setAccount }) {
 
             <div className="mt-3 d-flex gap-4">
             <Button className="h-75 px-4 text-danger border-0"  type="submit" style={{cursor:"pointer" , background:"#d2d2d2"}}>
-              Đăng ký
+              {t("auth.register")}
             </Button>
              <div>
-              <p className="mb-0">Bạn đã có tài khoản?</p>
-              <b className="text-primary mt-0" onClick={()=>{setAccount(false)}}>Đăng nhập ngay</b>
+              <p className="mb-0">{t("auth.haveAccount")}</p>
+              <b className="text-primary mt-0" onClick={()=>{setAccount(false)}}>{t("auth.loginNow")}</b>
           
              </div>
             </div>

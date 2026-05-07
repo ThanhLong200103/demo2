@@ -1,0 +1,25 @@
+{
+    "detail":{
+        "productCode":"Mã sản phẩm",
+        "status":"Tình trạng",
+        "brand":"Thương hiệu",
+        "price":"Giá",
+        "color":"Màu sắc",
+        "size":"Kích thước",
+        "sizeGuide":"Hướng dẫn chọn size",
+        "addToCart":"THÊM VÀO GIỎ HÀNG",
+        "buyNow":"MUA NGAY",
+        "quantity":"Số lượng",
+        "offer":"CLICK VÀO ĐÂY ĐỂ NHẬN ƯU ĐÃI",
+        "share":"Chia sẻ",
+        "text1":"Miễn phí giao hàng cho đơn hàng từ 500K",
+        "text2":"Hàng phân phối chính hãng 100%",
+        "text3":"TỔNG ĐÀI 24/7 : 0964942121",
+        "text4":" ĐỔI SẢN PHẨM DỄ DÀNG (Trong vòng 7 ngày khi còn nguyên tem mác)",
+        "text5":"Kiểm tra, thanh toán khi nhận hàng COD",
+        "text6":"Hỗ trợ bảo hành, đổi sản phẩm tại tất cả store TORANO",
+        "product":"SẢN PHẨM LIÊN QUAN",
+        "inStock":"Còn hàng",
+        "outOfStock":"Hết hàng"
+    }
+}

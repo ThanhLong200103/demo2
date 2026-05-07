@@ -16,6 +16,7 @@ import axiosClient from "../api/axios";
 import CartService from "../services/cart";
 import { useDispatch, useSelector } from "react-redux";
 import { indexCountItem, setCartItem, setCartLocal } from "../redux/features/cart";
+import { useTranslation } from "react-i18next";
 export default function DetailProductPage() {
   // const [products, setProducts] = useState([]); // removed: related products section is commented out
   const [productItem, setProductItem] = useState({});
@@ -35,6 +36,8 @@ export default function DetailProductPage() {
   const navigation = useNavigate();
   // console.log(id)
 const [mainImg, setMainImg] = useState(null);
+const{ t } = useTranslation("detail");
+  const i18nextlng = localStorage.getItem("i18nextLng")
 
   const thumbnails = [
     productItem.img,
@@ -78,7 +81,7 @@ const [mainImg, setMainImg] = useState(null);
     };
 
     getProduct();
-  }, [productId]);
+  }, [productId , i18nextlng]);
 
   useEffect(() => {
     // console.log("tt",selectedSize,selectedColor)
@@ -237,17 +240,17 @@ const [mainImg, setMainImg] = useState(null);
                 <div>
                   <span className="pe-2 border-end">
                     {" "}
-                    Mã sản phẩm : <b className="fw-bold">Test</b>{" "}
+                    {t("detail.productCode")} : <b className="fw-bold">Test</b>{" "}
                   </span>
                   <span className="px-2 border-end">
                     {" "}
-                    Tình trạng :
+                    {t("detail.status")} :
                     <b className="fw-bold">
-                      {attributesOne?.quantity > 0 ? "Còn hàng" : "Hết hàng"}
+                      {attributesOne?.quantity > 0 ? t("detail.inStock") : t("detail.outOfStock")}
                     </b>
                   </span>
                   <span className="ps-2">
-                    Thương hiệu : <b className="fw-bold">TORANO</b>
+                    {t("detail.brand")} : <b className="fw-bold">TORANO</b>
                   </span>
                 </div>
                 <div>
@@ -272,7 +275,7 @@ const [mainImg, setMainImg] = useState(null);
                   <Form>
                     <Row className="align-items-center mb-4">
                       <Col xs={4} md={3} lg={2}>
-                        <span className="fw-bold ">Màu sắc:</span>
+                        <span className="fw-bold">{t("detail.color")}:</span>
                       </Col>
                       <Col
                         xs={8}
@@ -307,7 +310,7 @@ const [mainImg, setMainImg] = useState(null);
 
                     <Row className="mb-3">
                       <Col xs={4} md={3} lg={2} className="pt-2">
-                        <span className="fw-bold">Kích thước:</span>
+                        <span className="fw-bold">{t("detail.size")}:</span>
                       </Col>
                       <Col xs={8} md={9} lg={10}>
                         <div className="d-flex flex-wrap gap-2 mb-2">
@@ -343,7 +346,7 @@ const [mainImg, setMainImg] = useState(null);
                               textUnderlineOffset: "4px",
                             }}
                           >
-                            Hướng dẫn chọn size
+                            {t("detail.sizeGuide")}
                           </a>
                         </div>
                       </Col>
@@ -352,7 +355,7 @@ const [mainImg, setMainImg] = useState(null);
 
                   <Row className="align-items-center mt-4">
                     <Col xs={4} md={3} lg={2}>
-                      <span className="fw-bold">Số lượng:</span>
+                      <span className="fw-bold">{t("detail.quantity")}:</span>
                     </Col>
                     <Col xs={8} md={9} lg={10}>
                       <div className="d-flex align-items-center">
@@ -402,7 +405,7 @@ const [mainImg, setMainImg] = useState(null);
                       handleCreateCart();
                     }}
                   >
-                    THÊM VÀO GIỎ
+                    {t("detail.addToCart")}
                   </Button>
                   <Button
                     className=" py-2 bg-danger border-danger"
@@ -414,19 +417,19 @@ const [mainImg, setMainImg] = useState(null);
                   //   to={"/order"}
                   //   state={{totalPrice ,productId ,quantityHandle ,  priceProduct : productItem?.price ,attributeId :attributesOne?.id , nameProduct :productItem?.name, imgProduct:productItem?.img ,selectedColor ,selectedSize}}
                   >
-                    MUA NGAY
+                    {t("detail.buyNow")}
                   </Button>
                 </div>
                 <button
                   className="w-100 border-0  bg-black text-white py-3 mt-4"
                   style={{ borderRadius: "5px" }}
                 >
-                  CLICK VÀO ĐÂY ĐỂ NHẬN ƯU ĐÃI
+                  {t("detail.offer")}
                 </button>
               </div>
               <div className=" mt-3">
                 <ul className="list-unstyled d-flex justify-content-start gap-2  ">
-                  <li className="me-5 mt-3 fw-bold">Chia sẻ:</li>
+                  <li className="me-5 mt-3 fw-bold">{t("detail.share")}:</li>
                   <li className="fs-4 ">
                     <a href="">
                       <FaFacebook />
@@ -457,23 +460,22 @@ const [mainImg, setMainImg] = useState(null);
               <div className="mb-4">
                 <ul className="list-unstyled d-flex flex-wrap text-start">
                   <li className="col-lg-4 col-md-12 p-2">
-                    Miễn phí giao hàng cho đơn hàng từ 500K
+                    {t("detail.text1")}
                   </li>
                   <li className="col-lg-4 col-md-12 p-2">
-                    Hàng phân phối chính hãng 100%
+                    {t("detail.text2")}
                   </li>
                   <li className="col-lg-4 col-md-12 p-2">
-                    TỔNG ĐÀI 24/7 : 0964942121{" "}
+                    {t("detail.text3")}{" "}
                   </li>
                   <li className="col-lg-4 col-md-12 p-2">
-                    ĐỔI SẢN PHẨM DỄ DÀNG (Trong vòng 7 ngày khi còn nguyên tem
-                    mác)
+                    {t("detail.text4")}
                   </li>
                   <li className="col-lg-4 col-md-12 p-2">
-                    Kiểm tra, thanh toán khi nhận hàng COD
+                    {t("detail.text5")}
                   </li>
                   <li className="col-lg-4 col-md-12 p-2">
-                    Hỗ trợ bảo hành, đổi sản phẩm tại tất cả store TORANO
+                    {t("detail.text6")}
                   </li>
                 </ul>
               </div>
@@ -481,7 +483,7 @@ const [mainImg, setMainImg] = useState(null);
           </Row>
           <Row>
             <Col className="col-12 text-center my-4">
-              <h2>Sản phẩm liên quan</h2>
+              <h2>{t("detail.product")}</h2>
             </Col>
             {/* <ProductComponent products={products}></ProductComponent> */}
           </Row>

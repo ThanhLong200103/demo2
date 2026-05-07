@@ -1,0 +1,8 @@
+{
+    "order":{
+        "confirm":"Xác nhận đơn hàng",
+        "product":"Sản phẩm đã chọn",
+        "total":"Tổng cộng",
+        "method":"Phương thức thanh toán"
+    }
+}

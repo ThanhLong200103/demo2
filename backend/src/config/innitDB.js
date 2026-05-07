@@ -10,7 +10,27 @@ const initDB = async () => {
         FOREIGN KEY (parent_id) REFERENCES category(id)
       );
     `);
-
+    await db.query(`
+      CREATE TABLE IF NOT EXISTS category_translations (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  category_id INT NOT NULL,
+  language_code VARCHAR(10) NOT NULL, -- Ví dụ: 'en', 'vi'
+  name VARCHAR(255) NOT NULL,
+  FOREIGN KEY (category_id) REFERENCES category(id) ON DELETE CASCADE,
+  UNIQUE(category_id, language_code) -- Đảm bảo mỗi ngôn ngữ chỉ có 1 bản dịch
+);
+      `);
+    await db.query(`
+        CREATE TABLE IF NOT EXISTS product_translations (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    product_id INT NOT NULL,            -- ID của sản phẩm gốc
+    language_code VARCHAR(10) NOT NULL,  -- 'vi' hoặc 'en'
+    name NVARCHAR(500) NOT NULL,         -- Tên sản phẩm đã dịch
+    
+    FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE,
+    UNIQUE(product_id, language_code)
+);
+        `);
     await db.query(`
       CREATE TABLE IF NOT EXISTS products (
         id INT AUTO_INCREMENT PRIMARY KEY,
@@ -24,7 +44,6 @@ const initDB = async () => {
       );
     `);
 
-   
     await db.query(`
       CREATE TABLE IF NOT EXISTS attributes (
         id INT AUTO_INCREMENT PRIMARY KEY,
@@ -36,7 +55,6 @@ const initDB = async () => {
       )
     `);
 
-  
     await db.query(`
       CREATE TABLE IF NOT EXISTS images (
         id INT AUTO_INCREMENT PRIMARY KEY,
@@ -47,7 +65,6 @@ const initDB = async () => {
       )    
     `);
 
-  
     await db.query(`
       CREATE TABLE IF NOT EXISTS users (
         id INT AUTO_INCREMENT PRIMARY KEY,
@@ -60,7 +77,6 @@ const initDB = async () => {
       )
     `);
 
- 
     await db.query(`
       CREATE TABLE IF NOT EXISTS carts (
         id INT AUTO_INCREMENT PRIMARY KEY,
@@ -68,7 +84,6 @@ const initDB = async () => {
         CONSTRAINT FK_Cart_User FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
       )
     `);
-
 
     await db.query(`
       CREATE TABLE IF NOT EXISTS cartItem (
@@ -84,7 +99,6 @@ const initDB = async () => {
       )
     `);
 
-   
     await db.query(`
       CREATE TABLE IF NOT EXISTS orders (
         id INT AUTO_INCREMENT PRIMARY KEY,
@@ -95,7 +109,6 @@ const initDB = async () => {
       )
     `);
 
- 
     await db.query(`
       CREATE TABLE IF NOT EXISTS order_items (
         id INT AUTO_INCREMENT PRIMARY KEY,
@@ -110,7 +123,6 @@ const initDB = async () => {
         CONSTRAINT FK_OrderItem_Attribute FOREIGN KEY (attribute_id) REFERENCES attributes(id) ON DELETE CASCADE
       )
     `);
-
 
     await db.query(`
       CREATE TABLE IF NOT EXISTS payments (
@@ -136,7 +148,7 @@ const initDB = async () => {
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
   )
 `);
-await db.query(`
+    await db.query(`
   CREATE TABLE IF NOT EXISTS order_addresses (
     id INT AUTO_INCREMENT PRIMARY KEY,
     order_id INT NOT NULL,

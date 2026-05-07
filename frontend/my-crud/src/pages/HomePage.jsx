@@ -10,6 +10,7 @@ import { RepositoryFactory } from "../services/FactoryService";
 import ProductComponent from "../components/ProductComponent";
 import { Container, Row } from "react-bootstrap";
 import CarouselComponent from "../components/CarouselComponent";
+import { useSelector } from "react-redux";
 
 export default function HomePage() {
   const [products, setProducts] = useState([]);
@@ -19,6 +20,8 @@ export default function HomePage() {
   const [currentPage, setCurrentPage] = useState(1);
   const [total, setTotal] = useState(0);
   const limit = 12;
+  const i18nextlng = localStorage.getItem("i18nextLng")
+ const { currentLanguage } = useSelector((state) => state.language);
 
   const totalPages = Math.ceil(total / limit);
   const quantity = 1;
@@ -48,7 +51,8 @@ export default function HomePage() {
   useEffect(() => {
    
     fetchProducts(currentPage);
-  }, [currentPage]);
+     console.log("language:", currentLanguage);
+  }, [currentPage , currentLanguage]);
   const handleDelete = async (id) => {
     try {
       await axiosClient.delete(`/product/delete/${id}`);

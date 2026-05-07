@@ -8,10 +8,12 @@ import axiosClient from "../api/axios";
 import { indexCountItem } from "../redux/features/cart";
 import { Link, useNavigate } from "react-router-dom";
 import { useEffect } from "react";
+import { useTranslation } from "react-i18next";
 export default function ProductComponent({ products ,cursor }) {
   const d = useDispatch();
   const n  = useNavigate();
   const quantity = 1;
+  const { t } = useTranslation("product");
   // console.log(products);
   // const handleCreateCart = async (productId, quantity) => {
   //   try {
@@ -90,7 +92,7 @@ export default function ProductComponent({ products ,cursor }) {
                         }}
                       >
                         <MdOutlineShoppingBag className="p-0 mb-1 " />
-                        Thêm vào giỏ
+                        {t("product.addcart")}
                       </Button>
                       <Button
                         className="text-white bg-black border-0"
@@ -114,8 +116,8 @@ export default function ProductComponent({ products ,cursor }) {
 
               <div className="pt-1 d-flex flex-column flex-grow-1 position-relative">
                 <div className="d-flex justify-content-between">
-                  <p className="mb-1">+ màu sắc</p>
-                  <p className="mb-1">+ kích thước</p>
+                  <p className="mb-1">{t("product.color")}</p>
+                  <p className="mb-1">{t("product.size")}</p>
                 </div>
 
                 <a className="text-decoration-none text-black text-start">

@@ -10,12 +10,16 @@ import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { CgMathMinus } from "react-icons/cg";
 import { RepositoryFactory } from "../services/FactoryService";
-
+import { useTranslation } from "react-i18next";
 export default function SideBarComponent({ isOpen }) {
   const d = useDispatch();
+  const { t } = useTranslation("header");
   // const [show, setShow] = useState(true);
   const [showId, setShowId] = useState();
   const [categorys, setCategorys] = useState([]);
+
+  const i18nextlng = localStorage.getItem("i18nextLng")
+
   const hanleCloseSideBar = () => {
     d(closeSideBar(false));
   };
@@ -44,7 +48,7 @@ export default function SideBarComponent({ isOpen }) {
       console.log(tree);
     };
     buildTree();
-  }, []);
+  }, [i18nextlng]);
   return (
     <>
       <div
@@ -54,7 +58,7 @@ export default function SideBarComponent({ isOpen }) {
       <Container className={`d-lg-none slide ${isOpen ? "active" : ""}`}>
         <Row style={{ background: "" }}>
           <div className="d-flex justify-content-between  py-4 border-bottom fs-3 px-4 fw-bold ">
-            <Col>Danh mục</Col>
+            <Col>{t("header.Category")}</Col>
             <Col className="text-end">
               <Button
                 className="bg-white border-0 text-black fs-2"
@@ -76,12 +80,12 @@ export default function SideBarComponent({ isOpen }) {
               >
                 <li className="py-3 fs-4">
                   <Link to="/" className="text-black text-decoration-none">
-                    Sản phẩm mới
+                    {t("header.productNew")}
                   </Link>
                 </li>
                 <li className="py-3 fs-4">
                   <Link to="/sale" className="text-black text-decoration-none">
-                    Danh mục sale
+                    {t("header.categories Sale")}
                   </Link>
                 </li>
                 {categorys.map((category) => (
@@ -130,7 +134,7 @@ export default function SideBarComponent({ isOpen }) {
         </Row>
         <Row className="p-3">
           <div className="fs-3">
-            <p>BẠN CẦN HỖ TRỢ?</p>
+            <p>{t("header.support")}</p>
           </div>
           <div className="d-flex gap-3 fs-3  ">
             <p>

@@ -35,6 +35,7 @@ export default function HeaderComponent(params) {
   const dispatch = useDispatch();
   const { token, isAuthenticated } = useSelector((state) => state.auth);
   const { countItem } = useSelector((state) => state.cart);
+ 
   const [userId, setId] = useState(null);
   const [profile, setProfile] = useState(null);
   const [showLogin, setShowLogin] = useState(false);
@@ -43,7 +44,10 @@ export default function HeaderComponent(params) {
   const { t, i18n } = useTranslation("header");
   const changeLanguage = (lng) => {
     i18n.changeLanguage(lng);
+    localStorage.setItem("i18nextLng", lng);
+    dispatch(changeLanguageLocal(lng));
   };
+  const i18nextlng = localStorage.getItem("i18nextLng")
   const [showLanguage , setShowLanguage] = useState(true)
   // const [showCart , setShowCart] = useState(false);
   useEffect(() => {
@@ -71,7 +75,7 @@ export default function HeaderComponent(params) {
       console.log(tree);
     };
     buildTree();
-  }, []);
+  }, [i18nextlng]);
   useEffect(() => {
     if (token) {
       const checkMe = async () => {
@@ -277,11 +281,11 @@ export default function HeaderComponent(params) {
                 <Button className="bg-white text-dark border-0 fs-5" onClick={()=>{setShowLanguage(item=>!item)}}>
                   <GrLanguage />
                 </Button>
-                <div className={`position-absolute d-flex flex-column ${showLanguage && "d-none"}`} style={{minWidth:"100px" ,left:"-36px" ,right:""}}>
-                  <button className="text-black"  style={{background :"#f5f5f5"}} onClick={() => changeLanguage("vi")}>
+                <div className={`position-absolute  d-flex flex-column ${showLanguage && "d-none"}`} style={{minWidth:"100px" ,left:"-36px" ,right:"" ,zIndex:"1000"}}>
+                  <button className="text-black"  style={{background :"#f5f5f5"}} onClick={() => {changeLanguage("vi") ,setShowLanguage(true)}}>
                     Tiếng Việt
                   </button>
-                  <button className="text-black" style={{background :"#f5f5f5"}} onClick={() => changeLanguage("en")}>
+                  <button className="text-black" style={{background :"#f5f5f5"}} onClick={() => {changeLanguage("en") ,setShowLanguage(true)}}>
                     English
                   </button>
                 </div>

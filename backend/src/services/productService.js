@@ -2,12 +2,12 @@ const { releaseConnection } = require("../config/db");
 const ProductModel = require("../models/ProductModel");
 
 class ProductService {
-    getAllProduct = async (limit,cursor ,direction, page)=>{
-        const data = await ProductModel.getAllProduct(limit,cursor ,direction, page);
+    getAllProduct = async (limit,cursor ,direction, page, locale)=>{
+        const data = await ProductModel.getAllProduct(limit,cursor ,direction, page, locale);
         return data ;
     }
-    getProduct = async (id)=>{
-        const data = await ProductModel.getProduct(id);
+    getProduct = async (id , locale)=>{
+        const data = await ProductModel.getProduct(id, locale);
         return data
     }
     createProduct = async (data)=>{

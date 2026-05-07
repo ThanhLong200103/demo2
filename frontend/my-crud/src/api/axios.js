@@ -1,5 +1,5 @@
 import axios from "axios";
-
+import i18n from "../i18n/i18n";
 // Tạo một biến để quản lý việc refresh token (tránh gọi nhiều lần cùng lúc)
 let isRefreshing = false;
 let failedQueue = [];
@@ -30,6 +30,7 @@ axiosClient.interceptors.request.use(
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
+    config.headers["Accept-Language"] = localStorage.getItem("i18nextLng");
     return config;
   },
   (error) => Promise.reject(error),
