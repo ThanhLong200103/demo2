@@ -57,6 +57,15 @@ class OrderModel {
         return row;
       }
 
+/// add địa chỉ của order 
+
+      createOrderAddress = async ( data ,connection = db)=>{
+        const {orderId , homeNumber ,district ,province ,receiverName ,phoneNumber} = data
+        const [orderAddress] = await connection.execute(
+            "INSERT INTO order_addresses ( order_id, home_number , district, province , receiver_name, phone_number) VALUES (?,?,?,?,?,?)",[orderId , homeNumber ,district ,province ,receiverName ,phoneNumber]
+        )
+        return orderAddress
+      }
     
     
     

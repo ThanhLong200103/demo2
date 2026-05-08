@@ -25,12 +25,12 @@ class CartItemController {
       res.status(500).json({ error: err.message });
     }
   };
-  editCartItem = async (req , res) =>{
+  editCartItem = async (req , res ) =>{
     try{
         const result = await runInTransaction(async (conn) => {
           const {id} = req.params;
           const {quantity , quantityProduct} = req.body
-          return await CartItemService.updateCartItem({id , quantity ,quantityProduct}, conn)
+          return await CartItemService.updateCartItem({id , quantity ,quantityProduct}, conn ,req.t);
         });
         res.json(result)
     }
@@ -42,9 +42,9 @@ class CartItemController {
     async (req , res )=>{
     
         const result = await runInTransaction(async (conn) => {
-          const{productId  , quantity ,cartId ,attributesId} = req.body;
+          const{productId  , quantity ,cartId ,attributesId } = req.body;
           // console.log(productId , quantity ,cartId)
-          return await CartItemService.createCartItem({productId ,cartId ,attributesId ,quantity}, conn)
+          return await CartItemService.createCartItem({productId ,cartId ,attributesId ,quantity , }, conn ,req.t)
         });
         res.json(result)
       }

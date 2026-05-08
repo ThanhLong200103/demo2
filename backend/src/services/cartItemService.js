@@ -10,7 +10,7 @@ class CartItemService {
     const item = await cartItem.getAllCartItem(cart_id);
     return item;
   };
-  createCartItem = async (data, conn) => {
+  createCartItem = async (data, conn , t) => {
       const productId = data.productId;
       const cartId = data.cartId;
       const attributesId = data.attributesId
@@ -25,7 +25,7 @@ class CartItemService {
       const quantityProduct = product.quantity - data.quantity;
       console.log("QUANTITY PRODUCT:", quantityProduct);
        if (quantityProduct < 0) {
-            throw new AppError(i18next.t("Notification:notification.Insufficient quantity of products"), 422);
+            throw new AppError(t("Notification:notification.Insufficient quantity of products"), 422);
        }
         // const up = await cartItem.updownQuanTiTyProduct(data, conn); // xóa , check số lượng theo kiểu khác
       // console.log("UP:", up);
@@ -56,7 +56,7 @@ class CartItemService {
       const dele = await cartItem.deleteCartItem(id, conn);
       return [dele];
   };
-  updateCartItem = async (data, conn) => {
+  updateCartItem = async (data, conn , t) => {
       const id = data.id;
       const row = await cartItem.getcart(id, conn);
       if (row.quantity <= 0) {
@@ -70,7 +70,7 @@ class CartItemService {
       
       if(quantity<0 && getProduct.quantity < 1){
         
-        throw new AppError(i18next.t("Notification:notification.Insufficient quantity of products"), 422);
+        throw new AppError(t("Notification:notification.Insufficient quantity of products"), 422);
       
       }
       // const updateQuantityProduct = await ProductModel.editQuantityProductAttributes(

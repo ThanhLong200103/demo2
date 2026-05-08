@@ -143,7 +143,7 @@ const initDB = async () => {
     district VARCHAR(255) NOT NULL,
     province VARCHAR(255) NOT NULL,
     is_default BOOLEAN  DEFAULT FALSE,
-    
+    status VARCHAR(50) DEFAULT 'active',
     CONSTRAINT FK_UserAddress_User 
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
   )
@@ -155,12 +155,21 @@ const initDB = async () => {
     home_number VARCHAR(255) NOT NULL, 
     district VARCHAR(255) NOT NULL,
     province VARCHAR(255) NOT NULL,
-
+     receiver_name VARCHAR(255) NOT NULL,
+      phone_number VARCHAR(20) NOT NULL,
     CONSTRAINT FK_OrderAddress_Order 
     FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE
   )
 `);
-
+//     await db.query(`
+//   ALTER TABLE order_addresses
+//   ADD receiver_name VARCHAR(255) NOT NULL,
+//   ADD phone_number VARCHAR(20) NOT NULL
+// `);
+// await db.query(`
+//   ALTER TABLE user_addresses 
+//   ADD COLUMN status VARCHAR(50) DEFAULT 'active' AFTER is_default;
+// `);
     console.log("Database initialized successfully!");
   } catch (err) {
     console.error("Init DB error:", err.message);

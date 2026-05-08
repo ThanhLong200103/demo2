@@ -5,6 +5,7 @@ import cartReducer from"./features/cart"
 import searchReducer from "./features/search"
 import detailReducer from"./features/detail"
 import languageReducer from "./features/language"
+import AddressReducer from "./features/address"
 const store = configureStore({
   reducer: {
     auth: authAccessReducer,
@@ -12,7 +13,8 @@ const store = configureStore({
     cart:cartReducer,
     search:searchReducer,
     detail:detailReducer,
-    language:languageReducer
+    language:languageReducer,
+    address:AddressReducer
   },
 });
 

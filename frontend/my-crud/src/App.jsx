@@ -9,6 +9,7 @@ import CartComponent from "./components/CartComponent";
 import SearchComponent from "./components/searchComponent";
 import DetailComponent from "./components/detailComponent";
 import './i18n/i18n';
+import AddressUserComponent from "./components/AddressUserComponent";
 function App() {
 
 
@@ -16,7 +17,7 @@ function App() {
   const { showCart } = useSelector((state) => state.cart);
   const { showSearch } = useSelector((state) => state.search);
   const { showDetail ,productId } = useSelector((state) => state.detail);
-
+  const {showAddress} = useSelector((state) => state.address)
 
   return (
     <>
@@ -28,6 +29,7 @@ function App() {
     <CartComponent open = {showCart}/>
     <SearchComponent OpenS={ showSearch}></SearchComponent>
     <DetailComponent showDetail={showDetail} productId={productId} ></DetailComponent>
+    <AddressUserComponent showAddress={showAddress}></AddressUserComponent>
     </>
   )
 }
