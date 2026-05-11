@@ -11,6 +11,7 @@ class OrderService {
   createOrder = async (data , conn) => {
      const user_id = data.userId;
       const total_price = data.totalPrice;
+      console.log("data dat hang :",data)
       const orderId = await OrderModel.createOrder(
         { user_id, total_price },
         conn,
@@ -19,6 +20,15 @@ class OrderService {
         data.cartItemIds,
         conn,
       );
+
+      if(orderId){
+        const homeNumber = data.homeNumber
+        const district = data.district
+        const province = data.province
+        const receiverName = data.receiverName
+        const phoneNumber = data.phoneNumber
+        const CreateAddressOrder = await OrderModel.createOrderAddress({orderId ,homeNumber ,district ,province ,receiverName ,phoneNumber},conn)
+      }
 
     if(cartItem && cartItem.length > 0){
         for (const item of cartItem) {
@@ -65,7 +75,7 @@ class OrderService {
         conn,
       );
       // await conn.commit();
-      return [orderId, cartItem, payment];
+      return [orderId, cartItem, payment ];
   };
 
   getItemOrder = async (ids) => {

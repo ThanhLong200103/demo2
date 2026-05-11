@@ -14,6 +14,7 @@ const cookieParser = require('cookie-parser');
 const initRouterError = require('./src/routers/routerErorr.js');
 const initCategoryRoutes = require('./src/routers/category.js');
 
+const startRedis = require("./src/config/redis.js")
 const { initI18n } = require("./src/i18n/i18n.js");
 const middleware = require("i18next-http-middleware");
 
@@ -35,6 +36,8 @@ app.use(cookieParser());
     initRouterError(app);
 
     await initDB();
+    
+     await startRedis.connect();
     app.listen(port, () => {
         console.log(`Server running on port ${port}`);
     });

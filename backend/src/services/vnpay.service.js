@@ -222,6 +222,15 @@ class VnPayService {
       data.cartItemIds,
       conn,
     );
+
+     if(orderId){
+            const homeNumber = data.homeNumber
+            const district = data.district
+            const province = data.province
+            const receiverName = data.receiverName
+            const phoneNumber = data.phoneNumber
+            const CreateAddressOrder = await orderModel.createOrderAddress({orderId ,homeNumber ,district ,province ,receiverName ,phoneNumber},conn)
+          }
     if (cartItem && cartItem.length > 0) {
       for (const item of cartItem) {
         await orderItemModel.createOrderItem(

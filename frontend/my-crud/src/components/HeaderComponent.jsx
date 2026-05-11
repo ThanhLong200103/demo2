@@ -30,6 +30,7 @@ import { SlMenu } from "react-icons/sl";
 import { indexCountItem, openCart } from "../redux/features/cart";
 import { openSearch } from "../redux/features/search";
 import { useTranslation } from "react-i18next";
+import { changeLanguageLocal } from "../redux/features/language";
 export default function HeaderComponent(params) {
   const navigate = useNavigate();
   const dispatch = useDispatch();

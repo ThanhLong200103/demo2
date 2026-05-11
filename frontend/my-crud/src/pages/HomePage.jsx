@@ -11,7 +11,6 @@ import ProductComponent from "../components/ProductComponent";
 import { Container, Row } from "react-bootstrap";
 import CarouselComponent from "../components/CarouselComponent";
 import { useSelector } from "react-redux";
-
 export default function HomePage() {
   const [products, setProducts] = useState([]);
   const [show, setShow] = useState(false);
@@ -94,6 +93,7 @@ const setPrevPage = async () => {
           limit: limit,
           cursor: cursor.prev,
           direction: direction,
+    
         });
         setProducts(res[0]);
         setCursor({
@@ -113,6 +113,9 @@ const setNextPage = async () => {
           limit: limit,
           cursor: cursor.next,
           direction: direction,
+      
+
+
         });
         setProducts(res[0]);
         setCursor({
@@ -152,7 +155,9 @@ const setNextPage = async () => {
   {pages.map((page) => (
     <Button
       key={page}
-      onClick={() => setCurrentPage(page)}
+      onClick={() => setCurrentPage(page)
+      
+      }
       className={`rounded-circle border-0 text-black  ${
         currentPage === page ? "bg-dark text-white" : ""
       }`}
@@ -165,7 +170,10 @@ const setNextPage = async () => {
   {/* Next */}
   {currentPage < totalPages && (
     <Button
-      onClick={() => setNextPage()}
+      onClick={() => setNextPage()
+
+        
+      }
       className="rounded-circle border-0 text-black"
       style={{ width: 40, height: 40 ,background :"#f5f5f5" }}
     >

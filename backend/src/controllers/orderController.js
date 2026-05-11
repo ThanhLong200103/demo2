@@ -7,11 +7,13 @@ class OrderController {
   CreateOrder = CacthAsync(
     async (req, res) => {
    
-      const { cartItemIds ,totalPrice ,productId ,quantityProduct ,priceProduct  ,attributeId} = req.body ;
+      const { cartItemIds ,totalPrice ,productId ,quantityProduct ,priceProduct  ,attributeId 
+        ,  homeNumber ,district ,province ,receiverName ,phoneNumber
+      } = req.body ;
       const userId = req.user.id;
 
       const data = await runInTransaction (async (conn) => {
-         return await OrderService.createOrder({cartItemIds ,totalPrice, userId ,productId ,quantityProduct ,priceProduct  ,attributeId }, conn);
+         return await OrderService.createOrder({cartItemIds ,totalPrice, userId ,productId ,quantityProduct ,priceProduct  ,attributeId ,  homeNumber ,district ,province ,receiverName ,phoneNumber }, conn);
        });
       res.json(data );
    
