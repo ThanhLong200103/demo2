@@ -1,0 +1,28 @@
+{
+  "checkout": {
+    "shippingAddress": "Shipping Address",
+    "houseNumber": "House Number",
+    "district": "District/Ward",
+    "province": "Province/City",
+    "addShippingAddress": "Add Shipping Address",
+
+    "confirmOrder": "Confirm Order",
+    "selectedProducts": "Selected Products",
+    "quantity": "Quantity",
+    "color": "Color",
+    "size": "Size",
+
+    "paymentMethod": "Payment Method",
+
+    "codTitle": "Cash on Delivery (COD)",
+    "codDescription": "Pay when receiving your order",
+
+    "onlinePaymentTitle": "Online Payment",
+    "onlinePaymentDescription": "Via VNPAY gateway (ATM Card, QR Code, Visa/Master)",
+
+    "total": "Total",
+
+    "confirmOrderCOD": "Confirm COD Order",
+    "confirmOrderVNPAY": "Confirm VNPAY Order"
+  }
+}

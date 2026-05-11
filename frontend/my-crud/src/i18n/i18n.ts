@@ -14,6 +14,9 @@ import enAuth from "../locales/en/auth.json";
 import viAuth from "../locales/vi/auth.json";
 import enProduct from "../locales/en/product.json";
 import viProduct from "../locales/vi/product.json";
+import enOrder from "../locales/en/order.json"
+import viOrder from "../locales/vi/order.json"
+
 export const resources = {
   en: {
     header: enHeader,
@@ -22,7 +25,8 @@ export const resources = {
     footer : enFooter,
     detail : enDetail,
     auth : enAuth,
-    product : enProduct
+    product : enProduct,
+    order :enOrder
   },
     vi: {
     header: viHeader,
@@ -31,7 +35,8 @@ export const resources = {
     footer : viFooter,
     detail : viDetail,
     auth : viAuth,
-    product : viProduct
+    product : viProduct,
+    order :viOrder
   }
 };
 localStorage.setItem("i18nextLng", "vi");

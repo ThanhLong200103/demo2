@@ -17,6 +17,7 @@ class UserController {
         console.log("language:", req.language);
 
       const checkPass = await UserService.checkProfile(email);
+      console.log("Check profile :",checkPass)
       if (!checkPass) {
         return next(new AppError(req.t("auth:auth.The account does not exist"), 422));
         

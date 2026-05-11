@@ -8,8 +8,10 @@ import { useDispatch, useSelector } from "react-redux";
 import { CiCircleChevDown, CiLocationOn } from "react-icons/ci";
 import { MdNavigateNext } from "react-icons/md";
 import { openAddress, setAddressAll, setAddressTrue } from "../redux/features/address";
-
+import { t } from "i18next";
+import { useTranslation } from "react-i18next";
 export default function OrderPage() {
+   const {t} = useTranslation("order")
   const location = useLocation();
   const {
     totalPrice,
@@ -67,6 +69,7 @@ export default function OrderPage() {
         // setAddress(data[1]);
       d(setAddressTrue(data[1]))
         d(setAddressAll(data[0]));
+        // console.log("Địa chỉ băn api : ",addressTrue[0].district);
       } catch (error) {
         console.log(error);
       }
@@ -83,6 +86,11 @@ export default function OrderPage() {
         quantityProduct: quantityHandle,
         priceProduct: priceProduct,
         attributeId: attributeId,
+        homeNumber :addressTrue[0]?.home_number,
+        district: addressTrue[0]?.district,
+        province:addressTrue[0]?.province,
+        receiverName :addressTrue[0]?.name,
+        phoneNumber:addressTrue[0]?.phone
       });
       console.log(pay);
       toast.success("Đặt hàng thành công");
@@ -108,6 +116,11 @@ export default function OrderPage() {
         quantityProduct: quantityHandle,
         priceProduct: priceProduct,
         attributeId: attributeId,
+        homeNumber :addressTrue[0]?.home_number,
+        district: addressTrue[0]?.district,
+        province:addressTrue[0]?.province,
+        receiverName :addressTrue[0]?.name,
+        phoneNumber:addressTrue[0]?.phone
       });
       console.log(pay);
       const orderId = pay[0];
@@ -153,233 +166,286 @@ export default function OrderPage() {
     }
   };
   return (
-    <>
-      <Container className="py-5" style={{ maxWidth: "" }}>
-        <Row className="d-flex justify-content-center flex-wrap">
-          <Col md={6}>
-            <h3 className="fw-bold mb-4">Địa chỉ nhận hàng </h3>
-            <div className="mb-5">
-              <Button
-                className="w-100 border-0 text-black d-flex"
-                style={{ background: "#f5f5f5" }}
-                onClick={() => {
-                  d(openAddress(true));
-                }}
-              >
-                {addressTrue?.map((a) => (
-                  <div className="w-100 p-0 m-0">
-                    <div className="d-flex justify-content-center gap-3 p-0 m-0">
-                      <p className="fw-bold p-0 m-0">
-                        {" "}
-                        <CiLocationOn /> {a.name}
-                      </p>
-                      <b>{a.phone}</b>
-                    </div>
-                    <p className="p-0 m-0">
-                      {" "}
-                      {a.home_number}, {a.district}, {a.province}
-                    </p>
-                  </div>
-                ))}
-                <MdNavigateNext className="mt-auto mb-auto" />
-              </Button>
-            </div>
+ <>
+  <Container className="py-5" style={{ maxWidth: "" }}>
+    <Row className="d-flex justify-content-center flex-wrap">
+      <Col md={6}>
+        <h3 className="fw-bold mb-4">
+          {t("checkout.shippingAddress")}
+        </h3>
 
-            <div>
-              <Form>
-                <Form.Group className="mb-3" controlId="formBasicPassword">
-                  {/* <Form.Label>Số nhà </Form.Label> */}
+        <div className="mb-5">
+          <Button
+            className="w-100 border-0 text-black d-flex"
+            style={{ background: "#f5f5f5" }}
+            onClick={() => {
+              d(openAddress(true));
+            }}
+          >
+            {addressTrue?.map((a) => (
+              <div className="w-100 p-0 m-0" key={a.id}>
+                <div className="d-flex justify-content-center gap-3 p-0 m-0">
+                  <p className="fw-bold p-0 m-0">
+                    <CiLocationOn /> {a.name}
+                  </p>
 
-                  <Form.Control
-                    type="text"
-                    placeholder="Số nhà"
-                    name="home_number"
-                    value={addressData.home_number}
-                    onChange={handleChangeAddress}
-                  />
-                </Form.Group>
-                <Form.Group className="mb-3" controlId="formBasicAddress">
-                  {/* <Form.Label>Huyện/Phường/Xã</Form.Label> */}
-
-                  <Form.Control
-                    type="text"
-                    placeholder="Huyện/Phường/Xã"
-                    name="district"
-                    value={addressData.district}
-                    onChange={handleChangeAddress}
-                  />
-                </Form.Group>
-                <Form.Group className="mb-3" controlId="formBasicPassword">
-                  {/* <Form.Label>Tỉnh/Thành phố</Form.Label> */}
-
-                  <Form.Control
-                    type="text"
-                    placeholder="Tỉnh/Thành phố"
-                    name="province"
-                    value={addressData.province}
-                    onChange={handleChangeAddress}
-                  />
-                </Form.Group>
-
-                <Button
-                  onClick={() => {
-                    handleAddress();
-                  }}
-                >
-                  Thêm địa chỉ nhận hàng
-                </Button>
-              </Form>
-            </div>
-          </Col>
-          <Col md={6}>
-            <h3 className="fw-bold mb-4">Xác nhận đơn hàng</h3>
-
-            <div className="mb-4">
-              <h5 className="mb-3">Sản phẩm đã chọn</h5>
-              {selectedIds ? (
-                orderItems.map((item) => (
-                  <Card key={item.id} className="mb-2 border-0 shadow-sm">
-                    <Card.Body>
-                      <Row className="align-items-center">
-                        <Col xs={3} md={2}>
-                          <img
-                            src={item.img}
-                            alt={item.name}
-                            className="img-fluid rounded"
-                          />
-                        </Col>
-                        <Col xs={5} md={6}>
-                          <h6 className="mb-0">{item.name}</h6>
-                          <small className="text-muted">
-                            Số lượng: {item.quantity}
-                          </small>
-                        </Col>
-                        <Col
-                          xs={4}
-                          md={4}
-                          className="text-end text-danger fw-bold"
-                        >
-                          {(item.price * item.quantity).toLocaleString()} đ
-                        </Col>
-                      </Row>
-                    </Card.Body>
-                  </Card>
-                ))
-              ) : (
-                <Card key={productId} className="mb-2 border-0 shadow-sm">
-                  <Card.Body>
-                    <Row className="align-items-center">
-                      <Col xs={3} md={2}>
-                        <img
-                          src={imgProduct}
-                          alt={nameProduct}
-                          className="img-fluid rounded"
-                        />
-                      </Col>
-                      <Col xs={5} md={6}>
-                        <h6 className="mb-0">{nameProduct}</h6>
-                        <small className="text-muted">
-                          Số lượng: {quantityHandle}
-                        </small>
-                        <p className="d-flex gap-3">
-                          <small className="text-muted">
-                            Màu sắc: {selectedColor}
-                          </small>
-                          <small className="text-muted">
-                            Cỡ: {selectedSize}
-                          </small>
-                        </p>
-                      </Col>
-                      <Col
-                        xs={4}
-                        md={4}
-                        className="text-end text-danger fw-bold"
-                      >
-                        {priceProduct.toLocaleString()} đ
-                      </Col>
-                    </Row>
-                  </Card.Body>
-                </Card>
-              )}
-            </div>
-
-            <Card className="mb-4 shadow-sm border-0">
-              <Card.Body>
-                <h5 className="mb-3">Phương thức thanh toán</h5>
-                <Form>
-                  <div className="p-3 border rounded mb-2">
-                    <Form.Check
-                      type="radio"
-                      id="payment-cod"
-                      label={
-                        <div className="ms-2">
-                          <strong>Thanh toán khi nhận hàng (COD)</strong>
-                          <br />
-                          <small className="text-muted">
-                            Giao hàng và thu tiền tận nơi
-                          </small>
-                        </div>
-                      }
-                      name="paymentMethod"
-                      value={"COD"}
-                      onChange={handleChange}
-                      defaultChecked
-                    />
-                  </div>
-                  <div className="p-3 border rounded">
-                    <Form.Check
-                      type="radio"
-                      id="payment-online"
-                      label={
-                        <div className="ms-2">
-                          <strong>Thanh toán trực tuyến</strong>
-                          <br />
-                          <small className="text-muted">
-                            Qua cổng VNPAY (Thẻ ATM, QR Code, Visa/Master)
-                          </small>
-                        </div>
-                      }
-                      value={"VNPAY"}
-                      name="paymentMethod"
-                      onChange={handleChange}
-                    />
-                  </div>
-                </Form>
-              </Card.Body>
-            </Card>
-
-            <Card className="shadow-sm border-0 bg-light">
-              <Card.Body className="d-flex justify-content-between align-items-center py-4">
-                <div>
-                  <span className="text-muted">Tổng cộng:</span>
-                  <h3 className="text-danger fw-bold mb-0">
-                    {totalPrice?.toLocaleString()} đ
-                  </h3>
+                  <b>{a.phone}</b>
                 </div>
-                {paymentMethod === "COD" ? (
-                  <Button
-                    variant="danger"
-                    size="lg"
-                    className="px-5 fw-bold"
-                    onClick={handleOrder}
+
+                <p className="p-0 m-0">
+                  {a.home_number}, {a.district}, {a.province}
+                </p>
+              </div>
+            ))}
+
+            <MdNavigateNext className="mt-auto mb-auto" />
+          </Button>
+        </div>
+
+        <div>
+          <Form>
+            <Form.Group
+              className="mb-3"
+              controlId="formBasicPassword"
+            >
+              <Form.Control
+                type="text"
+                placeholder={t("checkout.houseNumber")}
+                name="home_number"
+                value={addressData.home_number}
+                onChange={handleChangeAddress}
+              />
+            </Form.Group>
+
+            <Form.Group
+              className="mb-3"
+              controlId="formBasicAddress"
+            >
+              <Form.Control
+                type="text"
+                placeholder={t("checkout.district")}
+                name="district"
+                value={addressData.district}
+                onChange={handleChangeAddress}
+              />
+            </Form.Group>
+
+            <Form.Group
+              className="mb-3"
+              controlId="formBasicProvince"
+            >
+              <Form.Control
+                type="text"
+                placeholder={t("checkout.province")}
+                name="province"
+                value={addressData.province}
+                onChange={handleChangeAddress}
+              />
+            </Form.Group>
+
+            <Button
+              onClick={() => {
+                handleAddress();
+              }}
+            >
+              {t("checkout.addShippingAddress")}
+            </Button>
+          </Form>
+        </div>
+      </Col>
+
+      <Col md={6}>
+        <h3 className="fw-bold mb-4">
+          {t("checkout.confirmOrder")}
+        </h3>
+
+        <div className="mb-4">
+          <h5 className="mb-3">
+            {t("checkout.selectedProducts")}
+          </h5>
+
+          {selectedIds ? (
+            orderItems.map((item) => (
+              <Card
+                key={item.id}
+                className="mb-2 border-0 shadow-sm"
+              >
+                <Card.Body>
+                  <Row className="align-items-center">
+                    <Col xs={3} md={2}>
+                      <img
+                        src={item.img}
+                        alt={item.name}
+                        className="img-fluid rounded"
+                      />
+                    </Col>
+
+                    <Col xs={5} md={6}>
+                      <h6 className="mb-0">
+                        {item.name}
+                      </h6>
+
+                      <small className="text-muted">
+                        {t("checkout.quantity")}:{" "}
+                        {item.quantity}
+                      </small>
+                    </Col>
+
+                    <Col
+                      xs={4}
+                      md={4}
+                      className="text-end text-danger fw-bold"
+                    >
+                      {(item.price * item.quantity).toLocaleString()} đ
+                    </Col>
+                  </Row>
+                </Card.Body>
+              </Card>
+            ))
+          ) : (
+            <Card
+              key={productId}
+              className="mb-2 border-0 shadow-sm"
+            >
+              <Card.Body>
+                <Row className="align-items-center">
+                  <Col xs={3} md={2}>
+                    <img
+                      src={imgProduct}
+                      alt={nameProduct}
+                      className="img-fluid rounded"
+                    />
+                  </Col>
+
+                  <Col xs={5} md={6}>
+                    <h6 className="mb-0">
+                      {nameProduct}
+                    </h6>
+
+                    <small className="text-muted">
+                      {t("checkout.quantity")}:{" "}
+                      {quantityHandle}
+                    </small>
+
+                    <p className="d-flex gap-3">
+                      <small className="text-muted">
+                        {t("checkout.color")}:{" "}
+                        {selectedColor}
+                      </small>
+
+                      <small className="text-muted">
+                        {t("checkout.size")}:{" "}
+                        {selectedSize}
+                      </small>
+                    </p>
+                  </Col>
+
+                  <Col
+                    xs={4}
+                    md={4}
+                    className="text-end text-danger fw-bold"
                   >
-                    Xác nhận đặt hàng COD
-                  </Button>
-                ) : (
-                  <Button
-                    variant="danger"
-                    size="lg"
-                    className="px-5 fw-bold"
-                    onClick={handleOnlinePayment}
-                  >
-                    Xác nhận đặt hàng VNPAY
-                  </Button>
-                )}
+                    {priceProduct.toLocaleString()} đ
+                  </Col>
+                </Row>
               </Card.Body>
             </Card>
-          </Col>
-        </Row>
-      </Container>
-    </>
+          )}
+        </div>
+
+        <Card className="mb-4 shadow-sm border-0">
+          <Card.Body>
+            <h5 className="mb-3">
+              {t("checkout.paymentMethod")}
+            </h5>
+
+            <Form>
+              <div className="p-3 border rounded mb-2">
+                <Form.Check
+                  type="radio"
+                  id="payment-cod"
+                  label={
+                    <div className="ms-2">
+                      <strong>
+                        {t("checkout.codTitle")}
+                      </strong>
+
+                      <br />
+
+                      <small className="text-muted">
+                        {t("checkout.codDescription")}
+                      </small>
+                    </div>
+                  }
+                  name="paymentMethod"
+                  value={"COD"}
+                  onChange={handleChange}
+                  defaultChecked
+                />
+              </div>
+
+              <div className="p-3 border rounded">
+                <Form.Check
+                  type="radio"
+                  id="payment-online"
+                  label={
+                    <div className="ms-2">
+                      <strong>
+                        {t("checkout.onlinePaymentTitle")}
+                      </strong>
+
+                      <br />
+
+                      <small className="text-muted">
+                        {t("checkout.onlinePaymentDescription")}
+                      </small>
+                    </div>
+                  }
+                  value={"VNPAY"}
+                  name="paymentMethod"
+                  onChange={handleChange}
+                />
+              </div>
+            </Form>
+          </Card.Body>
+        </Card>
+
+        <Card className="shadow-sm border-0 bg-light">
+          <Card.Body className="d-flex justify-content-between align-items-center py-4">
+            <div>
+              <span className="text-muted">
+                {t("checkout.total")}
+              </span>
+
+              <h3 className="text-danger fw-bold mb-0">
+                {totalPrice?.toLocaleString()} đ
+              </h3>
+            </div>
+
+            {paymentMethod === "COD" ? (
+              <Button
+                variant="danger"
+                size="lg"
+                className="px-5 fw-bold"
+                onClick={handleOrder}
+              >
+                {t("checkout.confirmOrderCOD")}
+              </Button>
+            ) : (
+              <Button
+                variant="danger"
+                size="lg"
+                className="px-5 fw-bold"
+                onClick={handleOnlinePayment}
+              >
+                {t("checkout.confirmOrderVNPAY")}
+              </Button>
+            )}
+          </Card.Body>
+        </Card>
+      </Col>
+    </Row>
+  </Container>
+</>
   );
 }

@@ -7,6 +7,7 @@ const {
 const hasdRefreshToken = require("../utils/crypto");
 const UserModel = require("../models/UserModel");
 const db = require("../config/db");
+const client = require("../config/redis");
 class AuthService {
   login = async (data) => {
     const token = signToken(data);

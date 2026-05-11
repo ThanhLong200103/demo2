@@ -12,6 +12,7 @@ class UserService {
     }
     checkProfile = async (email)=>{
         const profile = await UserModel.getUser(email) ;
+ 
         return profile;
     }
     register = async (data)=>{
