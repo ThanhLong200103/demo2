@@ -1,0 +1,108 @@
+import {
+  Badge,
+  Box,
+  Button,
+  Container,
+  Grid,
+  InputAdornment,
+  Switch,
+  TextField,
+  useColorScheme,
+} from "@mui/material";
+import SearchIcon from "@mui/icons-material/Search";
+import LanguageIcon from "@mui/icons-material/Language";
+import NotificationsNoneIcon from "@mui/icons-material/NotificationsNone";
+import ManageAccountsIcon from "@mui/icons-material/ManageAccounts";
+import { useState } from "react";
+export default function HeaderComponent() {
+  
+  const { mode, setMode } = useColorScheme();
+  const [check , setCheck] = useState(false);
+  console.log(mode)
+  const handleDarkMode = () => {
+  const newCheck = !check;
+  setCheck(newCheck);
+  setMode(newCheck ? "dark" : "light");
+};
+
+  return (
+    <>
+      <Container
+        sx={{
+          width: "75%",
+          position: "absolute",
+          borderBottom: "1px solid #ccc",
+          maxHeight: "64px",
+          right: "0",
+         
+        }}
+      >
+        <Grid container sx={{
+           display:"flex",
+          justifyContent:"space-between"
+        }}>
+          <Grid size={6}>
+            <TextField
+              fullWidth
+              placeholder="Tìm kiếm..."
+              variant="outlined"
+              slotProps={{
+                input: {
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <SearchIcon color="primary" />
+                    </InputAdornment>
+                  ),
+                },
+              }}
+              sx={{
+                "& .MuiOutlinedInput-root": {
+                  borderRadius: 10,
+                  maxHeight: "32px",
+                  marginTop: "16px",
+                },
+              }}
+            />
+          </Grid>
+          <Grid size={6}>
+            <Box
+              component={"ul"}
+              sx={{
+                listStyle: "none",
+                display: "flex",
+                justifyContent: "end",
+              }}
+            >
+              <li>
+                <Button>
+                  <LanguageIcon />
+                </Button>
+              </li>
+              <li>
+                <Button>
+                  <Badge badgeContent={1} color="primary">
+                    <NotificationsNoneIcon color="primary" />
+                  </Badge>
+                </Button>
+              </li>
+              <li>
+                <Button>
+                  <ManageAccountsIcon />
+                </Button>
+              </li>
+              <li>
+                <Switch
+                  checked={check}
+                  slotProps={{ input: { "aria-label": "controlled" } }}
+                  onClick={()=>{
+                     handleDarkMode();
+                  }}
+                />
+              </li>
+            </Box>
+          </Grid>
+        </Grid>
+      </Container>
+    </>
+  );
+}
