@@ -1,31 +1,16 @@
-import { Button, Container, Grid } from "@mui/material";
+import { Container, Grid } from "@mui/material";
+import ButtonDasdboard from "../components/Dashboard/ButtonDashBoard";
 
 
 export default function DashboardPage() {
     return(
         <>
         <Container>
-            <Grid container className="d-flex justify-content-between">
-                <Grid size={3}   >
-                <Button>
-                    <div>
-                    <p className="fw-light">Tổng doanh thu</p>
-                    <div className="d-flex justify-content-center gap-2">
-                        <h5>0</h5> 
-                        <p>Thống kê</p>
-                    </div>
-                    <p>You made an extra {} this year</p>
-                    </div></Button>
-                </Grid >
-                <Grid size={3} >
-                <Button>Tổng đơn hàng</Button>
-                </Grid>
-                <Grid  size ={3} >
-                <Button>Tổng khách hàng</Button>
-                </Grid>
-                <Grid size={3} >
-                <Button>Đơn hàng chờ xủ lý</Button>
-                </Grid>
+            <Grid container>
+                <ButtonDasdboard text="You made an extra {} this year" title="Tổng doanh thu" total={0}></ButtonDasdboard>
+             <ButtonDasdboard text="You made an extra {} this year" title="Tổng đơn hàng" total={0}></ButtonDasdboard>
+                <ButtonDasdboard text="You made an extra {} this year" title="Tổng khách hàng" total={0}></ButtonDasdboard>
+                <ButtonDasdboard text="You made an extra {} this year" title="Đơn Hàng chờ xử lý" total={0}></ButtonDasdboard>
             </Grid>
         </Container>
         </>
