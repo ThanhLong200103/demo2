@@ -16,6 +16,7 @@ function App() {
           height: "calc(100vh - 64px)",
           overflowY: "auto",
           padding: "20px",
+          overflowX:"hidden"
         }}
       >
         <RouterApp />

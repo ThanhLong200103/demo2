@@ -1,6 +1,7 @@
 import { InputAdornment, ListItemIcon, type TextFieldProps } from "@mui/material";// Import cái styled(TextField) bạn viết lúc nãy
-import { SearchUser } from "./styled";
+
 import type { ReactElement } from "react";
+import { SearchUser } from "./styled";
 
 type UserSearchProps = TextFieldProps & {
   placeholder?: string;
@@ -16,7 +17,7 @@ const SearchUserPage = ({ placeholder,icon, ...props }: UserSearchProps) => {
             input: {
               startAdornment: (
                 <InputAdornment position="start">
-                  {icon && <ListItemIcon>{icon}</ListItemIcon>}
+                  {icon && <ListItemIcon >{icon}</ListItemIcon>}
                 </InputAdornment>
               ),
             },

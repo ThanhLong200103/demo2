@@ -1,12 +1,11 @@
 import {
   Box,
-  Container,
-  Grid,
+  Grid2,
   ImageList,
   ImageListItem,
   List,
 } from "@mui/material";
-import SidebarItem from "../../../components/SideBar/SideBarItem";
+import SidebarItem from "../../../components/sidebar/SideBarItem";
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import PermIdentityIcon from "@mui/icons-material/PermIdentity";
 import { useNavigate } from "react-router-dom";
@@ -28,9 +27,10 @@ export default function SideBarComonent() {
           width: "25%",
           borderRight: "1px solid #ccc",
           position: "absolute",
+            boxShadow:"1px 0 10px rgba(0,0,0,0.1)",
         }}
       >
-        <Grid size={12}>
+        <Grid2 size={12}>
           <Box component={"div"}>
             <ImageList>
               <ImageListItem>
@@ -42,8 +42,8 @@ export default function SideBarComonent() {
               </ImageListItem>
             </ImageList>
           </Box>
-        </Grid>
-        <Grid container>
+        </Grid2>
+        <Grid2 container>
           <List
             sx={{
               width: "100%",
@@ -86,7 +86,7 @@ export default function SideBarComonent() {
               onClick={() => handleNavigate("/System")}
             ></SidebarItem>
           </List>
-        </Grid>
+        </Grid2>
       </SideBar>
     </>
   );

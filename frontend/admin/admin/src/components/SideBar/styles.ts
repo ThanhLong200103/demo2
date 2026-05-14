@@ -7,7 +7,7 @@ const StyledListItemButton = styled(ListItemButton)(({ theme }) => ({
 
   // Khi chính nó (Button) có class .Mui-selected
   "&.Mui-selected": {
-    backgroundColor: "rgba(25, 118, 210, 0.08)", // Thêm màu nền nhạt cho đẹp
+    backgroundColor: "#0000", // Thêm màu nền nhạt cho đẹp
     color: theme.palette.primary.main,
 
     // Tìm thằng con Icon bên trong nó để nhuộm màu
