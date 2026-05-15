@@ -12,7 +12,9 @@ import TableOrderDashboard from "./TableOrderDashboard";
 import { StyledButonUser } from "../../user/styled";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import { StyledGridRerentActivity } from "../styled";
+import { useNavigate } from "react-router-dom";
 export default function RerentActivityDashBoard() {
+  const naviagte = useNavigate()
   const rows = [
     {
       order: "#1001",
@@ -164,6 +166,8 @@ export default function RerentActivityDashBoard() {
               sx={{
                 marginTop: "18px",
               }}
+              onClick={()=>{naviagte("/Product")}}
+
             >
               <Typography>View all </Typography>
               <ArrowForwardIcon sx={{ fontSize: "" }} />
@@ -194,6 +198,7 @@ export default function RerentActivityDashBoard() {
               sx={{
                 marginTop: "18px",
               }}
+              onClick={()=>{naviagte("/Order")}}
             >
               <Typography>View all </Typography>
               <ArrowForwardIcon sx={{ fontSize: "" }} />

@@ -1,5 +1,5 @@
 import type { GridColDef } from "@mui/x-data-grid";
-import { TableAction } from "./tableActions";
+import { TableAction } from "../tableGird/tableActions";
 
 type Props = {
   handleEdit: (id: string) => void;

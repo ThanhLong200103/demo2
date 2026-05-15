@@ -5,7 +5,7 @@ import {
   ImageListItem,
   List,
 } from "@mui/material";
-import SidebarItem from "../../../components/sidebar/SideBarItem";
+import SidebarItem from "../../../components/listItem/SideBarItem";
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import PermIdentityIcon from "@mui/icons-material/PermIdentity";
 import { useNavigate } from "react-router-dom";
@@ -14,6 +14,7 @@ import ShoppingBasketIcon from "@mui/icons-material/ShoppingBasket";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import SettingsIcon from "@mui/icons-material/Settings";
 import SideBar from "./styles";
+
 export default function SideBarComonent() {
   const navigate = useNavigate();
   const handleNavigate = (name: String) => {

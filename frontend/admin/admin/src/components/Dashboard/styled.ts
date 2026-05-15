@@ -27,6 +27,7 @@ export const StyledPieChatDashboard = styled(PieChart)(()=>(
       
       backgroundColor: "rgba(243, 245, 247, 0.08)",
 
+
     
     }
   }
@@ -50,8 +51,8 @@ export const StyledBarChart = styled(BarChart) (()=>(
 
 export const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
-    backgroundColor: theme.palette.common.black,
-    color: theme.palette.common.white,
+    backgroundColor: theme.palette.primary.main,
+    color: theme.palette.primary.contrastText,
     
   },
   [`&.${tableCellClasses.body}`]: {

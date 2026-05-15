@@ -5,13 +5,15 @@ import { SearchUser } from "./styled";
 
 type UserSearchProps = TextFieldProps & {
   placeholder?: string;
-  icon?:ReactElement
+  icon?:ReactElement,
+  value?:string
 };
 
-const SearchUserPage = ({ placeholder,icon, ...props }: UserSearchProps) => {
+const SearchUserPage = ({ placeholder,icon,value, ...props }: UserSearchProps) => {
   return (
     <SearchUser
       placeholder={placeholder} 
+      value={value}
       {...props} 
       slotProps={{
             input: {

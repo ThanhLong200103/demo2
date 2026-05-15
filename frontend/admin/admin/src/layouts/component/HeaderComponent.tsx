@@ -3,26 +3,33 @@ import {
   Box,
   Button,
   Container,
-  Grid,
+  Grid2,
   InputAdornment,
   Switch,
   TextField,
-  useColorScheme,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import LanguageIcon from "@mui/icons-material/Language";
 import NotificationsNoneIcon from "@mui/icons-material/NotificationsNone";
 import ManageAccountsIcon from "@mui/icons-material/ManageAccounts";
 import { useState } from "react";
+import { useDispatch } from "react-redux";
+import { setDark } from "../../redux/features/darkMode";
+
 export default function HeaderComponent() {
-  
-  const { mode, setMode } = useColorScheme();
+
   const [check , setCheck] = useState(false);
-  console.log(mode)
+  const  dispatch = useDispatch()
   const handleDarkMode = () => {
   const newCheck = !check;
   setCheck(newCheck);
-  setMode(newCheck ? "dark" : "light");
+  if(newCheck){
+    dispatch(setDark("dark"))
+  }else{
+    dispatch(setDark("light"))
+
+  }
+
 };
 
   return (
@@ -37,11 +44,11 @@ export default function HeaderComponent() {
          
         }}
       >
-        <Grid container sx={{
+        <Grid2 container sx={{
            display:"flex",
           justifyContent:"space-between"
         }}>
-          <Grid size={6}>
+          <Grid2 size={6}>
             <TextField
               fullWidth
               placeholder="Tìm kiếm..."
@@ -63,8 +70,8 @@ export default function HeaderComponent() {
                 },
               }}
             />
-          </Grid>
-          <Grid size={6}>
+          </Grid2>
+          <Grid2 size={6}>
             <Box
               component={"ul"}
               sx={{
@@ -100,8 +107,8 @@ export default function HeaderComponent() {
                 />
               </li>
             </Box>
-          </Grid>
-        </Grid>
+          </Grid2>
+        </Grid2>
       </Container>
     </>
   );

@@ -1,10 +1,12 @@
 
 
 
-import type { Components } from '@mui/material';
+import type { Components, Theme } from '@mui/material';
 import { buttonOverrides } from './button';
+import { iconOderide } from './icon';
 
-export const components: Components = {
+export const components: Components<Theme> = {
   MuiButton: buttonOverrides,
+  MuiSvgIcon: iconOderide,
 };
 

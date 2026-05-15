@@ -1,5 +1,4 @@
-import { DataGrid } from "@mui/x-data-grid";
-import { ColumTable } from "./columns";
+import { DataGrid, type GridColDef } from "@mui/x-data-grid";
 export const handleEdit = (id: string) => {
   return console.log("id", id);
 };
@@ -8,12 +7,17 @@ export const handleDelete = (id: string) => {
 };
 const paginationModel = { page: 0, pageSize: 5 };
 
+
+// interface setGirdCol  extends GridColDef[] {
+
+// } 
 type Props = {
   rows?:any,
-  checkbox:boolean 
+  checkbox:boolean,
+  columns:GridColDef[] 
 }
 
-const DataGird = ({rows ,checkbox}:Props) => {
+const DataGird = ({rows ,checkbox ,columns }:Props) => {
   
   return (
     <DataGrid
@@ -21,7 +25,7 @@ const DataGird = ({rows ,checkbox}:Props) => {
         width: "100%",
       }}
       rows={rows}
-      columns={ColumTable({ handleEdit, handleDelete })}
+      columns={columns}
       initialState={{ pagination: { paginationModel } }}
       pageSizeOptions={[5, 10]}
         checkboxSelection ={

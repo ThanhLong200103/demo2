@@ -1,25 +1,19 @@
-import { StrictMode } from 'react'
-import { createRoot } from 'react-dom/client'
-import { ThemeProvider } from '@mui/material/styles';
-import theme from './theme/index.ts';
-import {
-  BrowserRouter,
-} from "react-router-dom";
+import { StrictMode } from "react";
+import { createRoot } from "react-dom/client";
 
-import App from './App.tsx'
-import { CssBaseline } from '@mui/material';
+import { BrowserRouter } from "react-router-dom";
+
+import App from "./App.tsx";
+
 import { Provider } from "react-redux";
 import store from "./redux/store";
-createRoot(document.getElementById('root')!).render(
+
+createRoot(document.getElementById("root")!).render(
   <StrictMode>
-   <Provider store={store}>
-    <ThemeProvider theme={theme}>
-     <BrowserRouter>
-    <CssBaseline/>
-    <App />
-    </BrowserRouter>
-   </ThemeProvider>
-   </Provider>
-    
+    <Provider store={store}>
+      <BrowserRouter>
+        <App />
+      </BrowserRouter>
+    </Provider>
   </StrictMode>,
-)
+);
