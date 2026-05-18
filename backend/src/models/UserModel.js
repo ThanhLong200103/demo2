@@ -12,19 +12,19 @@ const User = {
     },
     getUser : async(email) =>{
        
-        const[oneUser] = await db.query("SELECT * FROM users WHERE email = ? ",[email] );
+        const[oneUser] = await db.query("SELECT u.id, u.email, u.password,u.phone, u.role_id, r.name AS role_name FROM users u JOIN  roles r ON u.role_id = r.id WHERE email = ? ",[email] );
         return oneUser[0];
     },
     userLogin : async(data)=>{
         const {email , hasdPassWord} = data
         const password = hasdPassWord
-        const[oneUser] = await db.execute("SELECT id , name , email ,password FROM users WHERE email = ? AND password =?",[email ,password] );
+        const[oneUser] = await db.execute("SELECT u.id, u.email, u.password,u.phone, u.role_id, r.name AS role_name FROM users u JOIN  roles r ON u.role_id = r.id WHERE u.email = ? AND u.password =?",[email ,password] );
         return oneUser[0];
     },
     createUser : async(user)=>{
         const{name,hasdPassWord ,email,phone} = user;
         const password = hasdPassWord
-        const[result] = await db.query("INSERT INTO users (name,password ,email,phone ) VALUES (?,?,?,?)" ,[name,password ,email,phone]);
+        const[result] = await db.query("INSERT INTO users (name,password ,email,phone, role_id ) VALUES (?,?,?,?,6)" ,[name,password ,email,phone]);
         return result;
     },
     editUser : async(id,user)=>{

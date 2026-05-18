@@ -2,11 +2,12 @@
 import { CssBaseline, ThemeProvider } from "@mui/material";
 import HeaderComponent from "./layouts/component/HeaderComponent";
 import SideBarComonent from "./layouts/component/SideBar/SideBarComonent";
-import RouterApp from "./router/router";
+
 import type { RootState } from "./redux/store";
 import { useSelector } from "react-redux";
 import { useMemo } from "react";
 import { createAppTheme } from "./theme";
+import { RouterApp, RouterLogin } from "./router/router";
 
 function App() {
    const setmode = useSelector(
@@ -17,11 +18,14 @@ function App() {
     () => createAppTheme(setmode),
     [setmode]
   );
+  const {isAuthenticated} = useSelector(    (state: RootState) => state.auth)
+
   return (
 
         <ThemeProvider theme={theme}>
               <CssBaseline/>
     <div className="admin-layout">
+      {isAuthenticated ?  <>
       <HeaderComponent />
       <SideBarComonent />
       <main
@@ -39,6 +43,8 @@ function App() {
       >
         <RouterApp />
       </main>
+      </>:<RouterLogin/> }
+      
     </div>
      </ThemeProvider>
   );

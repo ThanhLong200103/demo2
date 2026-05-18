@@ -5,12 +5,14 @@ import FileDownloadOutlinedIcon from "@mui/icons-material/FileDownloadOutlined";
 import FileUploadOutlinedIcon from "@mui/icons-material/FileUploadOutlined";
 import AddIcon from "@mui/icons-material/Add";
 
+
 type Props = {
   handleAdd: () => void;
   handleImport: () => void;
   handleExport: () => void;
   title:string
   checkAdd: boolean;
+
 };
 
 export const HandleLogic = ({
@@ -19,6 +21,8 @@ export const HandleLogic = ({
   handleExport,
   title,
   checkAdd,
+ 
+  
 }: Props) => {
   return (
     <Container sx={{ marginTop: "46px" }}>
@@ -70,6 +74,7 @@ export const HandleLogic = ({
           )}
         </Grid2>
       </Grid2>
+     
     </Container>
   );
 };

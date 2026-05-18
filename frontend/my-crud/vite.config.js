@@ -5,9 +5,7 @@ import react from '@vitejs/plugin-react'
 export default defineConfig({
   plugins: [react()],
   server: {
-    allowedHosts: [
-      'v5azrh9id54y.shares.zrok.io', // Thêm link zrok hiện tại của bạn vào đây
-      '.zrok.io' // Hoặc thêm cái này để cho phép tất cả các link từ zrok
-    ]
+    port: 5173,
+    strictPort: true
   }
 })

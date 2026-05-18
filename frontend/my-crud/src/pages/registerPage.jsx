@@ -69,7 +69,7 @@ export default function RegisterPage({ setAccount }) {
                 type="text"
                 placeholder={t("auth.lastName")}
                 value={data.name}
-                name="ho"
+                name="name"
                 className="inputAccount"
                 onChange={handleChange}
               />
@@ -78,8 +78,8 @@ export default function RegisterPage({ setAccount }) {
               <Form.Control
                 type="text"
                 placeholder={t("auth.firstName")}
-                value={data.name}
-                name="name"
+                value={data.phone}
+                name="phone"
                 className="inputAccount"
                 onChange={handleChange}
               />

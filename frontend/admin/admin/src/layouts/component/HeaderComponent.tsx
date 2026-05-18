@@ -15,10 +15,12 @@ import ManageAccountsIcon from "@mui/icons-material/ManageAccounts";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { setDark } from "../../redux/features/darkMode";
+import ProfileAndLogout from "../../components/header/profileAndLogout";
 
 export default function HeaderComponent() {
 
   const [check , setCheck] = useState(false);
+  const [show , setShow] = useState(false);
   const  dispatch = useDispatch()
   const handleDarkMode = () => {
   const newCheck = !check;
@@ -31,6 +33,7 @@ export default function HeaderComponent() {
   }
 
 };
+
 
   return (
     <>
@@ -92,10 +95,11 @@ export default function HeaderComponent() {
                   </Badge>
                 </Button>
               </li>
-              <li>
-                <Button>
+              <li style={{position:"relative"}}>
+                <Button onClick={()=>{setShow((s)=>!s)}}>
                   <ManageAccountsIcon />
                 </Button>
+                <ProfileAndLogout show = {show} setShow={setShow}></ProfileAndLogout>
               </li>
               <li>
                 <Switch

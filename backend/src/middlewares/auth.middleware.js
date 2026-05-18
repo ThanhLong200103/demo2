@@ -1,3 +1,4 @@
+
 const { verifyToken } = require("../utils/jwt");
 
 const authMiddleware = (req, res, next) => {
@@ -34,5 +35,7 @@ const authMiddleware = (req, res, next) => {
     return res.status(500).json({ message: "Internal server error" });
   }
 };
+
+
 
 module.exports = authMiddleware;

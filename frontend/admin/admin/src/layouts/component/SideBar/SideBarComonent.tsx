@@ -1,10 +1,4 @@
-import {
-  Box,
-  Grid2,
-  ImageList,
-  ImageListItem,
-  List,
-} from "@mui/material";
+import { Box, Grid2, ImageList, ImageListItem, List } from "@mui/material";
 import SidebarItem from "../../../components/listItem/SideBarItem";
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import PermIdentityIcon from "@mui/icons-material/PermIdentity";
@@ -28,7 +22,7 @@ export default function SideBarComonent() {
           width: "25%",
           borderRight: "1px solid #ccc",
           position: "absolute",
-            boxShadow:"1px 0 10px rgba(0,0,0,0.1)",
+          boxShadow: "1px 0 10px rgba(0,0,0,0.1)",
         }}
       >
         <Grid2 size={12}>
