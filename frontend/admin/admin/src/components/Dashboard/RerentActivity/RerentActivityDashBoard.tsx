@@ -13,58 +13,15 @@ import { StyledButonUser } from "../../user/styled";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import { StyledGridRerentActivity } from "../styled";
 import { useNavigate } from "react-router-dom";
-export default function RerentActivityDashBoard() {
+import type { OrderType } from "../../../types/order";
+
+type Props ={
+  rows:OrderType[]
+}
+
+export default function RerentActivityDashBoard({rows}:Props) {
   const naviagte = useNavigate()
-  const rows = [
-    {
-      order: "#1001",
-      customer: "Nguyễn Văn An",
-      date: "2026-05-01",
-      status: "Pending",
-    },
-    {
-      order: "#1002",
-      customer: "Trần Thị Bình",
-      date: "2026-05-02",
-      status: "Completed",
-    },
-    {
-      order: "#1003",
-      customer: "Lê Minh Hoàng",
-      date: "2026-05-03",
-      status: "Cancelled",
-    },
-    {
-      order: "#1004",
-      customer: "Phạm Quốc Huy",
-      date: "2026-05-04",
-      status: "Processing",
-    },
-    {
-      order: "#1005",
-      customer: "Đỗ Thị Lan",
-      date: "2026-05-05",
-      status: "Completed",
-    },
-    {
-      order: "#1006",
-      customer: "Hoàng Đức Nam",
-      date: "2026-05-06",
-      status: "Pending",
-    },
-    {
-      order: "#1007",
-      customer: "Võ Thanh Tùng",
-      date: "2026-05-07",
-      status: "Shipped",
-    },
-    {
-      order: "#1008",
-      customer: "Ngô Khánh Linh",
-      date: "2026-05-08",
-      status: "Completed",
-    },
-  ];
+ 
 
   const products = [
     {
@@ -134,6 +91,8 @@ export default function RerentActivityDashBoard() {
 
           {products.map((p) => (
             <List
+                key={p.id}
+
               sx={{
                 boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
               }}

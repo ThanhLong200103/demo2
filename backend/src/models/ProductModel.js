@@ -236,5 +236,10 @@ if (productIds.length > 0) {
     );
     return rows;
   };
+  // admin 
+  getAllProductAdmin = async()=>{
+    const [rows] = await db.query("SELECT p.id , p.name ,p.price,p.img,p.status ,p.category_id , p.created_by , p.created_at ,a.color , a.size , a.quantity FROM products p JOIN attributes a ON p.id = a.product_id  ")
+    return rows
+  }
 }
 module.exports = new ProductModel();

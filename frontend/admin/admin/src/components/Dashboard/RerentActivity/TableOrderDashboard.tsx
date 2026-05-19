@@ -1,14 +1,10 @@
 import { Paper, Table, TableBody, TableContainer, TableHead, TableRow } from "@mui/material";
 import { StyledTableCell, StyledTableRow } from "../styled";
+import type { OrderType } from "../../../types/order";
 
-interface OrderTable {
-    order:string,
-    customer:string,
-    date:string,
-    status:string
-}
+
 interface Rows {
-    rows:OrderTable[]
+    rows:OrderType[]
 }
 export default function TableOrderDashboard({rows}:Rows) {
     return(
@@ -23,13 +19,15 @@ export default function TableOrderDashboard({rows}:Rows) {
           </TableRow>
         </TableHead>
         <TableBody>
-          {rows.map((row :OrderTable) => (
-            <StyledTableRow key={row.order}>
+          {rows.map((row :OrderType) => (
+            <StyledTableRow key={row.id}>
               <StyledTableCell component="th" scope="row">
-                {row.order}
+                {row.id}
               </StyledTableCell>
-              <StyledTableCell align="right">{row.customer}</StyledTableCell>
-              <StyledTableCell align="right">{row.date}</StyledTableCell>
+              <StyledTableCell align="right">{row.nameUser}</StyledTableCell>
+              <StyledTableCell align="right">
+                {new Date(row.created_at).toLocaleString("vi-VN")}
+              </StyledTableCell>
               <StyledTableCell align="right">{row.status}</StyledTableCell>
       
             </StyledTableRow>

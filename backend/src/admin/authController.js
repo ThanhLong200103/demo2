@@ -3,7 +3,9 @@ const userService = require("../services/userService");
 const CacthAsync = require("../utils/cachAsync");
 const cartItemService = require("../services/cartItemService");
 const AppError = require("../utils/AppError");
-const { validatePass } = require("../utils/argon2");
+const { validatePass, hasdPass } = require("../utils/argon2");
+const AdminService = require("../services/admin");
+const roleService = require("../services/roleService");
 class AuthAdmin {
     login = CacthAsync(async(req , res ,next)=>{
          
@@ -48,6 +50,71 @@ class AuthAdmin {
     
 );
 
+getAllPays = CacthAsync(
+  async(req , res , next)=>{
+    const data =await AdminService.getAllPays()
+    res.json(data)
+  }
+)
+
+
+getAllOrderAdmin = CacthAsync(
+  async(req , res , next)=>{
+    const data = await AdminService.getAllOrderAdmin()
+    res.json(data)
+  }
+)
+getAllProductAdmin = CacthAsync(
+  async(req , res , next)=>{
+    const data = await AdminService.getAllProductAdmin()
+    res.json(data)
+  }
+)
+getAllCustomers = CacthAsync(
+  async(req , res , next)=>{
+    const data = await AdminService.getAllCustomers()
+    res.json(data)
+  }
+)
+
+createCustomer = CacthAsync(
+  async(req , res , next)=>{
+     const { name, password, email, phone ,role_id } = req.body; 
+      const hasdPassWord = await hasdPass(password);
+       const data = await AdminService.createCustomers({
+        name, hasdPassWord, email, phone ,role_id
+       })
+    res.json(data)
+
+  }
+)
+
+getAllRole= CacthAsync(
+  async(req,res,next) =>{
+    const data = await roleService.getAllRole()
+    res.json(data)
+  }
+)
+getOneCustomer = CacthAsync(
+  async(req,res,next) =>{
+    const {id} = req.params
+    const data = await AdminService.getOneCustomer(id)
+    res.json(data)
+  }
+)
+editCustomer =  CacthAsync(
+  async(req , res , next)=>{
+     const { name, email, phone, role_id, status, id ,password } = req.body; 
+      const hasdPassWord = await hasdPass(password);
+       const data = await AdminService.createCustomers({
+        name, hasdPassWord, email, phone ,role_id
+       })
+    res.json(data)
+
+  }
+)
 }
+
+
 
 module.exports = new AuthAdmin()

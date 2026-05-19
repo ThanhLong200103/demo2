@@ -66,8 +66,12 @@ class OrderModel {
         )
         return orderAddress
       }
-    
-    
+
+//admin
+ getAllOrderAdmin = async ()=>{
+    const [rows] = await db.query("SELECT o.id , o.user_id ,o.total_price , o.status , u.name AS nameUser , o.created_by , o.created_at FROM orders o JOIN users u ON o.user_id = u.id")
+    return rows
+ }
     
 }
 module.exports = new OrderModel();

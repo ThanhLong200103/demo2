@@ -17,9 +17,6 @@ export default function BasicModal({ open,
       <Modal open={open} onClose={handleClose}>
         <StyledBoxModal>
           {children}
-          <h2>Hello Modal</h2>
-
-          <p>Nội dung modal ở đây</p>
         </StyledBoxModal>
       </Modal>
     </div>

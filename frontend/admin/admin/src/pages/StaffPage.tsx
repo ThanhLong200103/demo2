@@ -1,13 +1,23 @@
 import { Container, Typography } from "@mui/material";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import DataGird from "../components/tableGird";
 import { ColumTableStaff, ColumTableStaffActivity } from "../components/staff/tableStaff/columnStaff";
-import { employees, productEmployees } from "../components/staff/tableStaff/rows";
+import {  productEmployees } from "../components/staff/tableStaff/rows";
 import { HandleLogic } from "../components/hanlde/hanlde";
 import { SearchLogic } from "../components/hanlde/search";
+import BasicModal from "../components/modal";
+import type { UserType } from "../types/user";
+import { GetCustomes } from "../components/staff/data";
+import FormCustomers from "../components/staff/FormAdd";
+import FormCustomersEdit from "../components/staff/FormEdit";
 export default function StaffPage() {
-  const handleEdit = (id: string) => {
-    return console.log("id", id);
+  const [showAdd , setShowAdd] = useState(false)
+  const [showEdit , setShowEdit] = useState(false)
+  const [id , setID] = useState<string>()
+  const[customers , setCustomer] = useState<Array<UserType>>()
+  const handleEdit = (id:string) => {
+    setShowEdit((s)=>!s)
+    setID(id)
   };
   const handleDelete = (id: string) => {
     return console.log("id", id);
@@ -15,7 +25,7 @@ export default function StaffPage() {
   const [valueSearch, setValueSearch] = useState(String);
   
   const handleAdd = ()=>{
-    console.log(valueSearch)
+    setShowAdd((show)=>!show)
   }
   const handleImport = ()=>{
     console.log(valueSearch)
@@ -25,10 +35,30 @@ export default function StaffPage() {
     console.log(valueSearch)
 
   }
+  const handelClose = ()=>{
+    setShowAdd(false)
+    setShowEdit(false)
+  }
+  useEffect(
+    ()=>{
+      const effectData = async ()=>{
+        const data = await GetCustomes()
+        setCustomer(data)
+      }
+      effectData()
+    },[]
+  )
+
+
   return (
     <>
       <HandleLogic title="Staff" checkAdd={true} handleAdd={handleAdd} handleImport={handleImport} handleExport={handleExport} ></HandleLogic>
       <SearchLogic valueSearch={valueSearch} placeholder="Search Staff" setValueSearch={setValueSearch} ></SearchLogic>
+      <BasicModal open={showAdd} handleClose={handelClose}>
+        <Typography variant="h5"> Thêm nhân viên
+<FormCustomers></FormCustomers>
+        </Typography>
+      </BasicModal>
       <Container
         sx={{
           display: "flex",
@@ -38,10 +68,15 @@ export default function StaffPage() {
         }}
       >
         <DataGird
-          rows={employees}
+          rows={customers}
           checkbox={true}
           columns={ColumTableStaff({ handleEdit, handleDelete })}
         ></DataGird>
+        <BasicModal open={showEdit} handleClose={handelClose}>
+          <Typography variant="h5"> Chỉnh sửa nhân viên
+            <FormCustomersEdit id={id??""}></FormCustomersEdit>
+        </Typography>
+        </BasicModal>
       </Container>
       <Container
       sx={{

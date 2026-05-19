@@ -6,4 +6,7 @@ export default class AuthService extends BaseService {
     const res = await this.http.post("/admin/login", {email,password});
     return res.data;
     }
+    async logout() {
+    return await this.http.post("/logout");
+  }
 };

@@ -4,6 +4,10 @@ class RoleService {
         const data = await RoleModel.getRole(userRoleId);
         return data
     }
+    getAllRole = async ()=>{
+        const data = await RoleModel.getAllRole()
+        return data
+    }
 }
 
 module.exports = new RoleService()

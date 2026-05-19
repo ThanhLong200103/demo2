@@ -25,6 +25,16 @@ class PaymentModel {
     );
     return row;
   }
+
+
+
+  // admin
+
+  getAllPays = async()=>{
+    const [rows] = await db.query("SELECT order_id , amount , status , method , created_by , created_at  FROM payments WHERE status = 'completed' ")
+   
+    return rows
+  }
 }
 
 module.exports = new PaymentModel();

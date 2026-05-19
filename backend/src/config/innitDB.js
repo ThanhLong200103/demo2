@@ -133,7 +133,7 @@ const initDB = async () => {
         phone VARCHAR(255) NOT NULL UNIQUE,
         refresh_token VARCHAR(255),
         time_refresh_token TIMESTAMP NULL,
-        status VARCHAR(50) DEFAULT 'active',
+        status ENUM('active', 'deleted') DEFAULT 'active',
         role_id INT NULL,
         created_by INT NULL,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,

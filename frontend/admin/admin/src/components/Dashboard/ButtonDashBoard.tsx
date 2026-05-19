@@ -5,7 +5,7 @@ import type { ReactElement } from "react";
 interface ButtonDashboardProps extends ButtonProps {
   title: string;
   text?: string;
-  total?: number;
+  total?: string;
     icon?: ReactElement;
   
 }

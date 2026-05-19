@@ -10,8 +10,8 @@ const verifyToken = (token) => {
   
     return jwt.verify(token, config.secret);
 };
-const signRefreshToken = (id)=>{
-    const accessToken = jwt.sign(id,config.refreshSecret,{expiresIn : config.refreshExpiresIn})
+const signRefreshToken = (getToken)=>{
+    const accessToken = jwt.sign(getToken,config.refreshSecret,{expiresIn : config.refreshExpiresIn})
     return accessToken;
 }
 const verifyRefreshToken = (token) => {

@@ -12,7 +12,7 @@ export const ColumTableStaff = ({
   {
     field: "id",
     headerName: "id",
-    width: 100,
+    width: 50,
     type: "string",
   },
   {
@@ -35,9 +35,9 @@ export const ColumTableStaff = ({
     filterable: true,
   },
   {
-    field: "role",
+    field: "role_name",
     headerName: "Chức vụ",
-    width: 100,
+    width: 150,
     type: "singleSelect",
   },
   {

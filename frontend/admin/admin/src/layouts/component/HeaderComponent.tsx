@@ -16,24 +16,35 @@ import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { setDark } from "../../redux/features/darkMode";
 import ProfileAndLogout from "../../components/header/profileAndLogout";
+import { RepositoryFactory } from "../../service/FactoryService";
+import { logout } from "../../redux/features/auth";
 
 export default function HeaderComponent() {
-
-  const [check , setCheck] = useState(false);
-  const [show , setShow] = useState(false);
-  const  dispatch = useDispatch()
+  const [check, setCheck] = useState(false);
+  const [show, setShow] = useState(false);
+  const dispatch = useDispatch();
   const handleDarkMode = () => {
-  const newCheck = !check;
-  setCheck(newCheck);
-  if(newCheck){
-    dispatch(setDark("dark"))
-  }else{
-    dispatch(setDark("light"))
+    const newCheck = !check;
+    setCheck(newCheck);
+    if (newCheck) {
+      dispatch(setDark("dark"));
+    } else {
+      dispatch(setDark("light"));
+    }
+  };
 
-  }
-
-};
-
+  const handleProfile = () => {
+    alert("Profile clicked!");
+    console.log("profile");
+  };
+  const handleLogout = async () => {
+    try {
+      await RepositoryFactory.get("auth").logout();
+      dispatch(logout())
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return (
     <>
@@ -44,13 +55,15 @@ export default function HeaderComponent() {
           borderBottom: "1px solid #ccc",
           maxHeight: "64px",
           right: "0",
-         
         }}
       >
-        <Grid2 container sx={{
-           display:"flex",
-          justifyContent:"space-between"
-        }}>
+        <Grid2
+          container
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+          }}
+        >
           <Grid2 size={6}>
             <TextField
               fullWidth
@@ -95,18 +108,26 @@ export default function HeaderComponent() {
                   </Badge>
                 </Button>
               </li>
-              <li style={{position:"relative"}}>
-                <Button onClick={()=>{setShow((s)=>!s)}}>
+              <li style={{ position: "relative" }}>
+                <Button
+                  onClick={() => {
+                    setShow((s) => !s);
+                  }}
+                >
                   <ManageAccountsIcon />
                 </Button>
-                <ProfileAndLogout show = {show} setShow={setShow}></ProfileAndLogout>
+                <ProfileAndLogout
+                  show={show}
+                  handleProfile={handleProfile}
+                  handleLogout={handleLogout}
+                ></ProfileAndLogout>
               </li>
               <li>
                 <Switch
                   checked={check}
                   slotProps={{ input: { "aria-label": "controlled" } }}
-                  onClick={()=>{
-                     handleDarkMode();
+                  onClick={() => {
+                    handleDarkMode();
                   }}
                 />
               </li>

@@ -17,6 +17,7 @@ const initCategoryRoutes = require('./src/routers/category.js');
 const startRedis = require("./src/config/redis.js")
 const { initI18n } = require("./src/i18n/i18n.js");
 const middleware = require("i18next-http-middleware");
+const initAdminRoutes = require('./src/routers/admin.js');
 
 app.use(cors(corsReact));
 app.use(express.json());
@@ -27,7 +28,7 @@ app.use(cookieParser());
     const i18next = await initI18n();
     // console.log("Dữ liệu i18next nhận được là:", i18next);
     app.use(middleware.handle(i18next));
-
+    initAdminRoutes(app)
     initCategoryRoutes(app);
     initPaymentRoutes(app);
     initUserRoutes(app);

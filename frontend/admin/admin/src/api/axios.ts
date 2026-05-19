@@ -1,9 +1,11 @@
 import axios, {
   type AxiosInstance,
-  type AxiosResponse,
   AxiosError,
   type InternalAxiosRequestConfig,
 } from "axios";
+
+import { logout } from "../redux/features/auth";
+import store from "../redux/store";
 
 // 1. Định nghĩa kiểu dữ liệu cho hàng đợi các request bị hoãn
 interface FailedRequest {
@@ -60,27 +62,37 @@ axiosClient.interceptors.request.use(
 
 // 2. Response Interceptor
 axiosClient.interceptors.response.use(
-  (response: AxiosResponse) => response,
+  (response) => response,
   async (error: AxiosError) => {
-    // Ép kiểu config về dạng tùy biến có chứa thuộc tính _retry
     const originalRequest = error.config as CustomAxiosRequestConfig;
 
+    // Không có request
+    if (!originalRequest) {
+      return Promise.reject(error);
+    }
+
+    // Nếu refresh endpoint fail thì logout luôn
+    if (originalRequest.url?.includes("/refresh")) {
+      localStorage.removeItem("accessToken");
+      store.dispatch(logout());
+      return Promise.reject(error);
+    }
+
+    // Không phải 401 hoặc đã retry
     if (
-      !originalRequest ||
       error.response?.status !== 401 ||
       originalRequest._retry
     ) {
       return Promise.reject(error);
     }
 
+    // Nếu đang refresh
     if (isRefreshing) {
       return new Promise<string>((resolve, reject) => {
         failedQueue.push({ resolve, reject });
       })
         .then((token) => {
-          if (originalRequest.headers) {
-            originalRequest.headers.Authorization = `Bearer ${token}`;
-          }
+          originalRequest.headers.Authorization = `Bearer ${token}`;
           return axiosClient(originalRequest);
         })
         .catch((err) => Promise.reject(err));
@@ -89,41 +101,35 @@ axiosClient.interceptors.response.use(
     originalRequest._retry = true;
     isRefreshing = true;
 
-    return new Promise(async (resolve, reject) => {
-      try {
-        // Khai báo kiểu RefreshResponse cho dữ liệu trả về của axios gốc
-        const res = await axios.post<RefreshResponse>(
-          "http://localhost:3000/api/refresh",
-          {},
-          { withCredentials: true },
-        );
+    try {
+      const res = await axios.post<RefreshResponse>(
+        "http://localhost:3000/api/refresh",
+        {},
+        { withCredentials: true }
+      );
 
-        // TypeScript giờ đã hiểu rõ cấu trúc và gợi ý thuộc tính accessToken
-        const { accessToken } = res.data;
-        localStorage.setItem("accessToken", accessToken);
+      const { accessToken } = res.data;
+      console.log(accessToken);
+      
+      localStorage.setItem("accessToken", accessToken);
 
-        processQueue(null, accessToken);
+      processQueue(null, accessToken);
 
-        if (originalRequest.headers) {
-          originalRequest.headers.Authorization = `Bearer ${accessToken}`;
-        }
-        resolve(axiosClient(originalRequest));
-      } catch (refreshError: any) {
-        processQueue(refreshError, null);
+      originalRequest.headers.Authorization = `Bearer ${accessToken}`;
 
-        if (
-          window.location.pathname !== "/login" &&
-          refreshError.response?.status === 401
-        ) {
-          localStorage.removeItem("accessToken");
-          window.location.href = "/login";
-        }
-        reject(refreshError);
-      } finally {
-        isRefreshing = false;
-      }
-    });
-  },
+      return axiosClient(originalRequest);
+    } catch (refreshError: any) {
+      processQueue(refreshError, null);
+
+      localStorage.removeItem("accessToken");
+
+      store.dispatch(logout());
+
+      return Promise.reject(refreshError);
+    } finally {
+      isRefreshing = false;
+    }
+  }
 );
 
 export default axiosClient;

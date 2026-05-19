@@ -1,7 +1,17 @@
 import AuthService from "./auth";
+import Order from "./order";
+import Pay from "./pay";
+import ProductService from "./product";
+import RoleService from "./role";
+import UserService from "./user";
 
 const repositories = {
-  auth: new AuthService()
+  auth: new AuthService(),
+  pay: new Pay(),
+  order:new Order(),
+  user: new UserService(),
+  product : new ProductService(),
+  role: new RoleService()
 };
 
 export const RepositoryFactory = {

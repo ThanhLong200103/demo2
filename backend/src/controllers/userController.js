@@ -56,7 +56,7 @@ class UserController {
     res.json(profile);
   });
   register = cachAsync(async (req, res , next) => {
-    const { name, password, email, phone } = req.body;
+    const { name, password, email, phone } = req.body; 
     const hasdPassWord = await hasdPass(password);
     const register = await UserService.register({
       name,

@@ -15,6 +15,14 @@ class RoleModel {
             SELECT id FROM role_tree`,[userRoleId])
         return rows
     }
+
+    getAllRole = async()=>{
+        const [rows] = await db.query(
+            "SELECT id , name ,description FROM roles WHERE name !='super_admin'"
+        )
+        return rows
+    }
+
 }
 
 module.exports = new RoleModel()

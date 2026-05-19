@@ -19,7 +19,6 @@ function App() {
     [setmode]
   );
   const {isAuthenticated} = useSelector(    (state: RootState) => state.auth)
-
   return (
 
         <ThemeProvider theme={theme}>

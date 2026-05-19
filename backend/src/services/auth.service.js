@@ -36,7 +36,7 @@ class AuthService {
       // console.log(getToken)
       // return getToken
       
-      const newRefreshToken = signRefreshToken({ id: id });
+      const newRefreshToken = signRefreshToken(getToken);
       // console.log(newRefreshToken)
       const newHasdToken = hasdRefreshToken(newRefreshToken);
       // console.log(newHasdToken)

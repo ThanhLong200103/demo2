@@ -5,8 +5,8 @@ const AddressUserController = require("../controllers/addressUserController");
 const {loginMiddleware, registerMiddleware} = require('../middlewares/login.midlleware');
 const CheckPermission = require('../middlewares/checkpermission');
 const routerUser = express.Router();
-const AuthAdmin = require("../admin/authController")
-routerUser.get("/api/users",UserController.getAllUser)
+
+
 routerUser.post("/api/login",loginMiddleware,UserController.login)
 routerUser.get("/api/profile",authMiddleware,CheckPermission("update:own_profile") ,UserController.proFile)
 routerUser.post("/api/register",registerMiddleware,UserController.register)
@@ -23,7 +23,6 @@ routerUser.put("/api/DeleteAddress/:id",authMiddleware,AddressUserController.del
 
 // admin
 
-routerUser.post("/api/admin/login",loginMiddleware,AuthAdmin.login)
 let initUserRoutes = (app) => {
   app.use('/', routerUser);
 };
