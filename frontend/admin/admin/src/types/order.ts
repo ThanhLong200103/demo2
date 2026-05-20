@@ -7,3 +7,16 @@ export interface OrderType {
     user_id:number,
     nameUser:string
 }
+
+export interface OrderStatusUpdate {
+    status:string,
+    id:string
+}
+export interface OrderPriceUpdate {
+     total_price:number,
+    id:string
+}
+
+
+export type ListStatus = string[]
+

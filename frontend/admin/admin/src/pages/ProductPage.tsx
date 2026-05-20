@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { HandleLogic } from "../components/hanlde/hanlde";
 import { SearchLogic } from "../components/hanlde/search";
 import { Container, Grid2 } from "@mui/material";
@@ -7,6 +7,7 @@ import { colorProduct, listProducts, sizeProduct } from "../components/product/d
 import { ColumTableProduct } from "../components/product/colums";
 import DataGird from "../components/tableGird";
 import BasicModal from "../components/modal";
+import { Product } from "../components/dashboard/data";
 
 
 export default function ProductPage() {
@@ -36,6 +37,16 @@ export default function ProductPage() {
     console.log(open);
 
   }
+  useEffect(
+    ()=>{
+      const effectData = async ()=>{
+        const data = await Product();
+        console.log(data)
+
+      }
+      effectData()
+    },[]
+  )
   return (
     <>
       <HandleLogic

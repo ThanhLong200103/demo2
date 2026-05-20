@@ -23,13 +23,13 @@ export const ColumTableOrder = ({
     type: "string",
   },
   {
-    field: "name",
+    field: "nameUser",
     headerName: "Họ tên khách",
     width: 150,
     type: "string",
   },
   {
-    field: "total",
+    field: "total_price",
     headerName: "Tổng tiền",
     width: 100,
     type: "string",

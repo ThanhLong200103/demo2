@@ -238,11 +238,32 @@ const initDB = async () => {
         CONSTRAINT FK_OrderAddress_Order FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE
       );
     `);
-    
 
+    await db.query(`
+  CREATE TABLE IF NOT EXISTS logs (
+    id INT AUTO_INCREMENT PRIMARY KEY,
 
+    user_id INT NOT NULL,
 
-    console.log("Database initialized successfully with RBAC and audit columns!");
+    product_id INT NULL,
+
+    action VARCHAR(255) NOT NULL,
+
+    description TEXT NULL,
+
+    created_by INT NULL,
+
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+    FOREIGN KEY (user_id) REFERENCES users(id),
+
+    FOREIGN KEY (product_id) REFERENCES products(id)
+  );
+`);
+
+    console.log(
+      "Database initialized successfully with RBAC and audit columns!",
+    );
   } catch (err) {
     console.error("Init DB error:", err.message);
   }

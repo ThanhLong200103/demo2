@@ -33,6 +33,23 @@ class AdminService {
          const res = await User.editCustomer(data)
         return res
     }
+    deteleCustomer = async(id)=>{
+        const res = await User.deteleCustomer(id)
+        return res
+    }
+
+    getOneUser = async(id)=>{
+        const res = await User.getOneUser(id)
+        return res
+    }
+    updateUser = async(data)=>{
+        const res = await User.updateUser(data)
+        return res
+    }
+    deleteUser = async(id)=>{
+        const res = await User.deleteUser(id)
+        return res
+    }
 }
 
 module.exports=new AdminService()

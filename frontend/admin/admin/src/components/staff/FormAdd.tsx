@@ -5,9 +5,11 @@ import { getRole } from "./data";
 import { RepositoryFactory } from "../../service/FactoryService";
 import type { FormDataCreate } from "../../types/user";
 
+type Props ={
+  handleClose:()=>void
+}
 
-
-export default function FormCustomers() {
+export default function FormCustomers({handleClose}:Props) {
   const [formData, setFormData] = useState<FormDataCreate>({
     name: "",
     email: "",
@@ -40,6 +42,7 @@ export default function FormCustomers() {
     role_id: 0,
       }
      )
+      handleClose()
      
     } catch (error) {
       console.log(error)

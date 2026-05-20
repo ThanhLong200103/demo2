@@ -7,7 +7,7 @@ export const StyledBoxModal = styled(Box)(({theme}) => ({
   transform: "translate(-50%, -50%)",
   background:theme.palette.primary.contrastText,
   width: 600,
-  height:500,
+  height:600,
   borderRadius: 2,
   boxShadow: "24",
   padding: 4,

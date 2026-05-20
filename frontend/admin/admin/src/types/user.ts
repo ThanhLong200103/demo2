@@ -16,6 +16,7 @@ export interface FormDataCreate  {
 };
 
 export interface FormDataEdit  {
+  id:string
   name: string;
   email: string;
   phone: string;
@@ -24,3 +25,18 @@ export interface FormDataEdit  {
   status:string,
   password:string
 };
+
+export interface UpdateUserType {
+  id:string
+  name: string;
+  email: string;
+  phone: string;
+   password: string;
+}
+
+export interface RegisterUser {
+  name: string;
+  email: string;
+  phone: string;
+   password: string;
+}

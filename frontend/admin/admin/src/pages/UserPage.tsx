@@ -1,22 +1,38 @@
 import { Container, Typography } from "@mui/material";
 import DataGird from "../components/tableGird";
 import { ColumTable } from "../components/user/columns";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { HandleLogic } from "../components/hanlde/hanlde";
 import { SearchLogic } from "../components/hanlde/search";
-import { dataUser } from "../components/user/data";
+import { deleteUser, getAllUser } from "../components/user/data";
+import type { UserType } from "../types/user";
+import BasicModal from "../components/modal";
+import FormUserEdit from "../components/user/FromEdit";
+import FormUserCreate from "../components/user/FromCreate";
+import UserDelete from "../components/user/DiaLogDelete";
 
 export default function UserPage() {
+  const [user, setUser] = useState<UserType[]>([]);
+  const [showEdit, setShowEdit] = useState(false);
+  const [showAdd, setShowAdd] = useState(false);
+  const [showDelete, setShowDelete] = useState(false);
+  const [id, setId] = useState<string>();
   const handleEdit = (id: string) => {
-    return console.log("id", id);
+    setShowEdit(true);
+    setId(id);
   };
-  const handleDelete = (id: string) => {
-    return console.log("id", id);
+  const handleClose = () => {
+    setShowEdit(false);
+    setShowAdd(false)
+  };
+  const handleDelete =  (id: string) => {
+    setShowDelete(true)
+    setId(id)
   };
   const [valueSearch, setValueSearch] = useState(String);
 
   const handleAdd = () => {
-    console.log(valueSearch);
+    setShowAdd(true)
   };
   const handleImport = () => {
     console.log(valueSearch);
@@ -24,6 +40,14 @@ export default function UserPage() {
   const handleExport = () => {
     console.log(valueSearch);
   };
+
+  useEffect(() => {
+    const effectData = async () => {
+      const data = await getAllUser();
+      setUser(data);
+    };
+    effectData();
+  }, []);
   return (
     <>
       <HandleLogic
@@ -33,6 +57,15 @@ export default function UserPage() {
         handleExport={handleExport}
         title="Customers"
       ></HandleLogic>
+      <BasicModal open={showAdd} handleClose={handleClose}>
+          <Typography variant="h5">
+           Thêm người dùng
+            <FormUserCreate
+             
+              handleClose={handleClose}
+            ></FormUserCreate>
+          </Typography>
+        </BasicModal>
       <SearchLogic
         valueSearch={valueSearch}
         placeholder="Search Customers"
@@ -48,13 +81,23 @@ export default function UserPage() {
         }}
       >
         <Typography variant="h6" sx={{ marginBottom: "16px" }}>
-          Lịch sử hoạt động
+          Tổng số lượng khách hàng
         </Typography>
         <DataGird
-          rows={dataUser}
+          rows={user}
           checkbox={true}
           columns={ColumTable({ handleEdit, handleDelete })}
         ></DataGird>
+        <BasicModal open={showEdit} handleClose={handleClose}>
+          <Typography variant="h5">
+            Chỉnh sửa người dùng
+            <FormUserEdit
+              id={id ?? ""}
+              handleClose={handleClose}
+            ></FormUserEdit>
+          </Typography>
+        </BasicModal>
+        <UserDelete open={showDelete} setOpen={setShowDelete} id={id??""}></UserDelete>
       </Container>
     </>
   );

@@ -1,22 +1,23 @@
 import { Box, Button, MenuItem, TextField, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import type { RoleType } from "../../types/role";
-import { getOneCustomer, getRole } from "./data";
-import { RepositoryFactory } from "../../service/FactoryService";
+import { edittOneCustomer, getOneCustomer, getRole } from "./data";
 import type { FormDataEdit } from "../../types/user";
 
 type Props = {
   id: string;
+  handleClose: () => void;
 };
-export default function FormCustomersEdit({ id }: Props) {
+export default function FormCustomersEdit({ id ,handleClose }: Props) {
   const [formData, setFormData] = useState<FormDataEdit>({
+    id: id,
     name: "",
     email: "",
     phone: "",
     role_name: "",
     role_id: 0,
     status: "",
-    password:""
+    password: "",
   });
 
   const [role, setRole] = useState<Array<RoleType>>();
@@ -30,7 +31,9 @@ export default function FormCustomersEdit({ id }: Props) {
   const handleSubmit = async (e: any) => {
     e.preventDefault();
     try {
-      console.log (formData)
+      await edittOneCustomer(formData);
+      // console.log(formData);
+      handleClose()
     } catch (error) {
       console.log(error);
     }
@@ -43,7 +46,11 @@ export default function FormCustomersEdit({ id }: Props) {
         setRole(data);
         const res = await getOneCustomer(id);
         console.log(res);
-        setFormData(res[0]);
+        setFormData({
+          ...res[0],
+          id: id,
+          password: "",
+        });
       } catch (error) {
         console.log(error);
       }
@@ -88,6 +95,14 @@ export default function FormCustomersEdit({ id }: Props) {
         fullWidth
       />
       <TextField
+        label="Password"
+        name="password"
+        type="password"
+        value={formData.password}
+        onChange={handleChange}
+        fullWidth
+      ></TextField>
+      <TextField
         select
         label="Status"
         name="status"
@@ -95,14 +110,6 @@ export default function FormCustomersEdit({ id }: Props) {
         onChange={handleChange}
         fullWidth
       >
-      <TextField
-        select
-        label="Password"
-        name="password"
-        value={formData.password}
-        onChange={handleChange}
-        fullWidth
-      ></TextField>
         <MenuItem
           value="active"
           sx={{

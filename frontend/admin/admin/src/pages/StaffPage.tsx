@@ -10,17 +10,20 @@ import type { UserType } from "../types/user";
 import { GetCustomes } from "../components/staff/data";
 import FormCustomers from "../components/staff/FormAdd";
 import FormCustomersEdit from "../components/staff/FormEdit";
+import StaffDelete from "../components/staff/DiaLogDelete";
 export default function StaffPage() {
   const [showAdd , setShowAdd] = useState(false)
   const [showEdit , setShowEdit] = useState(false)
   const [id , setID] = useState<string>()
   const[customers , setCustomer] = useState<Array<UserType>>()
+  const [openDelete, setOpenDelete] = useState(false);
   const handleEdit = (id:string) => {
     setShowEdit((s)=>!s)
     setID(id)
   };
   const handleDelete = (id: string) => {
-    return console.log("id", id);
+    setOpenDelete((d)=>!d)
+     setID(id)
   };
   const [valueSearch, setValueSearch] = useState(String);
   
@@ -56,7 +59,7 @@ export default function StaffPage() {
       <SearchLogic valueSearch={valueSearch} placeholder="Search Staff" setValueSearch={setValueSearch} ></SearchLogic>
       <BasicModal open={showAdd} handleClose={handelClose}>
         <Typography variant="h5"> Thêm nhân viên
-<FormCustomers></FormCustomers>
+<FormCustomers handleClose={handelClose} ></FormCustomers>
         </Typography>
       </BasicModal>
       <Container
@@ -74,9 +77,10 @@ export default function StaffPage() {
         ></DataGird>
         <BasicModal open={showEdit} handleClose={handelClose}>
           <Typography variant="h5"> Chỉnh sửa nhân viên
-            <FormCustomersEdit id={id??""}></FormCustomersEdit>
+            <FormCustomersEdit id={id??""} handleClose={handelClose}></FormCustomersEdit>
         </Typography>
         </BasicModal>
+        <StaffDelete open={openDelete} setOpen={setOpenDelete} id={id??""}></StaffDelete>
       </Container>
       <Container
       sx={{

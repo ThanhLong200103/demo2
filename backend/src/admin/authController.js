@@ -104,13 +104,56 @@ getOneCustomer = CacthAsync(
 )
 editCustomer =  CacthAsync(
   async(req , res , next)=>{
-     const { name, email, phone, role_id, status, id ,password } = req.body; 
-      const hasdPassWord = await hasdPass(password);
-       const data = await AdminService.createCustomers({
-        name, hasdPassWord, email, phone ,role_id
-       })
-    res.json(data)
+     const { name, email, phone, role_id, status, id ,password } = req.body;
+     console.log(name, email, phone, role_id, status, id ,password)
+     if (!id) {
+       return next(new AppError("User id is required", 400));
+     }
+     if (!name || !email || !phone || role_id == null || status == null) {
+       return next(new AppError("Missing required customer fields", 400));
+     }
+     const hasdPassWord = password ? await hasdPass(password) : undefined;
+     const data = await AdminService.editCustomer({
+       name,
+       email,
+       phone,
+       role_id,
+       status,
+       id,
+       hasdPassWord,
+     });
+     res.json(data);
 
+  }
+)
+deteleCustomer = CacthAsync(
+  async(req,res,next) =>{
+    const {id} = req.params
+    const data = await AdminService.deteleCustomer(id)
+    res.json(data)
+  }
+)
+
+getOneUser = CacthAsync(
+  async(req,res,next)=>{
+     const {id} = req.params
+      const data = await AdminService.getOneUser(id)
+    res.json(data)
+  }
+)
+updateUser = CacthAsync(
+  async(req,res,next)=>{
+     const {name,password,email,phone ,id} = req.body
+     const passwordH = await hasdPass(password)
+      const data = await AdminService.updateUser({name,passwordH,email,phone ,id})
+    res.json(data)
+  }
+)
+deleteUser = CacthAsync(
+  async(req,res,next)=>{
+     const {id} = req.params
+      const data = await AdminService.deleteUser(id)
+    res.json(data)
   }
 )
 }

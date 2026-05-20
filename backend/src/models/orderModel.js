@@ -69,9 +69,28 @@ class OrderModel {
 
 //admin
  getAllOrderAdmin = async ()=>{
-    const [rows] = await db.query("SELECT o.id , o.user_id ,o.total_price , o.status , u.name AS nameUser , o.created_by , o.created_at FROM orders o JOIN users u ON o.user_id = u.id")
+   const [rows] = await db.query("SELECT o.id,o.user_id,o.total_price,o.status,u.name AS nameUser,o.created_by,o.created_at FROM orders o JOIN users u ON o.user_id = u.id ORDER BY o.created_at DESC");
     return rows
  }
+
+  getOrderByStatus = async (status) => {
+  const [rows] = await db.query("SELECT o.id,o.user_id,o.total_price,o.status,u.name AS nameUser,o.created_by,o.created_at FROM orders o JOIN users u ON o.user_id = u.id WHERE o.status = ? ORDER BY o.created_at DESC",[status]);
+  return rows;
+};
+ updateStatusOrder = async (id, status) => {
+  const [result] = await db.query("UPDATE orders SET status = ? WHERE id = ?",[status,id]);
+
+  return result;
+};
+updateTotalPriceOrder = async (id, total_price) => {
+const [result] = await db.query("UPDATE orders SET total_price = ? WHERE id = ?",[total_price,id]);
+
+  return result;
+};
+getOneOrder = async (id) => {
+ const [rows] = await db.query("SELECT o.id,o.user_id,o.total_price,o.status,u.name AS nameUser,o.created_by,o.created_at FROM orders o JOIN users u ON o.user_id = u.id WHERE o.id = ?",[id]);
+  return rows[0];
+};
     
 }
 module.exports = new OrderModel();

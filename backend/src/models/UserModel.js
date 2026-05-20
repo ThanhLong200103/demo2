@@ -1,3 +1,4 @@
+const { assert } = require("node:console");
 const db = require("../config/db.js");
 
 const User = {
@@ -102,15 +103,16 @@ const User = {
     );
     return row;
   },
+  
   getAllCustomers: async () => {
     const [row] = await db.query(
-      "SELECT u.id , u.name ,u.email,u.phone , u.status , r.name AS role_name FROM users u  JOIN roles r ON u.role_id = r.id WHERE r.name != 'user' AND r.name !='super_admin'",
+      "SELECT u.id , u.name ,u.email,u.phone , u.status , r.name AS role_name FROM users u  JOIN roles r ON u.role_id = r.id WHERE r.name != 'user' AND r.name !='super_admin' AND status = 'active'",
     );
     return row;
   },
   getOneCustomer: async (id) => {
     const [row] = await db.query(
-      "SELECT  u.name ,u.email,u.phone , u.status ,u.role_id , r.name AS role_name FROM users u  JOIN roles r ON u.role_id = r.id WHERE r.name != 'user' AND r.name !='super_admin' AND u.id=?",
+      "SELECT   u.name ,u.email,u.phone , u.status ,u.role_id , r.name AS role_name FROM users u  JOIN roles r ON u.role_id = r.id WHERE r.name != 'user' AND r.name !='super_admin' AND u.id=?",
       [id],
     );
     return row;
@@ -125,7 +127,7 @@ const User = {
     return result;
   },
   editCustomer: async (data) => {
-    const { name, email, phone, role_id, status, id ,password } = data;
+    const { name, email, phone, role_id, status, id ,hasdPassWord } = data;
     const sql = `
   UPDATE users
   SET
@@ -141,11 +143,34 @@ const User = {
       name,
       email,
       phone,
-      password,
+      hasdPassWord,
       role_id,
       status,
       id,
     ]);
+
+    return res
   },
+
+  deteleCustomer :async (id)=>{
+    const res = await db.query("UPDATE users SET status = 'deleted' WHERE id = ? AND role_id != 6 ",[id])
+    return res
+  },
+  getOneUser : async (id) => { 
+    const [rows] = await db.query("SELECT id,name,email,phone FROM users WHERE id = ?",[id]); 
+    return rows[0]
+   },
+   updateUser : async (data) => {
+     const { name,passwordH,email,phone ,id} = data;
+     
+    const [result] = await db.query("UPDATE users SET name = ?, password = ?, email = ?, phone = ? WHERE id = ?",[name,passwordH,email,phone,id])
+   return result 
+  },
+  deleteUser : async (id) => { 
+    const [result] = await db.query("UPDATE users SET status = 'deleted' WHERE id = ?",[id]); 
+    return result; 
+  }
+
+
 };
 module.exports = User;

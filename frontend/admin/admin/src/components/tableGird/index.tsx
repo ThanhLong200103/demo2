@@ -17,7 +17,7 @@ type Props = {
   columns:GridColDef[] 
 }
 
-const DataGird = ({rows ,checkbox ,columns }:Props) => {
+const DataGird = ({rows ,checkbox ,columns ,...props }:Props) => {
   
   return (
     <DataGrid
@@ -31,6 +31,7 @@ const DataGird = ({rows ,checkbox ,columns }:Props) => {
         checkboxSelection ={
         checkbox
       }
+      {...props}
     />
   );
 };

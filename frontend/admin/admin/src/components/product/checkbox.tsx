@@ -37,13 +37,13 @@ export default function CheckBoxProduct({ size, color  }: Props) {
         sx={{ display: "flex", justifyContent: "space-between" }}
       >
         <FormGroup>
-          <Typography variant="h6">Size</Typography>
+          <Typography variant="h6" sx={{padding:"8px"}}>Size</Typography>
           {size.map((z) => (
             <FormControlLabel control={<Checkbox />} label={z} />
           ))}
         </FormGroup>
         <FormGroup>
-          <Typography variant="h6">Color</Typography>
+          <Typography variant="h6" sx={{padding:"8px"}}>Color</Typography>
           {color.map((c) => (
             <FormControlLabel control={<Checkbox />} label={c} />
           ))}
