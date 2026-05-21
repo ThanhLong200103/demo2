@@ -48,7 +48,7 @@ export default function DashboardPage() {
         setOrder(order);
         const users = await User();
         setUsers(users);
-        console.log(users)
+        // console.log(users)
 
         const pendingOrders = order.filter(
           (o: OrderType) => o.status === "pending",
@@ -74,9 +74,9 @@ export default function DashboardPage() {
           arrayOrderNew.push(ordertime[index])
         }
         setOrdertimes(arrayOrderNew)
-        const products = await Product();
-        console.log(order);
-        console.log("Danh sách data:", result.data);
+        // const products = await Product();
+        // console.log(order);
+        // console.log("Danh sách data:", result.data);
       } catch (error) {
         console.error("Lỗi khi lấy dữ liệu:", error);
       }

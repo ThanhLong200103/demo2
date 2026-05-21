@@ -40,3 +40,10 @@ export interface RegisterUser {
   phone: string;
    password: string;
 }
+
+export interface UserTypePage {
+  data: UserType[],
+   total: number;
+  page: number;
+  pageSize: number;
+}

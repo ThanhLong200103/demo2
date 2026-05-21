@@ -11,6 +11,11 @@ class UserController {
     const data = await UserService.getAll();
     res.json(data);
   });
+   getAllUserPage = CacthAsync(async (req, res) => {
+     let { page,pageSize } = req.query;
+    const data = await UserService.getAllPage(page,pageSize);
+    res.json(data);
+  });
   login = CacthAsync(
     async (req, res, next) => {
       const { email, password } = req.body;

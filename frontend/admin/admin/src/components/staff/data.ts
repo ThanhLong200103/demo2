@@ -3,8 +3,8 @@ import { RepositoryFactory } from "../../service/FactoryService"
 import type { FormDataEdit } from "../../types/user"
 
 
-export const GetCustomes = async ()=>{
-    const data = await RepositoryFactory.get("user").getAllCustomer()
+export const GetCustomes = async (page: number, pageSize: number)=>{
+    const data = await RepositoryFactory.get("user").getAllCustomer(page,pageSize)
     return data
 }
 

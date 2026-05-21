@@ -20,3 +20,9 @@ export interface OrderPriceUpdate {
 
 export type ListStatus = string[]
 
+export type OrderResponse = {
+  data: OrderType[];
+  total: number;
+  page: number;
+  pageSize: number;
+};

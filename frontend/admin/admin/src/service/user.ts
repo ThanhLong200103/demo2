@@ -1,11 +1,11 @@
 
-import type { FormDataCreate, FormDataEdit, RegisterUser, UpdateUserType, UserType } from "../types/user";
+import type { FormDataCreate, FormDataEdit, RegisterUser, UpdateUserType, UserType, UserTypePage } from "../types/user";
 import BaseService from "./BaseService";
 
 export default class UserService extends BaseService {
    
-    async getAllCustomer ():Promise<Array<UserType>>  {
-    const res =  await this.http.get("/admin/customers");
+    async getAllCustomer (page: number, pageSize: number):Promise<UserTypePage>  {
+    const res =  await this.http.get("/admin/customers",{params:{page,pageSize}});
     return res.data
     }
      async createCustomer (data:FormDataCreate):Promise<Array<UserType>>  {
@@ -32,6 +32,10 @@ export default class UserService extends BaseService {
     //user
  async getAllUser ():Promise<Array<UserType>>  {
     const res =  await this.http.get("/admin/users");
+    return res.data
+    }
+     async getAllUserPage (page: number, pageSize: number):Promise<UserTypePage>  {
+    const res =  await this.http.get("/admin/userPages" ,{params:{page,pageSize}});
     return res.data
     }
      async getOneUser (id:string):Promise<UpdateUserType> {

@@ -9,16 +9,24 @@ class AdminService {
         //  console.log(data)
         return data
     }
-    getAllOrderAdmin = async()=>{
-        const data = await orderModel.getAllOrderAdmin()
+    getAllOrderAdmin = async(page , pageSize)=>{
+        const data = await orderModel.getAllOrderAdmin(page , pageSize)
         return data
     }
-    getAllProductAdmin = async()=>{
-        const data = await ProductModel.getAllProductAdmin()
+    getAllOrderAdmins = async()=>{
+        const data = await orderModel.getAllOrderAdmins()
         return data
     }
-    getAllCustomers = async()=>{
-        const data = await User.getAllCustomers()
+    getAllProductAdmin = async(page,
+  pageSize)=>{
+        const data = await ProductModel.getAllProductAdmin(page,
+  pageSize)
+        return data
+    }
+    getAllCustomers = async(page,
+  pageSize)=>{
+        const data = await User.getAllCustomers(page,
+  pageSize)
         return data
     }
     createCustomers = async (data)=>{

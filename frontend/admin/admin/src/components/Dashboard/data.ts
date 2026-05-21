@@ -10,7 +10,7 @@ export const Revenue = async ()=>{
 }
 
 export const Order = async ()=>{
-    const data = await RepositoryFactory.get("order").getAllOrder()
+    const data = await RepositoryFactory.get("order").getAllOrders()
     return data
     
 }
@@ -20,8 +20,8 @@ export const User = async ()=>{
     
 }
 
-export const Product = async ()=>{
-    const data = await RepositoryFactory.get("product").getAllProduct()
+export const Product = async (page:number ,pageSize:number)=>{
+    const data = await RepositoryFactory.get("product").getAllProduct(page,pageSize)
     return data
     
 }

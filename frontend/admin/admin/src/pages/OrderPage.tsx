@@ -11,6 +11,7 @@ import DataGird from "../components/tableGird";
 import { ColumTableOrder } from "../components/order/columns";
 import {
   getAllOrder,
+  getAllOrders,
   getAllOrderStatus,
   updateStatusOrder,
 } from "../components/order/data";
@@ -33,6 +34,12 @@ export default function () {
   const [updateStatus, setUpdateStatus] = useState<OrderStatusUpdate>();
   const [showEdit, setShowEdit] = useState(false);
   const [id, setId] = useState<string>();
+  const [paginationModel, setPaginationModel] = useState({
+    page: 0,
+    pageSize: 5,
+  });
+  const [rowCount, setRowCount] = useState(0);
+  const [loading, setLoading] = useState(false);
   const handleEdit = (id: string) => {
     setShowEdit(true);
     setId(id);
@@ -101,27 +108,40 @@ export default function () {
     const effectData = async () => {
       try {
         if (statusOrder.length === 0) {
-          const dataOrder = await getAllOrder();
-          console.log(dataOrder);
-          console.log(statusOrder);
-          setDataOrder(dataOrder);
+          setLoading(true);
+
+          const res = await getAllOrder(
+            paginationModel.page + 1,
+            paginationModel.pageSize,
+          );
+          // console.log("dataOrder:",res)
+          setDataOrder(res.data);
+
+          setRowCount(res.total);
         } else {
-          const dataOrder = await getAllOrderStatus(statusOrder);
-          console.log(dataOrder);
-          console.log(statusOrder);
-          setDataOrder(dataOrder);
+          const res = await getAllOrderStatus(
+            statusOrder,
+            paginationModel.page + 1,
+            paginationModel.pageSize,
+          );
+          console.log("dataOrder:", res);
+          setDataOrder(res.data);
+
+          setRowCount(res.total);
         }
       } catch (error) {
         console.log(error);
+      } finally {
+        setLoading(false);
       }
     };
     effectData();
-  }, [statusOrder]);
+  }, [statusOrder, paginationModel]);
 
   useEffect(() => {
     try {
       const effectData = async () => {
-        const dataOrder = await getAllOrder();
+        const dataOrder = await getAllOrders();
         const today = new Date();
         const result = dataOrder.filter((item) => {
           const date = new Date(item.created_at);
@@ -132,7 +152,7 @@ export default function () {
             date.getFullYear() === today.getFullYear()
           );
         });
-        console.log("Ngày:", result);
+        // console.log("Ngày:", result);
 
         const resultMonth = dataOrder.filter((item) => {
           const date = new Date(item.created_at);
@@ -142,12 +162,12 @@ export default function () {
             date.getFullYear() === today.getFullYear()
           );
         });
-        console.log("Tháng:", resultMonth);
+        // console.log("Tháng:", resultMonth);
 
         const toatlOrderPending = dataOrder.filter((item) => {
           return item.status == "pending";
         });
-        console.log(toatlOrderPending);
+        // console.log(toatlOrderPending);
         setAnalytics([
           {
             id: 0,
@@ -259,7 +279,11 @@ export default function () {
                 handleRefund,
                 handleComplete,
               })}
-            ></DataGird>
+              loading={loading}
+              rowCount={rowCount}
+              paginationModel={paginationModel}
+              onPaginationModelChange={setPaginationModel}
+            />
             <BasicModal open={showEdit} handleClose={handleClose}>
               <Typography variant="h5">
                 Chỉnh sửa giá tiền

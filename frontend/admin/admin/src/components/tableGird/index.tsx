@@ -1,24 +1,34 @@
-import { DataGrid, type GridColDef } from "@mui/x-data-grid";
-export const handleEdit = (id: string) => {
-  return console.log("id", id);
-};
-export const handleDelete = (id: string) => {
-  return console.log("id", id);
-};
-const paginationModel = { page: 0, pageSize: 5 };
+import {
+  DataGrid,
+  type GridColDef,
+  type GridPaginationModel,
+} from "@mui/x-data-grid";
 
-
-// interface setGirdCol  extends GridColDef[] {
-
-// } 
 type Props = {
-  rows?:any,
-  checkbox:boolean,
-  columns:GridColDef[] 
-}
+  rows?: any;
+  checkbox: boolean;
+  columns: GridColDef[];
 
-const DataGird = ({rows ,checkbox ,columns ,...props }:Props) => {
-  
+  loading?: boolean;
+
+  rowCount?: number;
+
+  paginationModel: GridPaginationModel;
+
+  onPaginationModelChange: (
+    model: GridPaginationModel
+  ) => void;
+};
+
+const DataGird = ({
+  rows,
+  checkbox,
+  columns,
+  loading,
+  rowCount,
+  paginationModel,
+  onPaginationModelChange,
+}: Props) => {
   return (
     <DataGrid
       sx={{
@@ -26,12 +36,15 @@ const DataGird = ({rows ,checkbox ,columns ,...props }:Props) => {
       }}
       rows={rows}
       columns={columns}
-      initialState={{ pagination: { paginationModel } }}
-      pageSizeOptions={[5, 10]}
-        checkboxSelection ={
-        checkbox
+      loading={loading}
+      rowCount={rowCount}
+      paginationMode="server"
+      paginationModel={paginationModel}
+      onPaginationModelChange={
+        onPaginationModelChange
       }
-      {...props}
+      pageSizeOptions={[5, 10]}
+      checkboxSelection={checkbox}
     />
   );
 };

@@ -4,7 +4,7 @@ import { ColumTable } from "../components/user/columns";
 import { useEffect, useState } from "react";
 import { HandleLogic } from "../components/hanlde/hanlde";
 import { SearchLogic } from "../components/hanlde/search";
-import { deleteUser, getAllUser } from "../components/user/data";
+import { getAllUserPages } from "../components/user/data";
 import type { UserType } from "../types/user";
 import BasicModal from "../components/modal";
 import FormUserEdit from "../components/user/FromEdit";
@@ -17,6 +17,12 @@ export default function UserPage() {
   const [showAdd, setShowAdd] = useState(false);
   const [showDelete, setShowDelete] = useState(false);
   const [id, setId] = useState<string>();
+    const [paginationModel, setPaginationModel] = useState({
+    page: 0,
+    pageSize: 5,
+  });
+  const [rowCount, setRowCount] = useState(0);
+  const [loading, setLoading] = useState(false);
   const handleEdit = (id: string) => {
     setShowEdit(true);
     setId(id);
@@ -43,11 +49,20 @@ export default function UserPage() {
 
   useEffect(() => {
     const effectData = async () => {
-      const data = await getAllUser();
-      setUser(data);
+      try {
+        setLoading(true)
+        const data = await getAllUserPages( paginationModel.page + 1,
+          paginationModel.pageSize,);
+      setUser(data.data);
+      setRowCount(data.total)
+      } catch (error) {
+        console.log(false)
+      }finally{
+        setLoading(false)
+      }
     };
     effectData();
-  }, []);
+  }, [paginationModel]);
   return (
     <>
       <HandleLogic
@@ -87,6 +102,10 @@ export default function UserPage() {
           rows={user}
           checkbox={true}
           columns={ColumTable({ handleEdit, handleDelete })}
+          loading={loading}
+          rowCount={rowCount}
+          paginationModel={paginationModel}
+          onPaginationModelChange={setPaginationModel}
         ></DataGird>
         <BasicModal open={showEdit} handleClose={handleClose}>
           <Typography variant="h5">

@@ -5,7 +5,7 @@ const AdminService = require("../services/admin");
 
 class OrderAdmin {
   getOrderByStatus = CatchAsync(async (req, res, next) => {
-    let { status } = req.query;
+    let { status ,page,pageSize } = req.query;
 
    
  if (!status) {
@@ -15,8 +15,8 @@ class OrderAdmin {
     status = [status];
   }
        console.log("StatusOrder :",status)
-      const orders = await AdminOrderService.getOrderByStatus(status);
-      return res.status(200).json({ data: orders });
+      const orders = await AdminOrderService.getOrderByStatus(status ,page,pageSize);
+      return res.json( orders );
     
     
   });

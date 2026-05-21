@@ -25,4 +25,9 @@ import type { RegisterUser, UpdateUserType } from "../../types/user";
     return res
   }
 
+   export const getAllUserPages = async (page: number, pageSize: number)=>{
+    const data = await RepositoryFactory.get("user").getAllUserPage(page,pageSize);
+    return data
+  }
+
 

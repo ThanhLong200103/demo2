@@ -5,6 +5,12 @@ class UserService {
         const data = await UserModel.getAll();
         return data
     }
+    getAllPage =async (page,
+  pageSize)=>{
+        const data = await UserModel.getAllPage(page,
+  pageSize);
+        return data
+    }
     userLogin = async (data)=>{
         
         const result = await UserModel.userLogin(data);

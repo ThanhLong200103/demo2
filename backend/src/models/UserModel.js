@@ -103,13 +103,104 @@ const User = {
     );
     return row;
   },
-  
-  getAllCustomers: async () => {
-    const [row] = await db.query(
-      "SELECT u.id , u.name ,u.email,u.phone , u.status , r.name AS role_name FROM users u  JOIN roles r ON u.role_id = r.id WHERE r.name != 'user' AND r.name !='super_admin' AND status = 'active'",
-    );
-    return row;
-  },
+  getAllPage: async (
+  page,
+  pageSize
+) => {
+
+  const limit = Number(pageSize);
+
+  const offset =
+    (Number(page) - 1) * limit;
+
+  // query data
+  const [rows] = await db.query(
+    `
+    SELECT 
+      u.id,
+      u.name,
+      u.email,
+      u.phone,
+      u.status,
+      r.name AS role_name
+    FROM users u
+    JOIN roles r 
+      ON u.role_id = r.id
+    WHERE r.name = 'user'
+    LIMIT ? OFFSET ?
+    `,
+    [limit, offset]
+  );
+
+// query total
+  const [countRows] = await db.query(
+    `
+    SELECT COUNT(*) as total
+    FROM users u
+    JOIN roles r 
+      ON u.role_id = r.id
+    WHERE r.name = 'user'
+    `
+  );
+
+  return {
+    data: rows,
+    total: countRows[0].total,
+    page: Number(page),
+    pageSize: limit,
+  };
+},
+getAllCustomers: async (
+  page,
+  pageSize
+) => {
+
+  const limit = Number(pageSize);
+
+  const offset =
+    (Number(page) - 1) * limit;
+
+  // query data
+  const [rows] = await db.query(
+    `
+    SELECT 
+      u.id,
+      u.name,
+      u.email,
+      u.phone,
+      u.status,
+      r.name AS role_name
+    FROM users u
+    JOIN roles r 
+      ON u.role_id = r.id
+    WHERE r.name != 'user'
+      AND r.name != 'super_admin'
+      AND u.status = 'active'
+    LIMIT ? OFFSET ?
+    `,
+    [limit, offset]
+  );
+
+  // query total
+  const [countRows] = await db.query(
+    `
+    SELECT COUNT(*) as total
+    FROM users u
+    JOIN roles r 
+      ON u.role_id = r.id
+    WHERE r.name != 'user'
+      AND r.name != 'super_admin'
+      AND u.status = 'active'
+    `
+  );
+
+  return {
+    data: rows,
+    total: countRows[0].total,
+    page: Number(page),
+    pageSize: limit,
+  };
+},
   getOneCustomer: async (id) => {
     const [row] = await db.query(
       "SELECT   u.name ,u.email,u.phone , u.status ,u.role_id , r.name AS role_name FROM users u  JOIN roles r ON u.role_id = r.id WHERE r.name != 'user' AND r.name !='super_admin' AND u.id=?",

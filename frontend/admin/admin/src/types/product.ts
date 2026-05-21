@@ -12,3 +12,10 @@ export interface ProductType {
     size?: string
     status?: string 
 }
+
+export interface ProductTypePage {
+      data: ProductType[],
+       total: number;
+      page: number;
+      pageSize: number;
+}

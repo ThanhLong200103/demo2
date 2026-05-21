@@ -2,15 +2,11 @@ const orderModel = require("../models/orderModel");
 
 class AdminOrderService {
 
-  getOrderByStatus = async (status) => {
-   let result = [];
-
-  for (const s of status) {
-    const data =
-      await orderModel.getOrderByStatus(s);
+  getOrderByStatus = async (status ,page , pageSize) => {
+  
+    const result=  await orderModel.getOrderByStatus(status ,page , pageSize);
      
-    result.push(...data);
-  }
+   
  
   return result;
   };

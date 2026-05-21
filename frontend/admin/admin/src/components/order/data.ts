@@ -2,15 +2,16 @@ import { RepositoryFactory } from "../../service/FactoryService";
 import type { ListStatus, OrderPriceUpdate, OrderStatusUpdate } from "../../types/order";
 
 
-
-
-
-export const getAllOrderStatus = async (status:ListStatus)=>{
-  const data = await RepositoryFactory.get("order").getOrderStatus(status);
+export const getAllOrderStatus = async (status:ListStatus ,page:number ,pageSize:number)=>{
+  const data = await RepositoryFactory.get("order").getOrderStatus(status ,page,pageSize);
   return data
 }
-export const getAllOrder = async ()=>{
-  const data = await RepositoryFactory.get("order").getAllOrder();
+export const getAllOrder = async (page:number , pageSize:number)=>{
+  const data = await RepositoryFactory.get("order").getAllOrder(page,pageSize);
+  return data
+}
+export const getAllOrders = async ()=>{
+  const data = await RepositoryFactory.get("order").getAllOrders();
   return data
 }
 
