@@ -260,6 +260,87 @@ const initDB = async () => {
     FOREIGN KEY (product_id) REFERENCES products(id)
   );
 `);
+    await db.query(`
+  CREATE TABLE IF NOT EXISTS rooms (
+
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+
+    type ENUM('direct', 'group') NOT NULL DEFAULT 'direct',
+
+    name VARCHAR(255) NULL,
+
+    created_by INT NULL,
+
+    last_message_id BIGINT NULL,
+
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    ON UPDATE CURRENT_TIMESTAMP,
+
+    CONSTRAINT FK_Room_CreatedBy
+    FOREIGN KEY (created_by)
+    REFERENCES users(id)
+    ON DELETE SET NULL
+  );
+`);
+    await db.query(`
+  CREATE TABLE IF NOT EXISTS room_members (
+
+    room_id BIGINT NOT NULL,
+
+    user_id INT NOT NULL,
+
+    joined_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+    PRIMARY KEY (room_id, user_id),
+
+    CONSTRAINT FK_RoomMembers_Room
+    FOREIGN KEY (room_id)
+    REFERENCES rooms(id)
+    ON DELETE CASCADE,
+
+    CONSTRAINT FK_RoomMembers_User
+    FOREIGN KEY (user_id)
+    REFERENCES users(id)
+    ON DELETE CASCADE
+  );
+`);
+    await db.query(`
+  CREATE TABLE IF NOT EXISTS messages (
+
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+
+    room_id BIGINT NOT NULL,
+
+    sender_id INT NOT NULL,
+
+    content TEXT NOT NULL,
+
+    message_type ENUM(
+      'text',
+      'image',
+      'file'
+    ) DEFAULT 'text',
+
+    is_deleted BOOLEAN DEFAULT FALSE,
+
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    ON UPDATE CURRENT_TIMESTAMP,
+
+    CONSTRAINT FK_Message_Room
+    FOREIGN KEY (room_id)
+    REFERENCES rooms(id)
+    ON DELETE CASCADE,
+
+    CONSTRAINT FK_Message_Sender
+    FOREIGN KEY (sender_id)
+    REFERENCES users(id)
+    ON DELETE CASCADE
+  );
+`);
 
     console.log(
       "Database initialized successfully with RBAC and audit columns!",

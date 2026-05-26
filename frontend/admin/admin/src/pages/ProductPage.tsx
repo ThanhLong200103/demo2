@@ -5,7 +5,6 @@ import { Container, Grid2 } from "@mui/material";
 import CheckBoxProduct from "../components/product/checkbox";
 import {
   colorProduct,
-  listProducts,
   sizeProduct,
 } from "../components/product/data";
 import { ColumTableProduct } from "../components/product/colums";
