@@ -9,9 +9,6 @@ import {
 } from "@mui/material";
 import { deleteUser } from "./data";
 
-
-
-
 type Props ={
     open:boolean,
     setOpen:(V:boolean)=>void,

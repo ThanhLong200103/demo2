@@ -4,6 +4,7 @@ import { RepositoryFactory } from "../service/FactoryService";
 import { useDispatch } from "react-redux";
 import { loginSuccess } from "../redux/features/auth";
 import { useNavigate } from "react-router-dom";
+import { useSocket } from "../context/SocketContext";
 
 
 export default function LoginPage() {
@@ -11,6 +12,7 @@ export default function LoginPage() {
 const [password, setPassword] = useState<string>("");
     const dispatch = useDispatch()
     const navigate = useNavigate()
+    const { initSocket  } = useSocket() as any; 
     const handleLogin = async ()=>{
         // console.log("Email:",email ,"Pass :",password)
 
@@ -18,7 +20,8 @@ const [password, setPassword] = useState<string>("");
          const data = await RepositoryFactory.get('auth').login({email,password})
         //  console.log(data.accessToken)
          dispatch(loginSuccess({ token: data.accessToken }));
-
+         initSocket(data.accessToken);
+        
          navigate("/")
        } catch (error) {
         console.log(error)

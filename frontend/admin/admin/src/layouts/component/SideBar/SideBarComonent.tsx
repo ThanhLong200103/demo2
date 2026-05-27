@@ -8,7 +8,7 @@ import ShoppingBasketIcon from "@mui/icons-material/ShoppingBasket";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import SettingsIcon from "@mui/icons-material/Settings";
 import SideBar from "./styles";
-
+import ChatIcon from '@mui/icons-material/Chat';
 export default function SideBarComonent() {
   const navigate = useNavigate();
   const handleNavigate = (name: String) => {
@@ -74,12 +74,19 @@ export default function SideBarComonent() {
               active={true}
               onClick={() => handleNavigate("/User")}
             ></SidebarItem>
+             <SidebarItem
+              label="Chat"
+              icon={<ChatIcon />}
+              active={true}
+              onClick={() => handleNavigate("/Chat")}
+            ></SidebarItem>
             <SidebarItem
               label="System"
               icon={<SettingsIcon />}
               active={true}
               onClick={() => handleNavigate("/System")}
             ></SidebarItem>
+             
           </List>
         </Grid2>
       </SideBar>

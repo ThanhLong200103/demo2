@@ -5,7 +5,8 @@ const AuthAdmin = require("../admin/authController");
 const CheckPermission = require('../middlewares/checkpermission');
 const authMiddleware = require('../middlewares/auth.middleware');
 const userController = require('../controllers/userController');
-const OrderAdmin = require("../admin/orderComtroller")
+const OrderAdmin = require("../admin/orderComtroller");
+const chatController = require('../admin/chatController');
 RouterAdmin.post("/api/admin/login",loginMiddleware,AuthAdmin.login)
 RouterAdmin.get("/api/admin/pays",authMiddleware,CheckPermission("manage:payment"),AuthAdmin.getAllPays)
 RouterAdmin.get("/api/admin/order",authMiddleware,CheckPermission("view:order"),AuthAdmin.getAllOrderAdmin)
@@ -27,6 +28,11 @@ RouterAdmin.get("/api/admin/oneOrder/:id" ,authMiddleware,CheckPermission("view:
 RouterAdmin.get("/api/admin/getOneUser/:id" ,authMiddleware,CheckPermission("view:user"),AuthAdmin.getOneUser)
 RouterAdmin.patch("/api/admin/deleteUser/:id" ,authMiddleware,CheckPermission("view:user"),AuthAdmin.deleteUser)
 RouterAdmin.put("/api/admin/updateUser" ,authMiddleware,CheckPermission("view:user"),AuthAdmin.updateUser)
+
+
+
+RouterAdmin.get("/api/admin/rooms" ,authMiddleware,chatController.getRooms)
+RouterAdmin.get("/api/admin/room/:roomId/messages" ,authMiddleware,chatController.GetMessagesByRoom)
 
 
 

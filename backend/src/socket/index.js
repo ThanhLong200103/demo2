@@ -2,13 +2,13 @@ const http = require("http");
 const WebSocket = require("ws");
 const { socketAuth } = require("./middleware/socketAuth");
 const messageController = require("./controllers/messageController");
-const  initSocketBroadcast  = require("./service/initSocketBroadcast");
+const initSocketBroadcast = require("./service/initSocketBroadcast");
 
 const websocket = (app) => {
   ///http.createServer() tạo ra một lớp vỏ bảo vệ (HttpServer gốc của Node.js) chịu trách nhiệm mở cổng 3000.
   const server = http.createServer(app);
   const wss = new WebSocket.Server({ noServer: true });
-    initSocketBroadcast(wss)
+  initSocketBroadcast(wss);
   server.on("upgrade", (request, socket, head) => {
     socketAuth(socket, request, (err) => {
       // Nếu có lỗi (Ví dụ: không có token hoặc token sai)
@@ -31,6 +31,14 @@ const websocket = (app) => {
 
   wss.on("connection", (ws) => {
     console.log("THông tin user đã xác thực:", ws.user);
+    ws.send(
+      JSON.stringify({
+        event: "WELCOME",
+        data: {
+          text: `Hello ${ws.user.name}`,
+        },
+      }),
+    );
     ws.isAlive = true;
     ws.on("pong", () => {
       ws.isAlive = true;
@@ -43,15 +51,17 @@ const websocket = (app) => {
         console.log("Received event:", event, "with payload:", payload);
         switch (event) {
           case "chat":
-            await messageController(ws, payload);
+            await messageController(ws, data);
 
             break;
 
-          default:                 
+          default:
             ws.send(
               JSON.stringify({
                 event: "ERROR",
-                message: "Event không hợp lệ",
+                data: {
+                  text: "Event không hợp lệ",
+                },
               }),
             );
         }
@@ -59,8 +69,24 @@ const websocket = (app) => {
         console.error("Error parsing message:", error);
       }
     });
+    const interval = setInterval(() => {
+      wss.clients.forEach((ws) => {
+        // Nếu chu kỳ trước đã chuyển thành false mà chu kỳ này vẫn false -> Client đã mất kết nối
+        if (ws.isAlive === false) {
+          console.log("Client mất kết nối ngầm, đang tiến hành dọn dẹp RAM...");
+          return ws.terminate(); // Đóng kết nối ngay lập tức
+        }
 
-    ws.on("close", () => console.log(" Client ngắt kết nối"));
+        // Đánh dấu tạm thời là false và gửi Ping đi
+        ws.isAlive = false;
+        ws.ping();
+      });
+    }, 30000);
+
+    ws.on("close", () => {
+      console.log(" Client ngắt kết nối");
+      clearInterval(interval);
+    });
   });
 
   return server;

@@ -58,6 +58,8 @@ class AdminService {
         const res = await User.deleteUser(id)
         return res
     }
+
+    
 }
 
 module.exports=new AdminService()

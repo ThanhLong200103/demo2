@@ -6,6 +6,7 @@ import ProductPage from "../pages/ProductPage";
 import UserPage from "../pages/UserPage";
 import SystemPage from "../pages/SystemPage";
 import LoginPage from "../pages/LoginPage";
+import ChatComponent from "../pages/ChatComponent";
 
 
 export const RouterApp = () => {
@@ -20,7 +21,7 @@ export const RouterApp = () => {
       <Route path="/product" element={<ProductPage />} />
       <Route path="/user" element={<UserPage />} />
       <Route path="/system" element={<SystemPage />} />
-      
+      <Route path="/chat" element={<ChatComponent />} />
     </Routes>
   );
 };

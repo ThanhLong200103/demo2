@@ -18,11 +18,13 @@ import { setDark } from "../../redux/features/darkMode";
 import ProfileAndLogout from "../../components/header/profileAndLogout";
 import { RepositoryFactory } from "../../service/FactoryService";
 import { logout } from "../../redux/features/auth";
+import { useSocket } from "../../context/SocketContext";
 
 export default function HeaderComponent() {
   const [check, setCheck] = useState(false);
   const [show, setShow] = useState(false);
   const dispatch = useDispatch();
+  const { socket  } = useSocket() as any; 
   const handleDarkMode = () => {
     const newCheck = !check;
     setCheck(newCheck);
@@ -40,6 +42,7 @@ export default function HeaderComponent() {
   const handleLogout = async () => {
     try {
       await RepositoryFactory.get("auth").logout();
+      socket.disconnect();
       dispatch(logout())
     } catch (error) {
       console.log(error);

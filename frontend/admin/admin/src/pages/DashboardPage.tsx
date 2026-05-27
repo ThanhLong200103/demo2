@@ -4,7 +4,7 @@ import ChatAndAnalytics from "../components/dashboard/chatAndAnalytics";
 import PaidRoundedIcon from "@mui/icons-material/PaidRounded";
 import RerentActivityDashBoard from "../components/dashboard/RerentActivity/RerentActivityDashBoard";
 import { useEffect, useState } from "react";
-import { Order, Product, Revenue, User } from "../components/dashboard/data";
+import { Order, Revenue, User } from "../components/dashboard/data";
 import type { OrderType } from "../types/order";
 import type { UserType } from "../types/user";
 
@@ -76,7 +76,7 @@ export default function DashboardPage() {
         setOrdertimes(arrayOrderNew)
         // const products = await Product();
         // console.log(order);
-        // console.log("Danh sách data:", result.data);
+        // console.log("Danh sách data:", result.data);lam
       } catch (error) {
         console.error("Lỗi khi lấy dữ liệu:", error);
       }
@@ -84,6 +84,8 @@ export default function DashboardPage() {
 
     fetchRevenue();
   }, []);
+
+
   return (
     <>
       <Container>
