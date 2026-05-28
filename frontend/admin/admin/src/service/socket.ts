@@ -58,6 +58,7 @@ if (this.isIntentionalDisconnect) {
   }
       setTimeout(() => {
         this.connect(onMessage, onOpen, onClose, onError);
+        console.log("WebSocket done reconnected");
       }, this.reconnectInterval);
     };
   }
@@ -68,13 +69,8 @@ if (this.isIntentionalDisconnect) {
       return;
     }
 
-    const payload: WebSocketMessage<T> = {
-      event,
-      data,
-    };
-
-    this.socket.send(JSON.stringify(payload));
-    console.log("Sent message:", payload);
+    this.socket.send(JSON.stringify({ event, data }));
+    console.log("Sent message:", { event, data });
   }
 
   disconnect() {

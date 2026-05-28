@@ -150,6 +150,10 @@ class AuthAdmin {
     const data = await AdminService.deleteUser(id);
     res.json(data);
   });
+  getAllCustomersNoPage = CacthAsync(async (req, res, next) => {
+    const currentUserId = req.user.id;
+    const data = await AdminService.getAllCustomersNoPage(currentUserId);
+    res.json(data);});
 }
 
 module.exports = new AuthAdmin();

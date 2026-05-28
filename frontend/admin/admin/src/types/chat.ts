@@ -15,3 +15,11 @@ export type MessageType = {
   sender_id: number;
   sender_name: string;
 };
+
+
+export interface UserAddChatType {
+  name: string;
+  role_name: string;
+  id: number;
+
+}

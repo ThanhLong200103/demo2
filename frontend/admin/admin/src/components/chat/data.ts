@@ -17,3 +17,12 @@ export const getMessages = async (roomId: number) => {
         console.log(error)
     }   
 }
+
+export const getRoomUsers = async () => {
+    try {
+        const data = await RepositoryFactory.get('chat').getRoomUsers();
+        return data;
+    } catch (error) {
+        console.log(error)
+    }
+}

@@ -1,8 +1,9 @@
-import { Container, Typography } from "@mui/material";
+import { Container } from "@mui/material";
 import ListRoom from "../components/chat/ListRoom";
 import TitelChat from "../components/chat/Titel";
 import BasicModal from "../components/modal";
 import { useState } from "react";
+import ModalChatAdd from "../components/chat/modal";
 
 export default function ChatComponent() {
   const [showModal, setShowModal] = useState(false);
@@ -17,7 +18,7 @@ export default function ChatComponent() {
       <Container sx={{ margin: "63px 0" }}>
         <TitelChat handleAdd={handleAdd}></TitelChat>
         <BasicModal open={showModal} handleClose={handleClose}>
-          <Typography variant="h5">Danh sách người dùng</Typography>
+       <ModalChatAdd/>
         </BasicModal>
       </Container>
       <Container>

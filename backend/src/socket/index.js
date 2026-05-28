@@ -29,6 +29,19 @@ const websocket = (app) => {
     });
   });
 
+  // Chỉ chạy một interval duy nhất cho toàn bộ server thay vì mỗi client một interval
+  const interval = setInterval(() => {
+    wss.clients.forEach((ws) => {
+      if (ws.isAlive === false) {
+        console.log("Client mất kết nối ngầm, đang tiến hành dọn dẹp RAM...");
+        return ws.terminate();
+      }
+
+      ws.isAlive = false;
+      ws.ping();
+    });
+  }, 30000);
+
   wss.on("connection", (ws) => {
     console.log("THông tin user đã xác thực:", ws.user);
     ws.send(
@@ -47,11 +60,16 @@ const websocket = (app) => {
     ws.on("message", async (message) => {
       try {
         const parsedMessage = JSON.parse(message.toString());
-        const { event, payload } = parsedMessage;
-        console.log("Received event:", event, "with payload:", payload);
+        const { event, data } = parsedMessage;
+        console.log("Received event:", event, "with data:", data);
         switch (event) {
           case "chat":
             await messageController(ws, data);
+
+            break;
+
+            case "add_room":
+            console.log("Thêm phòng mới:", data);
 
             break;
 
@@ -69,24 +87,14 @@ const websocket = (app) => {
         console.error("Error parsing message:", error);
       }
     });
-    const interval = setInterval(() => {
-      wss.clients.forEach((ws) => {
-        // Nếu chu kỳ trước đã chuyển thành false mà chu kỳ này vẫn false -> Client đã mất kết nối
-        if (ws.isAlive === false) {
-          console.log("Client mất kết nối ngầm, đang tiến hành dọn dẹp RAM...");
-          return ws.terminate(); // Đóng kết nối ngay lập tức
-        }
-
-        // Đánh dấu tạm thời là false và gửi Ping đi
-        ws.isAlive = false;
-        ws.ping();
-      });
-    }, 30000);
 
     ws.on("close", () => {
       console.log(" Client ngắt kết nối");
-      clearInterval(interval);
     });
+  });
+
+  wss.on("close", () => {
+    clearInterval(interval);
   });
 
   return server;

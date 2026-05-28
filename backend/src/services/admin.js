@@ -58,6 +58,10 @@ class AdminService {
         const res = await User.deleteUser(id)
         return res
     }
+    getAllCustomersNoPage = async(currentUserId)=>{
+        const res = await User.getAllCustomersNoPage(currentUserId)
+        return res
+    }
 
     
 }

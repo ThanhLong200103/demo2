@@ -1,5 +1,5 @@
 
-import type { RoomChatType } from "../types/chat";
+import type { RoomChatType, UserAddChatType } from "../types/chat";
 import BaseService from "./BaseService";
 
 export default class ChatService extends BaseService {
@@ -9,6 +9,10 @@ export default class ChatService extends BaseService {
     }
     async getMessages(roomId: number) {
         const res = await this.http.get(`/admin/room/${roomId}/messages`);
+        return res.data;
+    }
+    async getRoomUsers():Promise<Array<UserAddChatType>> {
+        const res = await this.http.get("/admin/room/getUsers");
         return res.data;
     }
 };

@@ -260,7 +260,40 @@ getAllCustomers: async (
   deleteUser : async (id) => { 
     const [result] = await db.query("UPDATE users SET status = 'deleted' WHERE id = ?",[id]); 
     return result; 
-  }
+  },
+  getAllCustomersNoPage: async (currentUserId) => {
+  const [rows] = await db.query(
+    `
+    SELECT 
+      u.id,
+      u.name,
+    
+      r.name AS role_name
+
+    FROM users u
+
+    JOIN roles r
+      ON u.role_id = r.id
+
+    WHERE r.name NOT IN ('user')
+      AND u.status = 'active'
+      AND u.id != ?
+
+      AND NOT EXISTS (
+        SELECT 1
+        FROM room_members rm1
+        JOIN room_members rm2
+          ON rm1.room_id = rm2.room_id
+
+        WHERE rm1.user_id = ?
+          AND rm2.user_id = u.id
+      )
+    `,
+    [currentUserId, currentUserId]
+  );
+
+  return rows;
+},
 
 
 };
