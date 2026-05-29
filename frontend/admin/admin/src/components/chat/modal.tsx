@@ -1,6 +1,6 @@
 import { Container, Grid2, List, ListItem, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
-import { getRoomUsers } from "./data";
+import { addRoom, getRoomUsers } from "./data";
 import {
   ChatContent,
   ChatItem,
@@ -9,11 +9,11 @@ import {
   UserName,
 } from "./styled";
 import type { UserAddChatType } from "../../types/chat";
-import { useSocket } from "../../context/SocketContext";
+// import { useSocket } from "../../context/SocketContext";
 
 export default function ModalChatAdd() {
   const [users, setUsers] = useState<UserAddChatType[]>();
-  const {socket} = useSocket();
+  // const {socket} = useSocket();
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -25,9 +25,16 @@ export default function ModalChatAdd() {
     };
     fetchData();
   }, []);
-  const handleAddRoom = (userId: number) => {
-    console.log("Add room with user ID:", userId);
-    socket?.send("add_room", {user_id: userId});
+  const handleAddRoom = async (userId: number) => {
+    
+    try {
+      const data = await addRoom(userId);
+      // socket?.send("add_room", data);
+      console.log("Room added:", data);
+    } catch (error) {
+      console.log(error);
+    }
+    
   }
   return (
     <>

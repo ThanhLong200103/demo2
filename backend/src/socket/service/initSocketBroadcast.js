@@ -19,6 +19,19 @@ const initSocketBroadcast = (wss) => {
 
     });
 
+    appEventEmitter.on('new_room', ({ room_id, members }) => {
+
+        wss.clients.forEach((client) => {
+            if (client.readyState === WebSocket.OPEN) {
+                client.send(JSON.stringify({
+                    event: 'NEW_ROOM',
+                    data: { room_id, members }
+                }));
+            }
+        });
+    });
+
 };
+
 
 module.exports = initSocketBroadcast;

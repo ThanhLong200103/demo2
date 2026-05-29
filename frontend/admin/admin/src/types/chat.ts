@@ -6,16 +6,19 @@ export type RoomChatType = {
     last_message: string;
     last_message_time: string;
 }
-
 export type MessageType = {
-  content: string;
-  created_at: string;
-  is_deleted: number;
+  sender: {
+    user_id: number;
+    name: string;
+  };
+  _id: string;
   room_id: number;
-  sender_id: number;
-  sender_name: string;
+  content: string;
+  message_type: "text" | "image" | "video" | "file";
+  is_deleted: boolean;
+  created_at: string;
+  updated_at: string;
 };
-
 
 export interface UserAddChatType {
   name: string;

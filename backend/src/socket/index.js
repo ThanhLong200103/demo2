@@ -68,10 +68,6 @@ const websocket = (app) => {
 
             break;
 
-            case "add_room":
-            console.log("Thêm phòng mới:", data);
-
-            break;
 
           default:
             ws.send(

@@ -1,30 +1,20 @@
 const db = require("../config/db");
 
 class ChatModel {
-   GetRoomChat = async (userId) => {
-    const [rows] = await db.execute(`
-        SELECT 
-            cr.id,
-            cr.type,
-            u.name AS other_user_name,
-            u.id AS other_user_id,
-            m.content AS last_message,
-            m.created_at AS last_message_time
-        FROM rooms cr
-        JOIN room_members crm 
-            ON cr.id = crm.room_id
-        JOIN room_members other_rm 
-            ON cr.id = other_rm.room_id 
-            AND other_rm.user_id != ?
-        JOIN users u 
-            ON u.id = other_rm.user_id
-        LEFT JOIN messages m 
-            ON m.id = cr.last_message_id
-        WHERE crm.user_id = ?
-        ORDER BY m.created_at DESC
-    `, [userId, userId]);
+   getRooms = async (roomIds) => {
+   const [roomsFromSQL] = await db.execute(`
+        SELECT id, type FROM rooms WHERE id IN (${roomIds.map(() => '?').join(',')})
+    `, roomIds);
+    return roomsFromSQL;
+}
 
-    return rows;
+getUserById = async (otherUserId) => {
+    let otherUserName = null;
+   const [userRows] = await db.execute(`SELECT name FROM users WHERE id = ? LIMIT 1`, [otherUserId]);
+            if (userRows.length > 0) {
+                otherUserName = userRows[0].name;
+            }
+        return otherUserName;
 }
 
 GetMessagesByRoom = async (roomId) => {
@@ -47,6 +37,10 @@ GetMessagesByRoom = async (roomId) => {
     return rows;
 }
 
-}
 
+addRoom = async (conn = db) => {
+    const [result] = await conn.execute("INSERT INTO rooms () VALUES () ");
+    return result.insertId; 
+}
+}
 module.exports = new ChatModel();

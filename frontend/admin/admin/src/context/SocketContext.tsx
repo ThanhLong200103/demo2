@@ -24,6 +24,10 @@ export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
             case "WELCOME":
               console.log("User connected:", message);
               break;
+
+          case "NEW_ROOM":
+              console.log("User connected:", message);
+              break;
             default:
               console.log("Received message:", message);
           }

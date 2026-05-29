@@ -26,3 +26,11 @@ export const getRoomUsers = async () => {
         console.log(error)
     }
 }
+export const addRoom = async (userId: number) => {
+    try {
+        const data = await RepositoryFactory.get('chat').addRoom(userId);
+        return data;
+    } catch (error) {
+        console.log(error)
+    }
+}

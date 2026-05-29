@@ -103,19 +103,14 @@ const User = {
     );
     return row;
   },
-  getAllPage: async (
-  page,
-  pageSize
-) => {
+  getAllPage: async (page, pageSize) => {
+    const limit = Number(pageSize);
 
-  const limit = Number(pageSize);
+    const offset = (Number(page) - 1) * limit;
 
-  const offset =
-    (Number(page) - 1) * limit;
-
-  // query data
-  const [rows] = await db.query(
-    `
+    // query data
+    const [rows] = await db.query(
+      `
     SELECT 
       u.id,
       u.name,
@@ -129,40 +124,35 @@ const User = {
     WHERE r.name = 'user'
     LIMIT ? OFFSET ?
     `,
-    [limit, offset]
-  );
+      [limit, offset],
+    );
 
-// query total
-  const [countRows] = await db.query(
-    `
+    // query total
+    const [countRows] = await db.query(
+      `
     SELECT COUNT(*) as total
     FROM users u
     JOIN roles r 
       ON u.role_id = r.id
     WHERE r.name = 'user'
-    `
-  );
+    `,
+    );
 
-  return {
-    data: rows,
-    total: countRows[0].total,
-    page: Number(page),
-    pageSize: limit,
-  };
-},
-getAllCustomers: async (
-  page,
-  pageSize
-) => {
+    return {
+      data: rows,
+      total: countRows[0].total,
+      page: Number(page),
+      pageSize: limit,
+    };
+  },
+  getAllCustomers: async (page, pageSize) => {
+    const limit = Number(pageSize);
 
-  const limit = Number(pageSize);
+    const offset = (Number(page) - 1) * limit;
 
-  const offset =
-    (Number(page) - 1) * limit;
-
-  // query data
-  const [rows] = await db.query(
-    `
+    // query data
+    const [rows] = await db.query(
+      `
     SELECT 
       u.id,
       u.name,
@@ -178,12 +168,12 @@ getAllCustomers: async (
       AND u.status = 'active'
     LIMIT ? OFFSET ?
     `,
-    [limit, offset]
-  );
+      [limit, offset],
+    );
 
-  // query total
-  const [countRows] = await db.query(
-    `
+    // query total
+    const [countRows] = await db.query(
+      `
     SELECT COUNT(*) as total
     FROM users u
     JOIN roles r 
@@ -191,16 +181,16 @@ getAllCustomers: async (
     WHERE r.name != 'user'
       AND r.name != 'super_admin'
       AND u.status = 'active'
-    `
-  );
+    `,
+    );
 
-  return {
-    data: rows,
-    total: countRows[0].total,
-    page: Number(page),
-    pageSize: limit,
-  };
-},
+    return {
+      data: rows,
+      total: countRows[0].total,
+      page: Number(page),
+      pageSize: limit,
+    };
+  },
   getOneCustomer: async (id) => {
     const [row] = await db.query(
       "SELECT   u.name ,u.email,u.phone , u.status ,u.role_id , r.name AS role_name FROM users u  JOIN roles r ON u.role_id = r.id WHERE r.name != 'user' AND r.name !='super_admin' AND u.id=?",
@@ -218,7 +208,7 @@ getAllCustomers: async (
     return result;
   },
   editCustomer: async (data) => {
-    const { name, email, phone, role_id, status, id ,hasdPassWord } = data;
+    const { name, email, phone, role_id, status, id, hasdPassWord } = data;
     const sql = `
   UPDATE users
   SET
@@ -240,33 +230,50 @@ getAllCustomers: async (
       id,
     ]);
 
-    return res
+    return res;
   },
 
-  deteleCustomer :async (id)=>{
-    const res = await db.query("UPDATE users SET status = 'deleted' WHERE id = ? AND role_id != 6 ",[id])
-    return res
+  deteleCustomer: async (id) => {
+    const res = await db.query(
+      "UPDATE users SET status = 'deleted' WHERE id = ? AND role_id != 6 ",
+      [id],
+    );
+    return res;
   },
-  getOneUser : async (id) => { 
-    const [rows] = await db.query("SELECT id,name,email,phone FROM users WHERE id = ?",[id]); 
-    return rows[0]
-   },
-   updateUser : async (data) => {
-     const { name,passwordH,email,phone ,id} = data;
-     
-    const [result] = await db.query("UPDATE users SET name = ?, password = ?, email = ?, phone = ? WHERE id = ?",[name,passwordH,email,phone,id])
-   return result 
+  getOneUser: async (id) => {
+    const [rows] = await db.query(
+      "SELECT id,name,email,phone FROM users WHERE id = ?",
+      [id],
+    );
+    return rows[0];
   },
-  deleteUser : async (id) => { 
-    const [result] = await db.query("UPDATE users SET status = 'deleted' WHERE id = ?",[id]); 
-    return result; 
+  updateUser: async (data) => {
+    const { name, passwordH, email, phone, id } = data;
+
+    const [result] = await db.query(
+      "UPDATE users SET name = ?, password = ?, email = ?, phone = ? WHERE id = ?",
+      [name, passwordH, email, phone, id],
+    );
+    return result;
   },
-  getAllCustomersNoPage: async (currentUserId) => {
-  const [rows] = await db.query(
-    `
-    SELECT 
-      u.id,
-      u.name,
+  deleteUser: async (id) => {
+    const [result] = await db.query(
+      "UPDATE users SET status = 'deleted' WHERE id = ?",
+      [id],
+    );
+    return result;
+  },
+  getAllCustomersNoPage: async (userIds, currentUserId) => {
+    if (!userIds || userIds.length === 0) {
+      return [];
+    }
+
+    const placeholders = userIds.map(() => "?").join(",");
+    const [rows] = await db.query(
+      `
+      SELECT 
+        u.id,
+        u.name,
     
       r.name AS role_name
 
@@ -277,24 +284,15 @@ getAllCustomers: async (
 
     WHERE r.name NOT IN ('user')
       AND u.status = 'active'
-      AND u.id != ?
-
-      AND NOT EXISTS (
-        SELECT 1
-        FROM room_members rm1
-        JOIN room_members rm2
-          ON rm1.room_id = rm2.room_id
-
-        WHERE rm1.user_id = ?
-          AND rm2.user_id = u.id
+      AND u.id NOT IN (
+        ${placeholders}
       )
+        AND u.id != ?
     `,
-    [currentUserId, currentUserId]
-  );
+      [...userIds, currentUserId],
+    );
 
-  return rows;
-},
-
-
+    return rows;
+  },
 };
 module.exports = User;

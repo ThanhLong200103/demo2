@@ -47,7 +47,7 @@ const handleSendMessage = () => {
     </Typography>
      <ChatContainer>
       {messages.map((msg, index) => {
-        const isMe = msg.sender_id === userId;
+        const isMe = msg.sender.user_id === userId;
        
         return (
           <MessageRow key={index} isMe={isMe}>

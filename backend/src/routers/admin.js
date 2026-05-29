@@ -34,6 +34,7 @@ RouterAdmin.put("/api/admin/updateUser" ,authMiddleware,CheckPermission("view:us
 RouterAdmin.get("/api/admin/rooms" ,authMiddleware,chatController.getRooms)
 RouterAdmin.get("/api/admin/room/:roomId/messages" ,authMiddleware,chatController.GetMessagesByRoom)
 RouterAdmin.get("/api/admin/room/getUsers" ,authMiddleware,AuthAdmin.getAllCustomersNoPage)
+RouterAdmin.post("/api/admin/room/add" ,authMiddleware,chatController.addRoom)
 
 
 

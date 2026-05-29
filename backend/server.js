@@ -18,6 +18,7 @@ const startRedis = require("./src/config/redis.js")
 const { initI18n } = require("./src/i18n/i18n.js");
 const middleware = require("i18next-http-middleware");
 const initAdminRoutes = require('./src/routers/admin.js');
+const connectMongo = require('./src/config/mongoDB.js');
 
 app.use(cors(corsReact));
 app.use(express.json());
@@ -38,7 +39,7 @@ app.use(cookieParser());
     initRouterError(app);
 
     await initDB();
-    
+    await connectMongo()
      await startRedis.connect();
     server.listen(port, () => {
         console.log(`Server running on port ${port}`);

@@ -6,6 +6,7 @@ const AppError = require("../utils/AppError");
 const { validatePass, hasdPass } = require("../utils/argon2");
 const AdminService = require("../services/admin");
 const roleService = require("../services/roleService");
+
 class AuthAdmin {
   login = CacthAsync(async (req, res, next) => {
     const { email, password } = req.body;
@@ -153,6 +154,7 @@ class AuthAdmin {
   getAllCustomersNoPage = CacthAsync(async (req, res, next) => {
     const currentUserId = req.user.id;
     const data = await AdminService.getAllCustomersNoPage(currentUserId);
+    
     res.json(data);});
 }
 
