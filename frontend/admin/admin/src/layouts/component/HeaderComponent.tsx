@@ -19,12 +19,14 @@ import ProfileAndLogout from "../../components/header/profileAndLogout";
 import { RepositoryFactory } from "../../service/FactoryService";
 import { logout } from "../../redux/features/auth";
 import { useSocket } from "../../context/SocketContext";
+import NotificationComponent from "../../components/header/notification";
 
 export default function HeaderComponent() {
   const [check, setCheck] = useState(false);
   const [show, setShow] = useState(false);
   const dispatch = useDispatch();
   const { socket  } = useSocket() as any; 
+  const [notifications, setNotifications] = useState(false);
   const handleDarkMode = () => {
     const newCheck = !check;
     setCheck(newCheck);
@@ -48,6 +50,8 @@ export default function HeaderComponent() {
       console.log(error);
     }
   };
+
+
 
   return (
     <>
@@ -104,12 +108,14 @@ export default function HeaderComponent() {
                   <LanguageIcon />
                 </Button>
               </li>
-              <li>
-                <Button>
+              <li style={{ position: "relative" }}>
+                <Button onClick={() => setNotifications(!notifications)}>
                   <Badge badgeContent={1} color="primary">
                     <NotificationsNoneIcon color="primary" />
+
                   </Badge>
                 </Button>
+                <NotificationComponent setOpenNotification={setNotifications} show={notifications} />
               </li>
               <li style={{ position: "relative" }}>
                 <Button

@@ -42,5 +42,21 @@ addRoom = async (conn = db) => {
     const [result] = await conn.execute("INSERT INTO rooms () VALUES () ");
     return result.insertId; 
 }
+
+updateRoomLastMessage = async (roomId, lastMessage) => {
+   const result = await db.execute(
+        "UPDATE rooms SET last_message_id = ?, updated_at = NOW() WHERE id = ?",
+        [lastMessage, roomId]
+    );
+
+    return result;
+}
+
+getAllSupporters = async () => {
+    const [rows] = await db.execute(`
+        SELECT u.id, u.name , r.name as role_name FROM users u JOIN roles r ON u.role_id = r.id WHERE r.name = 'customer_support'
+    `);
+    return rows;
+}
 }
 module.exports = new ChatModel();

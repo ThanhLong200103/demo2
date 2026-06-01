@@ -13,6 +13,7 @@ export default function ChatComponent() {
   const handleClose = () => {
     setShowModal(false);
   };
+
   return (
     <>
       <Container sx={{ margin: "63px 0" }}>
@@ -22,7 +23,7 @@ export default function ChatComponent() {
         </BasicModal>
       </Container>
       <Container>
-        <ListRoom></ListRoom>
+        <ListRoom handleClose={handleClose}></ListRoom>
       </Container>
     </>
   );

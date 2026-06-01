@@ -17,7 +17,7 @@ const User = {
   },
   getUser: async (email) => {
     const [oneUser] = await db.query(
-      "SELECT u.id, u.email, u.password,u.phone, u.role_id, r.name AS role_name FROM users u JOIN  roles r ON u.role_id = r.id WHERE email = ? ",
+      "SELECT u.id,u.name, u.email, u.password,u.phone, u.role_id, r.name AS role_name FROM users u JOIN  roles r ON u.role_id = r.id WHERE email = ? ",
       [email],
     );
     return oneUser[0];
@@ -264,34 +264,24 @@ const User = {
     return result;
   },
   getAllCustomersNoPage: async (userIds, currentUserId) => {
-    if (!userIds || userIds.length === 0) {
-      return [];
-    }
+    const hasExcludedIds = Array.isArray(userIds) && userIds.length > 0;
+    const placeholders = hasExcludedIds ? userIds.map(() => "?").join(",") : "";
 
-    const placeholders = userIds.map(() => "?").join(",");
-    const [rows] = await db.query(
-      `
+    const sql = `
       SELECT 
         u.id,
         u.name,
-    
-      r.name AS role_name
-
-    FROM users u
-
-    JOIN roles r
-      ON u.role_id = r.id
-
-    WHERE r.name NOT IN ('user')
-      AND u.status = 'active'
-      AND u.id NOT IN (
-        ${placeholders}
-      )
+        r.name AS role_name
+      FROM users u
+      JOIN roles r
+        ON u.role_id = r.id
+      WHERE u.status = 'active'
         AND u.id != ?
-    `,
-      [...userIds, currentUserId],
-    );
+        ${hasExcludedIds ? `AND u.id NOT IN (${placeholders})` : ""}
+    `;
 
+    const params = hasExcludedIds ? [...userIds, currentUserId] : [currentUserId];
+    const [rows] = await db.query(sql, params);
     return rows;
   },
 };

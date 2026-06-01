@@ -6,7 +6,7 @@ const db = require("../config/db");
 const paymentModel = require("../models/paymentModel");
 const CartItem = require("../models/CartItem");
 const AppError = require("../utils/AppError");
-
+const NotificationService = require("../services/notification")
 class OrderService {
   createOrder = async (data , conn) => {
      const user_id = data.userId;
@@ -74,8 +74,14 @@ class OrderService {
         { order_id: orderId, amount: total_price, method: "COD" },
         conn,
       );
+
+      const addNotification = await  NotificationService.createNotification({
+        user_id: user_id,
+        title: `Khách hàng ${data.nameUser} đã đặt hàng `,
+        content: `Đã đặt hàng thành công với mã đơn hàng #${orderId}`,
+      });
       // await conn.commit();
-      return [orderId, cartItem, payment ];
+      return [orderId, cartItem, payment ,addNotification ];
   };
 
   getItemOrder = async (ids) => {

@@ -10,6 +10,7 @@ import SearchComponent from "./components/searchComponent";
 import DetailComponent from "./components/detailComponent";
 import './i18n/i18n';
 import AddressUserComponent from "./components/AddressUserComponent";
+import ChatComponent from "./components/chatComponent";
 function App() {
 
 
@@ -30,6 +31,7 @@ function App() {
     <SearchComponent OpenS={ showSearch}></SearchComponent>
     <DetailComponent showDetail={showDetail} productId={productId} ></DetailComponent>
     <AddressUserComponent showAddress={showAddress}></AddressUserComponent>
+    <ChatComponent></ChatComponent>
     </>
   )
 }

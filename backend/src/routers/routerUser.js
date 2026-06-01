@@ -4,6 +4,7 @@ const UserController = require("../controllers/userController");
 const AddressUserController = require("../controllers/addressUserController");
 const {loginMiddleware, registerMiddleware} = require('../middlewares/login.midlleware');
 const CheckPermission = require('../middlewares/checkpermission');
+const chatController = require('../admin/chatController');
 const routerUser = express.Router();
 
 
@@ -22,6 +23,9 @@ routerUser.put("/api/DeleteAddress/:id",authMiddleware,AddressUserController.del
 
 
 // admin
+
+//chat
+routerUser.post("/api/chat/messages",authMiddleware,chatController.addChatUserSupport)
 
 let initUserRoutes = (app) => {
   app.use('/', routerUser);

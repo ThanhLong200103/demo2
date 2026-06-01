@@ -2,6 +2,8 @@ const ChatModel = require("../models/chat");
 const RoomMember = require("../models/mongoDB/RoomMember"); // Model Mongo
 const Message = require("../models/mongoDB/message");
 const mongoose = require("mongoose");
+const Messager = require("../models/mongoDB/message");
+const appEventEmitter = require("../utils/appEventEmitter");
 class ChatService {
   getrooms = async (userId) => {
     const myRooms = await RoomMember.find({ user_id: userId }).select(
@@ -25,7 +27,7 @@ class ChatService {
           id: room.id,
           type: room.type,
           other_user_id: otherUserId,
-          other_user_name: otherUserName ,
+          other_user_name: otherUserName,
           last_message: lastMsgDoc ? lastMsgDoc.content : null,
           last_message_time: lastMsgDoc ? lastMsgDoc.created_at : null,
         };
@@ -47,6 +49,15 @@ class ChatService {
     return data;
   };
 
+  getRoomType = async (roomId) => {
+    const rooms = await ChatModel.getRooms([roomId]);
+    return rooms.length > 0 ? rooms[0].type : "direct";
+  };
+
+  getUserNameById = async (userId) => {
+    return await ChatModel.getUserById(userId);
+  };
+
   addRoom = async (userIdConnect, userId, conn) => {
     // tạo mongo session
     const session = await mongoose.startSession();
@@ -57,38 +68,35 @@ class ChatService {
     try {
       const newRoomId = await ChatModel.addRoom(conn);
 
-      const newRoom1 = await RoomMember.insertMany(
-        [
-          {
-            room_id: newRoomId,
-            user_id: userIdConnect,
+      const newRoom1 = await RoomMember.insertMany([
+        {
+          room_id: newRoomId,
+          user_id: userIdConnect,
 
-            nickname_in_room: null,
+          nickname_in_room: null,
 
-            settings: {
-              is_muted: false,
-              mute_until: null,
-            },
-
-            last_read_message_id: null,
+          settings: {
+            is_muted: false,
+            mute_until: null,
           },
-          {
-            room_id: newRoomId,
-            user_id: userId,
 
-            nickname_in_room: null,
+          last_read_message_id: null,
+        },
+        {
+          room_id: newRoomId,
+          user_id: userId,
 
-            settings: {
-              is_muted: false,
-              mute_until: null,
-            },
+          nickname_in_room: null,
 
-            last_read_message_id: null,
+          settings: {
+            is_muted: false,
+            mute_until: null,
           },
-        ],
-        
-      );
-      
+
+          last_read_message_id: null,
+        },
+      ]);
+
       await session.commitTransaction();
 
       return {
@@ -97,10 +105,95 @@ class ChatService {
       };
     } catch (error) {
       await session.abortTransaction();
-       console.log(error);
+      console.log(error);
     } finally {
       session.endSession();
     }
+  };
+
+  addmessage = async (roomId, senderId, name, content) => {
+    const newMessage = await Message.create({
+      room_id: roomId,
+      sender: {
+        user_id: senderId,
+        name: name,
+      },
+      content: content,
+    });
+    console.log("New message created:", newMessage);
+    const updateRoom = await ChatModel.updateRoomLastMessage(
+      roomId,
+      newMessage._id,
+    );
+
+    return newMessage;
+  };
+  addChatUser = async (userIdConnect) => {
+    const supporters = await ChatModel.getAllSupporters();
+
+    if (!supporters.length) {
+      return null;
+    }
+
+    const randomIndex = Math.floor(Math.random() * supporters.length);
+
+    const checkRoomUser = await RoomMember.findOne({
+      user_id: userIdConnect,
+    });
+    console.log("checkRoomUser:", checkRoomUser);
+    if (checkRoomUser) {
+      const getMessages = await Messager.find({
+        room_id: checkRoomUser.room_id,
+      }).sort({ createdAt: 1 });
+      return {
+        idUser: userIdConnect,
+        roomId: checkRoomUser.room_id,
+        messages: getMessages,
+      };
+    } else {
+      const supporter = supporters[randomIndex];
+      const newRoomId = await ChatModel.addRoom();
+
+      const newRoom1 = await RoomMember.insertMany([
+        {
+          room_id: newRoomId,
+          user_id: userIdConnect,
+
+          nickname_in_room: null,
+
+          settings: {
+            is_muted: false,
+            mute_until: null,
+          },
+
+          last_read_message_id: null,
+        },
+        {
+          room_id: newRoomId,
+          user_id: supporter.id,
+
+          nickname_in_room: null,
+
+          settings: {
+            is_muted: false,
+            mute_until: null,
+          },
+
+          last_read_message_id: null,
+        },
+      ]);
+      
+      appEventEmitter.emit("new_room", {
+        room_id: newRoomId,
+             room_type: await this.getRoomType(newRoomId),
+
+        user1: { id: userIdConnect, name: await this.getUserNameById(userIdConnect) },
+        user2: { id: supporter.id, name: supporter.name }
+      });
+      return newRoom1;
+    }
+
+    // return supporters;
   };
 }
 

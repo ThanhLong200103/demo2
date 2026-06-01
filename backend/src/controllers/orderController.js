@@ -2,6 +2,7 @@
 const OrderService = require("../services/order.service");
 const runInTransaction = require("../utils/runTransaction");
 const CacthAsync = require("../utils/cachAsync");
+const appEventEmitter = require("../utils/appEventEmitter");
 
 class OrderController {
   CreateOrder = CacthAsync(
@@ -11,10 +12,16 @@ class OrderController {
         ,  homeNumber ,district ,province ,receiverName ,phoneNumber
       } = req.body ;
       const userId = req.user.id;
+      const nameUser = req.user.role_name;
 
       const data = await runInTransaction (async (conn) => {
-         return await OrderService.createOrder({cartItemIds ,totalPrice, userId ,productId ,quantityProduct ,priceProduct  ,attributeId ,  homeNumber ,district ,province ,receiverName ,phoneNumber }, conn);
+         return await OrderService.createOrder({cartItemIds ,totalPrice, userId ,productId ,quantityProduct ,priceProduct  ,attributeId ,  homeNumber ,district ,province ,receiverName ,phoneNumber , nameUser }, conn);
        });
+
+       appEventEmitter.emit("add_notification" ,{
+        data:data.addNotification
+       })
+      
       res.json(data );
    
   }

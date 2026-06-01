@@ -1,5 +1,6 @@
 import AuthService from "./auth";
 import ChatService from "./chat";
+import NotificationService from "./notification";
 import Order from "./order";
 import Pay from "./pay";
 import ProductService from "./product";
@@ -14,6 +15,7 @@ const repositories = {
   product : new ProductService(),
   role: new RoleService(),
   chat: new ChatService(),
+  notification : new NotificationService(),
 };
 
 export const RepositoryFactory = {

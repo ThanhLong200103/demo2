@@ -54,20 +54,24 @@ class AdminService {
     const res = await User.deleteUser(id);
     return res;
   };
-  getAllCustomersNoPage = async (currentUserId ) => {
+  getAllCustomersNoPage = async (currentUserId) => {
     const getRoomUserLogin = await RoomMember.find({ user_id: currentUserId });
-    // console.log(getRoomUserLogin);
+    console.log(getRoomUserLogin);
     const roomIds = getRoomUserLogin.map((item) => item.room_id);
-    // console.log(roomIds);
+    console.log(roomIds);
+
+    if (roomIds.length === 0) {
+      return await User.getAllCustomersNoPage([], currentUserId);
+    }
 
     const getUserInRoom = await RoomMember.find({
-      room_id: roomIds,
-        user_id: { $ne: currentUserId },
+      room_id: { $in: roomIds },
+      user_id: { $ne: currentUserId },
     });
     // console.log(getUserInRoom);
     const userIds = getUserInRoom.map((item) => item.user_id);
     // console.log(userIds);
-    const res = await User.getAllCustomersNoPage(userIds ,currentUserId);
+    const res = await User.getAllCustomersNoPage(userIds, currentUserId);
     // console.log(res);
     return res;
   };

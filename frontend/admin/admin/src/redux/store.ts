@@ -1,10 +1,13 @@
  import { configureStore } from '@reduxjs/toolkit';
 import DarkMode from "./features/darkMode";
 import authSlice from "./features/auth"
+import  addRoom from '../redux/features/addroom';
+
 const store = configureStore({
     reducer: {
         darkmode: DarkMode,
-        auth:authSlice
+        auth:authSlice,
+        dataRoom:addRoom
     }
 });
 

@@ -34,3 +34,13 @@ export const addRoom = async (userId: number) => {
         console.log(error)
     }
 }
+
+export const sendMessage = async (roomId: number, content: string) => {
+    try {
+        const data = await RepositoryFactory.get('chat').sendMessage(roomId, content);
+        return data;
+    } catch (error) {
+        console.log(error)
+    }   
+
+}

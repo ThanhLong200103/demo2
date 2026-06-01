@@ -26,3 +26,6 @@ export interface UserAddChatType {
   id: number;
 
 }
+export interface NewRoomEventData {
+  members: RoomChatType;
+}

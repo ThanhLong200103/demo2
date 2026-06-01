@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react";
-import { getMessages } from "./data";
+import { getMessages, sendMessage } from "./data";
 import { ChatContainer, ChatInput, ChatInputContainer, MessageBubble, MessageRow, MessageTime } from "./styled";
 import { Button, Typography } from "@mui/material";
 import type { MessageType } from "../../types/chat";
 import SendIcon from '@mui/icons-material/Send';
+import { useSocket } from "../../context/SocketContext";
+
 type BoxRoomProps = {
   roomId: number | null;
   userId: number | null;
@@ -12,6 +14,8 @@ type BoxRoomProps = {
 export default function BoxRoom({ roomId, userId, userName }: BoxRoomProps) {
       const [messages, setMessages] = useState<MessageType[]>([]);
     const [text, setText] = useState("");
+    const {lastMessage} = useSocket();
+  console.log(lastMessage);
   useEffect(() => {
     const fetchMessages = async () => {
       if (roomId !== null) {
@@ -31,15 +35,44 @@ export default function BoxRoom({ roomId, userId, userName }: BoxRoomProps) {
     };
     fetchMessages();
   }, [roomId]);
-const handleSendMessage = () => {
-  if (!text.trim()) return;
 
-  console.log(text);
 
-  // call api send message here
+// 1. Lắng nghe tin nhắn mới từ WebSocket thông qua useEffect
+useEffect(() => {
+  if (lastMessage?.event === "NEW_MESSAGE") {
+    const newMessage = lastMessage.data as MessageType;
+    console.log("New message received via WebSocket:", newMessage);
 
-  setText("");
+    // Kiểm tra tin nhắn mới có thuộc về room hiện tại không
+    if (newMessage.room_id === roomId) {
+      setMessages((prev: MessageType[]) => {
+        // (Tùy chọn) Tránh trùng lặp tin nhắn nếu tin nhắn đã tồn tại
+        const isDuplicate = prev.some(msg => msg._id === newMessage._id); // Thay 'id' bằng key định danh của message nếu cần
+        if (isDuplicate) return prev;
+
+        return [...prev, newMessage];
+      });
+       setText("");
+    }
+  }
+}, [lastMessage, roomId]);
+
+// 2. Hàm gửi tin nhắn (chỉ đảm nhận việc gửi và xóa input)
+const handleSendMessage = async () => {
+  if (!text.trim() || roomId === null || userId === null) return;
+
+  console.log("Sending message:", text, "to room ID:", roomId, "from user ID:", userId);
+
+  try {
+    await sendMessage(roomId, text);
+   
+  } catch (error) {
+    console.log("Error sending message:", error);
+  }
 };
+
+
+
   return (
     <>
     <Typography variant="h6" sx={{ marginBottom: "16px" ,borderBottom:"1px solid #ccc", paddingBottom:"8px"}}>
