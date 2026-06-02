@@ -56,7 +56,7 @@ export default function ChatComponent() {
     return () => clearInterval(interval);
   }, []);
   useEffect(() => {
-    if (open) {
+    if (open && token) {
       ws.connect((message) => {
         if (message.event === "NEW_MESSAGE") {
           console.log("Received new message via WebSocket:", message);

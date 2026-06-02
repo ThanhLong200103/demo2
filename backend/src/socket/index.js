@@ -13,7 +13,8 @@ const websocket = (app) => {
     socketAuth(socket, request, (err) => {
       // Nếu có lỗi (Ví dụ: không có token hoặc token sai)
       if (err) {
-        socket.end("HTTP/1.1 401 Unauthorized\r\nConnection: close\r\n\r\n");
+        socket.write("HTTP/1.1 401 Unauthorized\r\n\r\n");
+        socket.destroy();
         return;
       }
       try {
