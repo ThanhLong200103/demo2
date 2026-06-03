@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { getMessages, sendMessage } from "./data";
 import { ChatContainer, ChatInput, ChatInputContainer, MessageBubble, MessageRow, MessageTime } from "./styled";
 import { Button, Typography } from "@mui/material";
@@ -15,7 +15,7 @@ export default function BoxRoom({ roomId, userId, userName }: BoxRoomProps) {
       const [messages, setMessages] = useState<MessageType[]>([]);
     const [text, setText] = useState("");
     const {lastMessage} = useSocket();
-  console.log(lastMessage);
+const bottomRef = useRef<HTMLDivElement | null>(null);
   useEffect(() => {
     const fetchMessages = async () => {
       if (roomId !== null) {
@@ -56,6 +56,11 @@ useEffect(() => {
     }
   }
 }, [lastMessage, roomId]);
+useEffect(() => {
+  bottomRef.current?.scrollIntoView({
+    behavior: "smooth",
+  });
+}, [messages]);
 
 // 2. Hàm gửi tin nhắn (chỉ đảm nhận việc gửi và xóa input)
 const handleSendMessage = async () => {
@@ -96,6 +101,7 @@ const handleSendMessage = async () => {
           </MessageRow>
         );
       })}
+      <div ref={bottomRef} />
     </ChatContainer>
    {userId &&  <ChatInputContainer>
   <ChatInput

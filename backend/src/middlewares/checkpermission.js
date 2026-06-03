@@ -26,5 +26,4 @@ const CheckPermission = (requiredPermission) =>{
     }
   }
 }
-
 module.exports = CheckPermission

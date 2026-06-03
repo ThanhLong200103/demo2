@@ -73,18 +73,18 @@ const initSocketBroadcast = (wss) => {
       }
     });
   });
-   appEventEmitter.on("add_notification", ({ data }) => {
+  appEventEmitter.on("add_notificaton",({newNotification})=>{
     wss.clients.forEach((client) => {
       if (client.readyState === WebSocket.OPEN) {
         client.send(
           JSON.stringify({
             event: "new_notification",
-            data: data,
+            data: newNotification,
           }),
         );
       }
     });
-  });
+  })
 };
 
 module.exports = initSocketBroadcast;

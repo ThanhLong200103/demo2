@@ -12,21 +12,29 @@ import SearchIcon from "@mui/icons-material/Search";
 import LanguageIcon from "@mui/icons-material/Language";
 import NotificationsNoneIcon from "@mui/icons-material/NotificationsNone";
 import ManageAccountsIcon from "@mui/icons-material/ManageAccounts";
-import { useState } from "react";
-import { useDispatch } from "react-redux";
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { setDark } from "../../redux/features/darkMode";
 import ProfileAndLogout from "../../components/header/profileAndLogout";
 import { RepositoryFactory } from "../../service/FactoryService";
 import { logout } from "../../redux/features/auth";
 import { useSocket } from "../../context/SocketContext";
 import NotificationComponent from "../../components/header/notification";
+import { setDataNotification } from "../../redux/features/notification";
+import type { GetNotificationsResponse } from "../../types/notification";
+import { GetNotifications } from "../../components/header/data";
 
 export default function HeaderComponent() {
   const [check, setCheck] = useState(false);
   const [show, setShow] = useState(false);
   const dispatch = useDispatch();
-  const { socket  } = useSocket() as any; 
+  const { socket } = useSocket() as any;
   const [notifications, setNotifications] = useState(false);
+  const [notificationsData, setNotificationsData] = useState<GetNotificationsResponse[]>([]);
+  const {dataNotification} = useSelector((state :any)=>state.notification)
+  const [totalNotification , setTotalNotification] = useState<number>(0)
+  let limit = 10;
+    const { lastMessage } = useSocket();
   const handleDarkMode = () => {
     const newCheck = !check;
     setCheck(newCheck);
@@ -45,12 +53,48 @@ export default function HeaderComponent() {
     try {
       await RepositoryFactory.get("auth").logout();
       socket.disconnect();
-      dispatch(logout())
+      dispatch(logout());
     } catch (error) {
       console.log(error);
     }
   };
 
+  useEffect(() => {
+    const fechData = async () => {
+      try {
+        
+        const data = await GetNotifications(limit);
+        const notifications = data?.notifications || [];
+        setNotificationsData(notifications);
+        setTotalNotification(data?.total ||0)
+        dispatch(setDataNotification(data?.total));
+        console.log(data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    fechData();
+  }, []);
+
+  useEffect(() => {
+    if (lastMessage?.event === "new_notification") {
+      const newNotification = lastMessage.data as GetNotificationsResponse;
+      console.log("New message received via WebSocket:", newNotification);
+      setNotificationsData((p: GetNotificationsResponse[]) => {
+        const isDuplicate = p.some((msg) => msg._id === newNotification._id); // Thay 'id' bằng key định danh của message nếu cần
+        if (isDuplicate) return p;
+
+        const updated = [...p, newNotification].sort(
+          (a, b) =>
+            new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
+        );
+
+        dispatch(setDataNotification(totalNotification +1));
+        return updated;
+
+      });
+    }
+  }, [lastMessage]);
 
 
   return (
@@ -110,12 +154,18 @@ export default function HeaderComponent() {
               </li>
               <li style={{ position: "relative" }}>
                 <Button onClick={() => setNotifications(!notifications)}>
-                  <Badge badgeContent={1} color="primary">
+                  <Badge badgeContent={dataNotification} color="primary">
                     <NotificationsNoneIcon color="primary" />
-
                   </Badge>
                 </Button>
-                <NotificationComponent setOpenNotification={setNotifications} show={notifications} />
+                <NotificationComponent
+                  setOpenNotification={setNotifications}
+                  show={notifications}
+                  notificationsData={notificationsData}
+                  total={totalNotification}
+                  limit = {limit}
+                  setNotificationsData={setNotificationsData}
+                />
               </li>
               <li style={{ position: "relative" }}>
                 <Button

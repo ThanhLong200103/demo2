@@ -14,7 +14,7 @@ const { getConnectionRabbitMQ } = require("./index");
   });
   await ch2.assertQueue(queue, { durable: true });
 
-  await ch2.sendToQueue(queue, Buffer.from(msg),{
+  await ch2.sendToQueue(queue, Buffer.from(JSON.stringify(msg)),{
     persistent: true,
 
   });

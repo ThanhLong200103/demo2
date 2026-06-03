@@ -6,10 +6,11 @@ const db = require("../config/db");
 const paymentModel = require("../models/paymentModel");
 const CartItem = require("../models/CartItem");
 const AppError = require("../utils/AppError");
-const NotificationService = require("../services/notification")
+const { ProducerRabbitMQ } = require("../rabbitMq/producer");
 class OrderService {
   createOrder = async (data , conn) => {
      const user_id = data.userId;
+     const nameUser = data.nameUser
       const total_price = data.totalPrice;
       console.log("data dat hang :",data)
       const orderId = await OrderModel.createOrder(
@@ -75,13 +76,10 @@ class OrderService {
         conn,
       );
 
-      const addNotification = await  NotificationService.createNotification({
-        user_id: user_id,
-        title: `Khách hàng ${data.nameUser} đã đặt hàng `,
-        content: `Đã đặt hàng thành công với mã đơn hàng #${orderId}`,
-      });
+   
       // await conn.commit();
-      return [orderId, cartItem, payment ,addNotification ];
+      await ProducerRabbitMQ("notificationOrder",{user_id ,nameUser ,orderId})
+      return [orderId, cartItem, payment ];
   };
 
   getItemOrder = async (ids) => {

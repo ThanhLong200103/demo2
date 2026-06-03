@@ -21,6 +21,7 @@ const connectMongo = require("./src/config/mongoDB.js");
 const {startRabbitMQ}  = require("./src/rabbitMq/index.js");
 const { ProducerRabbitMQ } = require("./src/rabbitMq/producer.js");
 const { ConSumerRabbitMQ } = require("./src/rabbitMq/consumer.js");
+const startConsumers = require("./src/rabbitMq/startConsumer.js");
 
 
 app.use(cors(corsReact));
@@ -49,8 +50,9 @@ app.use(cookieParser());
 
 
   // TEST RabbitMQ
-  await ProducerRabbitMQ();
-  await ConSumerRabbitMQ();
+  // await ProducerRabbitMQ();
+  // await ConSumerRabbitMQ();
+  await startConsumers()
 
   server.listen(port, () => {
     console.log(`Server running on port ${port}`);

@@ -18,9 +18,6 @@ class OrderController {
          return await OrderService.createOrder({cartItemIds ,totalPrice, userId ,productId ,quantityProduct ,priceProduct  ,attributeId ,  homeNumber ,district ,province ,receiverName ,phoneNumber , nameUser }, conn);
        });
 
-       appEventEmitter.emit("add_notification" ,{
-        data:data.addNotification
-       })
       
       res.json(data );
    
