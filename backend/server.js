@@ -22,6 +22,10 @@ const {startRabbitMQ}  = require("./src/rabbitMq/index.js");
 const { ProducerRabbitMQ } = require("./src/rabbitMq/producer.js");
 const { ConSumerRabbitMQ } = require("./src/rabbitMq/consumer.js");
 const startConsumers = require("./src/rabbitMq/startConsumer.js");
+const { connectProducerKafka } = require("./src/kafka/index.js");
+const ProducerKafka = require("./src/kafka/producer.js");
+const StartConsumerKafka = require("./src/kafka/consumer.js");
+
 
 
 app.use(cors(corsReact));
@@ -46,13 +50,20 @@ app.use(cookieParser());
   await initDB();
   await connectMongo();
   await startRedis.connect();
+
+  //kafka
+  await connectProducerKafka();
+  //rabit
   await startRabbitMQ();
-
-
   // TEST RabbitMQ
   // await ProducerRabbitMQ();
   // await ConSumerRabbitMQ();
   await startConsumers()
+
+  //Test Kafka 
+  // await ProducerKafka()
+  // await StartConsumerKafka(1)
+  //  await StartConsumerKafka(2)
 
   server.listen(port, () => {
     console.log(`Server running on port ${port}`);
