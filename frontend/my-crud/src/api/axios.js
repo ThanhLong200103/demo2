@@ -1,8 +1,11 @@
 import axios from "axios";
 import i18n from "../i18n/i18n";
+
 // Tạo một biến để quản lý việc refresh token (tránh gọi nhiều lần cùng lúc)
 let isRefreshing = false;
 let failedQueue = [];
+
+const BASE_URL = import.meta.env.VITE_URL_BE || 'http://localhost:3000/api';
 
 const processQueue = (error, token = null) => {
   failedQueue.forEach((prom) => {
@@ -16,7 +19,7 @@ const processQueue = (error, token = null) => {
 };
 
 const axiosClient = axios.create({
-  baseURL: "http://localhost:3000/api",
+  baseURL: BASE_URL,
   headers: {
     "Content-Type": "application/json",
   },
@@ -66,7 +69,7 @@ axiosClient.interceptors.response.use(
       try {
         // GỌI REFRESH TOKEN (Sử dụng instance axios gốc để tránh interceptor đè lên)
         const res = await axios.post(
-          "http://localhost:3000/api/refresh",
+          `${BASE_URL}/refresh`,
           {},
           { withCredentials: true },
         );

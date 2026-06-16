@@ -52,7 +52,7 @@ app.use(cookieParser());
   await startRedis.connect();
 
   //kafka
-  await connectProducerKafka();
+  // await connectProducerKafka();
   //rabit
   await startRabbitMQ();
   // TEST RabbitMQ
