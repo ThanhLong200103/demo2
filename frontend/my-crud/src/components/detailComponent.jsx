@@ -19,6 +19,7 @@ import { closeDetail } from "../redux/features/detail";
 import CartService from "../services/cart";
 import { indexCountItem, setCartItem, setCartLocal } from "../redux/features/cart";
 import { json, useNavigate } from "react-router-dom";
+
 export default function DetailComponent({ showDetail, productId }) {
   // const [products, setProducts] = useState([]);
   const [productItem, setProductItem] = useState({});
@@ -208,252 +209,136 @@ const localCartItem = JSON.parse(localStorage.getItem("pendingCart")) || [];
           d(closeDetail({ showDetail: false, productId: null }));
         }}
       ></div>
-      <Container className={`detail ${showDetail && "active"}`}>
-        <div className="">
-          <Row className="d-flex">
-            <Col md={12} lg={4}>
-              <div className="w-100 mb-3 mt-5" style={{ overflow: "hidden" }}>
-                <img
-                  className="w-100 h-100"
-                  style={{ objectFit: "cover" }}
-                  src={mainImg}
-                  alt="product"
-                />
-              </div>
+     <Container className={`detail ${showDetail ? "active" : ""}`}>
+  <Row className="g-4 pt-4 pb-4">
 
-              <ul className="list-unstyled row row-cols-6 g-1 bottom-0">
-                {thumbnails.map((img, index) => (
-                  <li className="col" key={index}>
-                    <img
-                      className="img-fluid border"
-                      src={img}
-                      alt=""
-                      onClick={() => setMainImg(img)}
-                      style={{ cursor: "pointer" }}
-                    />
-                  </li>
-                ))}
-              </ul>
-            </Col>
-            <Col md={12} lg={8} className="border-start">
-              <div style={{ width: "100%" }} className="mt-2">
-                <div className="position-relative pt-4">
-                  <h4 className="fw-bold">{productItem.name}</h4>
+    {/* LEFT - IMAGE */}
+    <Col xs={12} lg={4}>
+      <div className="mt-3">
+        <img
+          src={mainImg}
+          className="w-100 rounded"
+          style={{ objectFit: "cover", maxHeight: "420px" }}
+        />
+      </div>
 
-                  <IoCloseOutline
-                    className="position-absolute  top-0 end-0 fs-4  "
-                    onClick={() => {
-                      d(closeDetail({ showDetail: false, productId: null }));
-                    }}
-                  />
-                </div>
+      <div className="mt-2 d-flex flex-wrap gap-2">
+        {thumbnails.map((img, index) => (
+          <img
+            key={index}
+            src={img}
+            onClick={() => setMainImg(img)}
+            style={{
+              width: "60px",
+              height: "60px",
+              objectFit: "cover",
+              cursor: "pointer",
+              borderRadius: "6px"
+            }}
+          />
+        ))}
+      </div>
+    </Col>
 
-                <div>
-                  <span className="pe-2 border-end">
-                    {" "}
-                    Mã sản phẩm : <b className="fw-bold">Test</b>{" "}
-                  </span>
-                  <span className="px-2 border-end">
-                    {" "}
-                    Tình trạng :
-                    <b className="fw-bold">
-                      {attributesOne?.quantity > 0 ? "Còn hàng" : "Hết hàng"}
-                    </b>
-                  </span>
-                  <span className="ps-2">
-                    Thương hiệu : <b className="fw-bold">TORANO</b>
-                  </span>
-                </div>
-                <div>
-                  <div
-                    className="d-flex gap-3 py-3 ps-2 mt-3 "
-                    style={{ background: "#f5f5f5", borderRadius: "5px" }}
-                  >
-                    <span className="me-5 fw-bold ">Giá :</span>
-                    <span className="text-danger fw-bold">
-                      {productItem.price?.toLocaleString()}
-                    </span>
-                    <b>100,000,000đ</b>
-                    <span
-                      className="bg-danger px-2 border-0 text-white"
-                      style={{ borderRadius: "10px" }}
-                    >
-                      -33%
-                    </span>
-                  </div>
-                </div>
-                <div className="mt-4">
-                  <Form>
-                    <Row className="align-items-center mb-4">
-                      <Col xs={4} md={3} lg={2}>
-                        <span className="fw-bold ">Màu sắc:</span>
-                      </Col>
-                      <Col
-                        xs={8}
-                        md={9}
-                        lg={10}
-                        className="d-flex flex-wrap gap-2"
-                      >
-                        <div className="d-flex flex-wrap gap-2">
-                          {colors.map((color) => (
-                            <div key={color} className="relative">
-                              <input
-                                type="radio"
-                                id={`color-${color}`}
-                                name="color"
-                                value={color}
-                                checked={selectedColor === color}
-                                onChange={() => setSelectedColor(color)}
-                                className="d-none"
-                              />
-                              <label
-                                htmlFor={`color-${color}`}
-                                className={`inline-block px-4 py-2  border border-gray-300 rounded-md cursor-pointer transition-all peer-checked:border-2 peer-checked:border-gray-900 peer-checked:font-bold ${selectedColor === color ? "bg-danger text-white" : "bg-white"}`}
-                                style={{ borderRadius: "10px" }}
-                              >
-                                {color}
-                              </label>
-                            </div>
-                          ))}
-                        </div>
-                      </Col>
-                    </Row>
+    {/* RIGHT - INFO */}
+    <Col xs={12} lg={8} className="border-start-lg ps-lg-4">
 
-                    <Row className="mb-3">
-                      <Col xs={4} md={3} lg={2} className="pt-2">
-                        <span className="fw-bold">Kích thước:</span>
-                      </Col>
-                      <Col xs={8} md={9} lg={10}>
-                        <div className="d-flex flex-wrap gap-2 mb-2">
-                          {sizes.map((size) => (
-                            <div key={size} className="relative">
-                              <input
-                                type="radio"
-                                id={`size-${size}`}
-                                name="size"
-                                value={size}
-                                checked={selectedSize === size}
-                                onChange={() => setSelectedSize(size)}
-                                className="d-none"
-                              />
-                              <label
-                                htmlFor={`size-${size}`}
-                                className={`inline-block px-4 py-2  border border-gray-300 rounded-md cursor-pointer transition-all peer-checked:border-2 peer-checked:border-gray-900 peer-checked:font-bold ${selectedSize === size ? "bg-danger text-white" : "bg-white"}`}
-                                style={{ borderRadius: "10px" }}
-                              >
-                                {size}
-                              </label>
-                            </div>
-                          ))}
-                        </div>
+      {/* HEADER */}
+      <div className="d-flex justify-content-between align-items-start">
+        <h4 className="fw-bold">{productItem.name}</h4>
 
-                        <div className="d-flex justify-content-between align-items-end">
-                          <div className="d-flex flex-wrap gap-2"></div>
-                          <a
-                            href="#"
-                            className="text-dark"
-                            style={{
-                              textDecoration: "underline",
-                              textUnderlineOffset: "4px",
-                            }}
-                          >
-                            Hướng dẫn chọn size
-                          </a>
-                        </div>
-                      </Col>
-                    </Row>
-                  </Form>
+        <IoCloseOutline
+          size={26}
+          className="cursor-pointer"
+          onClick={() =>
+            d(closeDetail({ showDetail: false, productId: null }))
+          }
+        />
+      </div>
 
-                  <Row className="align-items-center mt-4">
-                    <Col xs={4} md={3} lg={2}>
-                      <span className="fw-bold">Số lượng:</span>
-                    </Col>
-                    <Col xs={8} md={9} lg={10}>
-                      <div className="d-flex align-items-center">
-                        <Button
-                          variant="outline-secondary"
-                          className="d-flex justify-content-center align-items-center text-dark bg-white border"
-                          style={{
-                            width: "45px",
-                            height: "45px",
-                            fontSize: "1.2rem",
-                          }}
-                          onClick={() => {
-                            handleReduce();
-                          }}
-                        >
-                          -
-                        </Button>
-                        <span
-                          className="d-flex justify-content-center align-items-center fs-6 "
-                          style={{ width: "50px", height: "45px" }}
-                        >
-                          {quantityHandle}
-                        </span>
-                        <Button
-                          variant="outline-secondary"
-                          className="d-flex justify-content-center align-items-center text-dark bg-white border"
-                          style={{
-                            width: "45px",
-                            height: "45px",
-                            fontSize: "1.2rem",
-                          }}
-                          onClick={() => {
-                            hanldeIncrease();
-                          }}
-                        >
-                          +
-                        </Button>
-                      </div>
-                    </Col>
-                  </Row>
-                </div>
-                <div className="d-flex  justify-content-center mt-4">
-                  <Button
-                    className=" py-2 bg-white text-danger border-danger"
-                    style={{ width: "45%" }}
-                    onClick={() => {
-                      handleCreateCart();
-                    }}
-                  >
-                    THÊM VÀO GIỎ
-                  </Button>
-                </div>
-              </div>
-              <div className=" mt-3">
-                <ul className="list-unstyled d-flex justify-content-start gap-2  ">
-                  <li className="me-5 mt-3 fw-bold">Chia sẻ:</li>
-                  <li className="fs-4 ">
-                    <a href="">
-                      <FaFacebook />
-                    </a>
-                  </li>
-                  <li className="fs-4">
-                    <a href="">
-                      <FaFacebookMessenger />
-                    </a>
-                  </li>
-                  <li className="fs-4">
-                    <a href="">
-                      <AiFillTwitterCircle />
-                    </a>
-                  </li>
-                  <li className="fs-4 ">
-                    <a href="">
-                      <FaPinterest className="text-danger" />
-                    </a>
-                  </li>
-                  <li className="fs-4">
-                    <a href="">
-                      <FaLink />
-                    </a>
-                  </li>
-                </ul>
-              </div>
-            </Col>
-          </Row>
+      {/* INFO */}
+      <div className="text-muted small mt-2">
+        <div>Mã: <b>TEST</b></div>
+        <div>
+          Tình trạng:{" "}
+          <b>{attributesOne?.quantity > 0 ? "Còn hàng" : "Hết hàng"}</b>
         </div>
-      </Container>
+      </div>
+
+      {/* PRICE */}
+      <div className="mt-3 p-3 bg-light rounded d-flex gap-3 align-items-center">
+        <span className="fw-bold">Giá:</span>
+        <span className="text-danger fw-bold fs-5">
+          {productItem.price?.toLocaleString()}đ
+        </span>
+      </div>
+
+      {/* COLOR */}
+      <div className="mt-4">
+        <div className="fw-bold mb-2">Màu sắc</div>
+        <div className="d-flex flex-wrap gap-2">
+          {colors.map((color) => (
+            <button
+              key={color}
+              onClick={() => setSelectedColor(color)}
+              className={`btn btn-sm ${
+                selectedColor === color
+                  ? "btn-danger"
+                  : "btn-outline-secondary"
+              }`}
+            >
+              {color}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* SIZE */}
+      <div className="mt-3">
+        <div className="fw-bold mb-2">Kích thước</div>
+        <div className="d-flex flex-wrap gap-2">
+          {sizes.map((size) => (
+            <button
+              key={size}
+              onClick={() => setSelectedSize(size)}
+              className={`btn btn-sm ${
+                selectedSize === size
+                  ? "btn-danger"
+                  : "btn-outline-secondary"
+              }`}
+            >
+              {size}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* QUANTITY */}
+      <div className="mt-4 d-flex align-items-center gap-3">
+        <span className="fw-bold">Số lượng</span>
+
+        <div className="d-flex border rounded">
+          <button className="btn" onClick={handleReduce}>-</button>
+          <div className="px-3 d-flex align-items-center">
+            {quantityHandle}
+          </div>
+          <button className="btn" onClick={hanldeIncrease}>+</button>
+        </div>
+      </div>
+
+      {/* ADD CART */}
+      <div className="mt-4">
+        <button
+          className="btn btn-danger w-100"
+          onClick={handleCreateCart}
+        >
+          THÊM VÀO GIỎ
+        </button>
+      </div>
+
+    </Col>
+  </Row>
+</Container>
     </>
   );
 }
