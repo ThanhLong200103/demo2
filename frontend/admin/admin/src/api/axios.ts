@@ -37,8 +37,10 @@ const processQueue = (error: any, token: string | null = null): void => {
   failedQueue = [];
 };
 
+const BASE_URL = import.meta.env.VITE_URL_BE || 'http://localhost:3000/api';
+
 const axiosClient: AxiosInstance = axios.create({
-  baseURL: "http://localhost:3000/api",
+  baseURL: BASE_URL,
   headers: {
     "Content-Type": "application/json",
   },
@@ -103,7 +105,7 @@ axiosClient.interceptors.response.use(
 
     try {
       const res = await axios.post<RefreshResponse>(
-        "http://localhost:3000/api/refresh",
+        `${BASE_URL}/refresh`,
         {},
         { withCredentials: true }
       );
