@@ -3,20 +3,20 @@ require("dotenv").config();
 
 const connectMongo = async () => {
     try {
-        // Truyền thêm object { dbName: "chatdb" } ở tham số thứ 2
         await mongoose.connect(process.env.MONGO_URI, {
-            dbName: "chatdb"
+            dbName: "chatdb",
+            serverSelectionTimeoutMS: 30000,
         });
-        
-        console.log("Kết nối thành công với database: chatdb");
 
-        // Ping kiểm tra database hiện tại
-        const pingResult = await mongoose.connection.db.command({ ping: 1 });
-        console.log("Ping test:", pingResult);
+        console.log("MongoDB connected: chatdb");
+
+        await mongoose.connection.db.command({ ping: 1 });
+        console.log("MongoDB ping OK");
 
     } catch (error) {
-        console.log("MongoDB Error:", error);
+        console.log("MongoDB Error:", error.message);
+        process.exit(1);
     }
-}
+};
 
 module.exports = connectMongo;
