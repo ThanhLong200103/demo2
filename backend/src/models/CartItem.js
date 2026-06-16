@@ -12,10 +12,10 @@ class CartItem {
     return row;
   };
   createCartItem = async (data, connection = db) => {
-    const { productId, quantity, cartId ,attributesId } = data;
+    const { productId, quantity, cartId, attributesId } = data;
     const [result] = await connection.execute(
       "INSERT INTO cartitem (cart_id, product_id, quantity ,attributes_id) VALUES (?,?,?,?)",
-      [cartId, productId, quantity ,attributesId ],
+      [cartId, productId, quantity, attributesId],
     );
     return result;
   };
@@ -34,10 +34,10 @@ class CartItem {
     );
     return row;
   };
-  checkproductID = async (productId, cartId ,attributesId, connection = db) => {
+  checkproductID = async (productId, cartId, attributesId, connection = db) => {
     const [existingItem] = await connection.execute(
       "SELECT * FROM  cartitem WHERE product_id = ? AND cart_id = ?  AND status = 'active' AND attributes_id = ? FOR UPDATE",
-      [productId, cartId ,attributesId],
+      [productId, cartId, attributesId],
     );
     return existingItem;
   };
@@ -49,20 +49,22 @@ class CartItem {
     return rows[0];
   };
   updownQuanTiTyProduct = async (data, connection = db) => {
-    const product = await this.getProductForUpdate(data.attributesId, connection);
+    const product = await this.getProductForUpdate(
+      data.attributesId,
+      connection,
+    );
     const quantityProduct = product.quantity - data.quantity;
     console.log(product);
     console.log("QUANTITY PRODUCT:", quantityProduct);
     if (quantityProduct < 0) {
-      throw new AppError("Số lượng sản phẩm không đủ" ,422);
-    }
-    else {
-       const attributesId = data.attributesId;
-    const [existingItem] = await connection.execute(
-      "UPDATE attributes SET quantity = ? WHERE id = ? ",
-      [quantityProduct, attributesId],
-    );
-    return existingItem;
+      throw new AppError("Số lượng sản phẩm không đủ", 422);
+    } else {
+      const attributesId = data.attributesId;
+      const [existingItem] = await connection.execute(
+        "UPDATE attributes SET quantity = ? WHERE id = ? ",
+        [quantityProduct, attributesId],
+      );
+      return existingItem;
     }
   };
   getcart = async (id, connection = db) => {
@@ -73,8 +75,7 @@ class CartItem {
     return rows[0];
   };
 
-
-  // Lấy thông tin cartitem theo danh sách id ,để dùng cho  orderItem sau khi đặt hàng thành công
+  // Lấy thông tin cartItem theo danh sách id ,để dùng cho  orderItem sau khi đặt hàng thành công
   getCartItemsByIds = async (ids, connection = db) => {
     if (!ids || ids.length === 0) return [];
     const placeholders = ids.map(() => "?").join(",");
@@ -90,7 +91,7 @@ class CartItem {
     return rows;
   };
 
-   getCartItemsOfSelectOrder = async (ids) => {
+  getCartItemsOfSelectOrder = async (ids) => {
     if (!ids || ids.length === 0) return [];
     const placeholders = ids.map(() => "?").join(",");
     const query = `SELECT c.id , c.product_id ,c.quantity ,p.price ,p.name,p.img FROM cartitem  c INNER JOIN   products p on p.id = c.product_id   WHERE c.id IN (${placeholders})`;
@@ -99,8 +100,5 @@ class CartItem {
   };
 
   // Thanh toán trực tiếp
-  
-
-
 }
 module.exports = new CartItem();

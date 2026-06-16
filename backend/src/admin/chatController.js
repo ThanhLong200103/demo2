@@ -47,6 +47,7 @@ class ChatController {
         const newMessage = await ChatService.addmessage(roomId, senderId, name, content);
 
         appEventEmitter.emit("MESSAGE_CREATED", { message: newMessage });
+        // res.status(201).json({ message: newMessage });
     })
 
 
