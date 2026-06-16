@@ -1,9 +1,13 @@
 const CartItemService = require("../services/cartItemService");
 const cartItem = require("../models/CartItem")
+const runInTransaction = require("../utils/runTransaction");
+const CacthAsync = require("../utils/cachAsync");
+
 class CartItemController {
   getCartItemAll = async (req, res) => {
     try {
-      const all = await CartItemService.getAllCart();
+      const {id} = req.params
+      const all = await CartItemService.getAllCart(id);
       // console.log("DATA API:", all); 
       res.json(all);
     } catch (err) {
@@ -12,37 +16,41 @@ class CartItemController {
   };
   deleteCartitem = async (req,res)=>{
     try{
-        const {id} = req.params
-        const dele = await CartItemService.deleteCartItem(id);
-        res.json(dele)
+        const result = await runInTransaction(async (conn) => {
+          const {id} = req.params
+          return await CartItemService.deleteCartItem(id, conn);
+        });
+        res.json(result)
     }catch(err){
       res.status(500).json({ error: err.message });
     }
   };
-  editCartItem = async (req , res) =>{
+  editCartItem = async (req , res ) =>{
     try{
-        const {id} = req.params;
-        const {quantity} = req.body
-        const edit = await CartItemService.updateCartItem({quantity,id})
-        res.json(edit)
+        const result = await runInTransaction(async (conn) => {
+          const {id} = req.params;
+          const {quantity , quantityProduct} = req.body
+          return await CartItemService.updateCartItem({id , quantity ,quantityProduct}, conn ,req.t);
+        });
+        res.json(result)
     }
     catch(err){
       res.status(500).json({ error: err.message });
-
     }
   }
-  createCartItem = async (req , res )=>{
-    try{
-        const{productId ,quantityProduct} = req.body;
-        const quantity = 1
-        const craete = await CartItemService.createCartItem({productId  , quantityProduct,quantity})
-        res.json(craete)
-    }catch(err){
-      res.status(500).json({ error: err.message });
-
-    }
-  }
-  getCart = async (req,res)=>{
+  createCartItem = CacthAsync(
+    async (req , res )=>{
+    
+        const result = await runInTransaction(async (conn) => {
+          const{productId  , quantity ,cartId ,attributesId } = req.body;
+          // console.log(productId , quantity ,cartId)
+          return await CartItemService.createCartItem({productId ,cartId ,attributesId ,quantity , }, conn ,req.t)
+        });
+        res.json(result)
+      }
+  );
+  
+  getCartItem = async (req,res)=>{
     try{
       const {id} = req.params
       const data = await CartItemService.checkDelete(id);
@@ -50,6 +58,25 @@ class CartItemController {
     }catch(err){
       res.status(500).json({ error: err.message });
 
+    }
+  }
+  getCart = async (req, res)=>{
+    try {
+      const userId = req.user.id;
+      const data = await CartItemService.getCart(userId)
+      res.json(data)
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+      
+    }
+  }
+  createCart = async (req, res) =>{
+    try {
+      const userId = req.user.id;
+      const data = await CartItemService.createCart(userId)
+      res.json(data)
+    } catch (error) {
+      res.status(500).json({ error: error.message });
     }
   }
 }

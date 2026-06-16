@@ -5,25 +5,53 @@ import { Link } from "react-router-dom";
 import Button from "react-bootstrap/Button";
 import DeletePage from "./DeletePage";
 import { MdAddShoppingCart } from "react-icons/md";
-
+import { toast } from "react-toastify";
+import { RepositoryFactory } from "../services/FactoryService";
+import ProductComponent from "../components/ProductComponent";
+import { Container, Row } from "react-bootstrap";
+import CarouselComponent from "../components/CarouselComponent";
+import { useSelector } from "react-redux";
 export default function HomePage() {
   const [products, setProducts] = useState([]);
   const [show, setShow] = useState(false);
   const [id, setId] = useState(null);
+  const [cursor, setCursor] = useState({});
+  const [currentPage, setCurrentPage] = useState(1);
+  const [total, setTotal] = useState(0);
+  const limit = 12;
+  const i18nextlng = localStorage.getItem("i18nextLng")
+ const { currentLanguage } = useSelector((state) => state.language);
 
-  useEffect(() => {
-    const fetchProducts = async () => {
+  const totalPages = Math.ceil(total / limit);
+  const quantity = 1;
+
+  // const tinh = 0-1 ;
+  // console.log(tinh)
+
+   const fetchProducts = async (page = 1) => {
       try {
-        const res = await axiosClient.get("/products");
-        setProducts(res); 
+        const res = await RepositoryFactory.get("product").getAll({
+          limit: limit,
+          cursor: null,
+          page: page,
+        });
+        setProducts(res[0]);
+        setCursor({
+          next: res[1],
+          prev: res[2],
+        });
+
+        setTotal(res[3]["COUNT(*)"]);
+        console.log("res :", res);
       } catch (err) {
         console.log("Fetch error:", err);
       }
     };
-    fetchProducts();
-  }, []);
-
-  // ✅ Delete
+  useEffect(() => {
+   
+    fetchProducts(currentPage);
+     console.log("language:", currentLanguage);
+  }, [currentPage , currentLanguage]);
   const handleDelete = async (id) => {
     try {
       await axiosClient.delete(`/product/delete/${id}`);
@@ -34,87 +62,127 @@ export default function HomePage() {
     }
   };
 
-  // ✅ Add to cart
-  const handleCreateCart = async (product_id, quantity) => {
+  const handleCreateCart = async (productId, quantity) => {
     try {
+      const response = await axiosClient.get("/cart");
+
+      const cartId = response.id;
+      console.log(cartId, productId, quantity);
       await axiosClient.post("/cartitem/create", {
-        product_id,
+        productId,
         quantity,
+        cartId,
       });
+
       alert("Added to cart!");
+      setProducts(
+        products.map((p) =>
+          p.id === productId ? { ...p, quantity: p.quantity - quantity } : p,
+        ),
+      );
     } catch (err) {
-      console.log(err);
+      toast.error("Lỗi khi thêm sản phẩm vào giỏ hàng");
     }
   };
+const pages = Array.from({ length: totalPages }, (_, i) => i + 1);
 
+const setPrevPage = async () => {
+  try {
+    const direction = "prev";
+   const res = await RepositoryFactory.get("product").getAll({
+          limit: limit,
+          cursor: cursor.prev,
+          direction: direction,
+    
+        });
+        setProducts(res[0]);
+        setCursor({
+          next: res[1],
+          prev: res[2],
+        });
+        setCurrentPage(currentPage - 1)
+  } catch (error) {
+    console.error("Error fetching previous page:", error);
+  }
+  
+}
+const setNextPage = async () => {
+  try {
+    const direction = "next";
+   const res = await RepositoryFactory.get("product").getAll({
+          limit: limit,
+          cursor: cursor.next,
+          direction: direction,
+      
+
+
+        });
+        setProducts(res[0]);
+        setCursor({
+          next: res[1],
+          prev: res[2],
+        });
+        setCurrentPage(currentPage + 1)
+  } catch (error) {
+    console.error("Error fetching next page:", error);
+  }
+  
+}
   return (
     <>
-      <Table striped bordered hover>
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>Price</th>
-            <th>Image</th>
-            <th>Quantity</th>
-            <th>Handle</th>
-          </tr>
-        </thead>
+      <Container style={{ maxWidth: "1600px" }} className="position-relative">
+        {/* <CarouselComponent></CarouselComponent> */}
+        <ProductComponent
+          products={products}
+          cursor={cursor}
+        ></ProductComponent>
+      </Container>
+      <Container className="mb-5">
+        <Row className="d-flex justify-content-center gap-2 mt-4">
 
-        <tbody>
-          {products.map((p) => (
-            <tr key={p.id}>
-              <td>{p.name}</td>
-              <td>{p.price}</td>
+  {/* Prev */}
+  {currentPage > 1 && (
+    <Button
+      onClick={() => setPrevPage()}
+      className="rounded-circle border-0 text-dark  "
+      style={{ width: 40, height: 40 ,background :"#f5f5f5"  }}
+    >
+      &lt;
+    </Button>
+  )}
 
-     
-              <td>
-                <img src={p.img} alt={p.name} width="60" />
-              </td>
+  {/* Page numbers */}
+  {pages.map((page) => (
+    <Button
+      key={page}
+      onClick={() => setCurrentPage(page)
+      
+      }
+      className={`rounded-circle border-0 text-black  ${
+        currentPage === page ? "bg-dark text-white" : ""
+      }`}
+      style={{ width: 40, height: 40, background: "#eee" }}
+    >
+      {page}
+    </Button>
+  ))}
 
-              <td>{p.quantity}</td>
+  {/* Next */}
+  {currentPage < totalPages && (
+    <Button
+      onClick={() => setNextPage()
 
-              <td>
-                <Button
-                  as={Link}
-                  to={`/edit/${p.id}`}
-                  variant="success"
-                  size="sm"
-                  className="me-2"
-                >
-                  Edit
-                </Button>
+        
+      }
+      className="rounded-circle border-0 text-black"
+      style={{ width: 40, height: 40 ,background :"#f5f5f5" }}
+    >
+      &gt;
+    </Button>
+  )}
 
-                <Button
-                  variant="outline-danger"
-                  size="sm"
-                  className="me-2"
-                  onClick={() => {
-                    setShow(true);
-                    setId(p.id);
-                  }}
-                >
-                  Delete
-                </Button>
-
-                <Button
-                  variant="outline-secondary"
-                  size="sm"
-                  onClick={() => {}}
-                >
-                  <MdAddShoppingCart />
-                </Button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </Table>
-
-      <DeletePage
-        show={show}
-        handleClose={() => setShow(false)}
-        userId={id}
-        onDelete={handleDelete}
-      />
+</Row>
+      </Container>
     </>
   );
 }

@@ -1,0 +1,28 @@
+{
+  "checkout": {
+    "shippingAddress": "Địa chỉ nhận hàng",
+    "houseNumber": "Số nhà",
+    "district": "Huyện/Phường/Xã",
+    "province": "Tỉnh/Thành phố",
+    "addShippingAddress": "Thêm địa chỉ nhận hàng",
+
+    "confirmOrder": "Xác nhận đơn hàng",
+    "selectedProducts": "Sản phẩm đã chọn",
+    "quantity": "Số lượng",
+    "color": "Màu sắc",
+    "size": "Cỡ",
+
+    "paymentMethod": "Phương thức thanh toán",
+
+    "codTitle": "Thanh toán khi nhận hàng (COD)",
+    "codDescription": "Giao hàng và thu tiền tận nơi",
+
+    "onlinePaymentTitle": "Thanh toán trực tuyến",
+    "onlinePaymentDescription": "Qua cổng VNPAY (Thẻ ATM, QR Code, Visa/Master)",
+
+    "total": "Tổng cộng",
+
+    "confirmOrderCOD": "Xác nhận đặt hàng COD",
+    "confirmOrderVNPAY": "Xác nhận đặt hàng VNPAY"
+  }
+}

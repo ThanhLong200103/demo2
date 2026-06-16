@@ -4,11 +4,12 @@ import Button from "react-bootstrap/Button";
 import axiosClient from "../api/axios";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
+import { RepositoryFactory } from "../services/FactoryService";
 
 export default function EditPage() {
   const navigate = useNavigate();
   const { id } = useParams();
- 
+  const productService = RepositoryFactory.get("product");
   const [form, setForm] = useState({
     name: "",
     price: "",
@@ -16,18 +17,18 @@ export default function EditPage() {
     quantity: "",
   });
   useEffect(() => {
-    const fechProduct = async () =>{
-   try {
-     const data = await axiosClient.get(`/product/${id}`);
-    console.log(data[0])
-    setForm(data[0])
-       } catch (error) {
-    console.log(error)
-    
-   }
-    }
+    const fechProduct = async () => {
+      try {
+        const data = await productService.getById(id);
+        console.log(data[0]);
+        setForm(data[0]);
+      } catch (error) {
+        console.log(error);
+        toast.error(error.response?.data?.message || "Lỗi khi tải sản phẩm");
+      }
+    };
     fechProduct();
-  },[id]);
+  }, [id]);
   const handleChange = (e) => {
     setForm({
       ...form,
@@ -39,7 +40,7 @@ export default function EditPage() {
     e.preventDefault();
 
     try {
-      await axiosClient.put(`/product/edit/${id}`, form);
+      await productService.update(id, form);
 
       toast.success("Update Product thành công ");
 
@@ -54,23 +55,27 @@ export default function EditPage() {
     } catch (err) {
       const status = err.response?.status;
 
-      if (status === 400) {
-        const errors = err.response?.data?.errors;
-
-        if (Array.isArray(errors)) {
-          errors.forEach((msg) => toast.error(msg));
+      if (status === 422) {
+        const errors = err.response?.data?.error;
+        if (typeof errors === "object" && errors !== null) {
+          Object.values(errors).forEach((msg) => toast.error(msg));
         } else {
-          toast.error("Dữ liệu không hợp lệ");
+          toast.error(errors || "Lỗi xác thực dữ liệu");
         }
+      } else if (status === 400) {
+        toast.error(err.response?.data?.message || "Dữ liệu không hợp lệ");
+      } else if (status === 500) {
+        toast.error("Lỗi máy chủ, vui lòng thử lại sau");
       } else {
-        console.log("ERROR:", err);
+        toast.error("Có lỗi xảy ra, vui lòng thử lại");
       }
+      console.log("ERROR:", err);
     }
   };
 
   return (
     <div style={{ maxWidth: "500px", margin: "50px auto" }}>
-      <h2>Update User</h2>
+      <h2>Update Product</h2>
 
       <Form onSubmit={handleSubmit}>
         <Form.Group className="mb-3">

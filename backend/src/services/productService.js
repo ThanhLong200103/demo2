@@ -2,12 +2,12 @@ const { releaseConnection } = require("../config/db");
 const ProductModel = require("../models/ProductModel");
 
 class ProductService {
-    getAllProduct = async ()=>{
-        const data = await ProductModel.getAllProduct();
+    getAllProduct = async (limit,cursor ,direction, page, locale)=>{
+        const data = await ProductModel.getAllProduct(limit,cursor ,direction, page, locale);
         return data ;
     }
-    getProduct = async (id)=>{
-        const data = await ProductModel.getProduct(id);
+    getProduct = async (id , locale)=>{
+        const data = await ProductModel.getProduct(id, locale);
         return data
     }
     createProduct = async (data)=>{
@@ -21,6 +21,10 @@ class ProductService {
     deleteProduct = async (id)=>{
         const dele = await ProductModel.deleteProduct(id);
         return dele;
+    }
+    searchProduct = async (name)=>{
+        const data = await ProductModel.searchProduct(name);
+        return data
     }
 }
 module.exports = new  ProductService ();

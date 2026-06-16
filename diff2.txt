@@ -1,0 +1,603 @@
+diff --git a/backend/server.js b/backend/server.js
+index cdb07a3..fdd48f3 100644
+--- a/backend/server.js
++++ b/backend/server.js
+@@ -21,6 +21,7 @@ const connectMongo = require("./src/config/mongoDB.js");
+ const {startRabbitMQ}  = require("./src/rabbitMq/index.js");
+ const { ProducerRabbitMQ } = require("./src/rabbitMq/producer.js");
+ const { ConSumerRabbitMQ } = require("./src/rabbitMq/consumer.js");
++const startConsumers = require("./src/rabbitMq/startConsumer.js");
+ 
+ 
+ app.use(cors(corsReact));
+@@ -49,8 +50,9 @@ app.use(cookieParser());
+ 
+ 
+   // TEST RabbitMQ
+-  await ProducerRabbitMQ();
+-  await ConSumerRabbitMQ();
++  // await ProducerRabbitMQ();
++  // await ConSumerRabbitMQ();
++  await startConsumers()
+ 
+   server.listen(port, () => {
+     console.log(`Server running on port ${port}`);
+diff --git a/backend/src/admin/notificationController.js b/backend/src/admin/notificationController.js
+index fbb587f..5b0e4a2 100644
+--- a/backend/src/admin/notificationController.js
++++ b/backend/src/admin/notificationController.js
+@@ -3,7 +3,10 @@ const catchAsync = require("../utils/cachAsync");
+ 
+ class NotificationController {
+   getNotifications = catchAsync(async (req, res) => {
+-    const notifications = await NotificationService.getNotifications();
++    const limit = req.query.limit || 10
++    const offset = req.query.offset || 0
++    
++    const notifications = await NotificationService.getNotifications(offset , limit);
+     res.json(notifications);
+   });
+ }
+diff --git a/backend/src/controllers/orderController.js b/backend/src/controllers/orderController.js
+index db20648..9901749 100644
+--- a/backend/src/controllers/orderController.js
++++ b/backend/src/controllers/orderController.js
+@@ -18,9 +18,6 @@ class OrderController {
+          return await OrderService.createOrder({cartItemIds ,totalPrice, userId ,productId ,quantityProduct ,priceProduct  ,attributeId ,  homeNumber ,district ,province ,receiverName ,phoneNumber , nameUser }, conn);
+        });
+ 
+-       appEventEmitter.emit("add_notification" ,{
+-        data:data.addNotification
+-       })
+       
+       res.json(data );
+    
+diff --git a/backend/src/middlewares/checkpermission.js b/backend/src/middlewares/checkpermission.js
+index 7142d30..28ef408 100644
+--- a/backend/src/middlewares/checkpermission.js
++++ b/backend/src/middlewares/checkpermission.js
+@@ -26,5 +26,4 @@ const CheckPermission = (requiredPermission) =>{
+     }
+   }
+ }
+-
+ module.exports = CheckPermission
+\ No newline at end of file
+diff --git a/backend/src/rabbitMq/consumer.js b/backend/src/rabbitMq/consumer.js
+index a6bfcec..5e69bdf 100644
+--- a/backend/src/rabbitMq/consumer.js
++++ b/backend/src/rabbitMq/consumer.js
+@@ -1,28 +1,41 @@
+ const { getConnectionRabbitMQ } = require("./index");
+-
+- const ConSumerRabbitMQ = async ( queue = "tasks") => {
+-  const  conn = getConnectionRabbitMQ();
+-    const ch1 = await conn.createChannel();
++const NotificationService = require ("../services/notification")
++const ConSumerRabbitMQ = async (queue = "tasks") => {
++  const conn = getConnectionRabbitMQ();
++  const ch1 = await conn.createChannel();
+   ch1.on("error", (err) => {
+     console.error("Channel error:", err);
+   });
+   ch1.on("handler-error", (err, event) => {
+     console.error(`Uncaught exception in channel ${event} listener:`, err);
+   });
+-  await ch1.assertQueue(queue, { durable: true });
+-
++  await ch1.assertQueue(queue, { durable: true  });
++  await ch1.prefetch(1);
+   // Listener
+-  ch1.consume(queue, (msg) => {
+-    if (msg !== null) {
+-      console.log("Received:", msg.content.toString());
+-      ch1.ack(msg);
+-
+-    } else {
+-      console.log("Consumer cancelled by server");
+-    }
+-  });
+-}
++  ch1.consume(
++    queue,
++    async (msg) => {
++      if (!msg) return;
++      const data = JSON.parse(msg.content.toString());
++      try {
++        switch (queue) {
++          case "notificationOrder":
++            await NotificationService.createNotification(data);
++            break;
++          default:
++            console.log("Unknown queue:", queue);
++            break;
++        }
++        ch1.ack(msg);
++      } catch (err) {
++        console.error("Notification consumer failed:", err);
++        ch1.nack(msg, false, true);
++      }
++    },
++    { noAck: false },
++  );
++};
+ 
+ module.exports = {
+-    ConSumerRabbitMQ,
+-}
+\ No newline at end of file
++  ConSumerRabbitMQ,
++};
+diff --git a/backend/src/rabbitMq/producer.js b/backend/src/rabbitMq/producer.js
+index 3fc0426..2ede94b 100644
+--- a/backend/src/rabbitMq/producer.js
++++ b/backend/src/rabbitMq/producer.js
+@@ -14,7 +14,7 @@ const { getConnectionRabbitMQ } = require("./index");
+   });
+   await ch2.assertQueue(queue, { durable: true });
+ 
+-  await ch2.sendToQueue(queue, Buffer.from(msg),{
++  await ch2.sendToQueue(queue, Buffer.from(JSON.stringify(msg)),{
+     persistent: true,
+ 
+   });
+diff --git a/backend/src/services/notification.js b/backend/src/services/notification.js
+index b716e35..6f0c070 100644
+--- a/backend/src/services/notification.js
++++ b/backend/src/services/notification.js
+@@ -1,13 +1,33 @@
+ const Notification = require("../models/mongoDB/notification");
+-
++const appEventEmitter = require("../utils/appEventEmitter");
+ class NotificationService {
+-  createNotification = async (user_id, title, content) => {
+-    const newNotification = Notification.create({ user_id, title, content });
++  createNotification = async (data) => {
++    console.log(data)
++    const user_id = data.user_id
++    const title =  `Khách hàng ${data.nameUser} đã đặt hàng `
++    const content = `Đã đặt hàng thành công với mã đơn hàng #${data.orderId}`
++    const newNotification = await Notification.create({ user_id, title, content });
++    appEventEmitter.emit("add_notificaton",{newNotification:newNotification})
+     return newNotification;
+   };
+-  getNotifications = async () => {
+-    const notifications = Notification.find().limit(10).sort({ created_at: -1 });
+-    return notifications;
++  getNotifications = async (
++  offset,
++  limit 
++) => {
++  console.log(limit)
++  const [notifications, total] = await Promise.all([
++    Notification.find()
++      .sort({ created_at: -1 })
++      .skip(offset)
++      .limit(limit),
++
++    Notification.countDocuments(),
++  ]);
++
++  return {
++    notifications,
++    total,
+   };
++};
+ }
+ module.exports = new NotificationService();
+\ No newline at end of file
+diff --git a/backend/src/services/order.service.js b/backend/src/services/order.service.js
+index fd2a13c..de94874 100644
+--- a/backend/src/services/order.service.js
++++ b/backend/src/services/order.service.js
+@@ -6,10 +6,11 @@ const db = require("../config/db");
+ const paymentModel = require("../models/paymentModel");
+ const CartItem = require("../models/CartItem");
+ const AppError = require("../utils/AppError");
+-const NotificationService = require("../services/notification")
++const { ProducerRabbitMQ } = require("../rabbitMq/producer");
+ class OrderService {
+   createOrder = async (data , conn) => {
+      const user_id = data.userId;
++     const nameUser = data.nameUser
+       const total_price = data.totalPrice;
+       console.log("data dat hang :",data)
+       const orderId = await OrderModel.createOrder(
+@@ -75,13 +76,10 @@ class OrderService {
+         conn,
+       );
+ 
+-      const addNotification = await  NotificationService.createNotification({
+-        user_id: user_id,
+-        title: `Khách hàng ${data.nameUser} đã đặt hàng `,
+-        content: `Đã đặt hàng thành công với mã đơn hàng #${orderId}`,
+-      });
++   
+       // await conn.commit();
+-      return [orderId, cartItem, payment ,addNotification ];
++      await ProducerRabbitMQ("notificationOrder",{user_id ,nameUser ,orderId})
++      return [orderId, cartItem, payment ];
+   };
+ 
+   getItemOrder = async (ids) => {
+diff --git a/backend/src/socket/service/initSocketBroadcast.js b/backend/src/socket/service/initSocketBroadcast.js
+index 1ac3050..154a73b 100644
+--- a/backend/src/socket/service/initSocketBroadcast.js
++++ b/backend/src/socket/service/initSocketBroadcast.js
+@@ -73,18 +73,18 @@ const initSocketBroadcast = (wss) => {
+       }
+     });
+   });
+-   appEventEmitter.on("add_notification", ({ data }) => {
++  appEventEmitter.on("add_notificaton",({newNotification})=>{
+     wss.clients.forEach((client) => {
+       if (client.readyState === WebSocket.OPEN) {
+         client.send(
+           JSON.stringify({
+             event: "new_notification",
+-            data: data,
++            data: newNotification,
+           }),
+         );
+       }
+     });
+-  });
++  })
+ };
+ 
+ module.exports = initSocketBroadcast;
+diff --git a/frontend/admin/admin/src/components/chat/BoxRoom.tsx b/frontend/admin/admin/src/components/chat/BoxRoom.tsx
+index fd1e440..be10399 100644
+--- a/frontend/admin/admin/src/components/chat/BoxRoom.tsx
++++ b/frontend/admin/admin/src/components/chat/BoxRoom.tsx
+@@ -1,4 +1,4 @@
+-import { useEffect, useState } from "react";
++import { useEffect, useRef, useState } from "react";
+ import { getMessages, sendMessage } from "./data";
+ import { ChatContainer, ChatInput, ChatInputContainer, MessageBubble, MessageRow, MessageTime } from "./styled";
+ import { Button, Typography } from "@mui/material";
+@@ -15,7 +15,7 @@ export default function BoxRoom({ roomId, userId, userName }: BoxRoomProps) {
+       const [messages, setMessages] = useState<MessageType[]>([]);
+     const [text, setText] = useState("");
+     const {lastMessage} = useSocket();
+-  console.log(lastMessage);
++const bottomRef = useRef<HTMLDivElement | null>(null);
+   useEffect(() => {
+     const fetchMessages = async () => {
+       if (roomId !== null) {
+@@ -56,6 +56,11 @@ useEffect(() => {
+     }
+   }
+ }, [lastMessage, roomId]);
++useEffect(() => {
++  bottomRef.current?.scrollIntoView({
++    behavior: "smooth",
++  });
++}, [messages]);
+ 
+ // 2. Hàm gửi tin nhắn (chỉ đảm nhận việc gửi và xóa input)
+ const handleSendMessage = async () => {
+@@ -96,6 +101,7 @@ const handleSendMessage = async () => {
+           </MessageRow>
+         );
+       })}
++      <div ref={bottomRef} />
+     </ChatContainer>
+    {userId &&  <ChatInputContainer>
+   <ChatInput
+diff --git a/frontend/admin/admin/src/components/header/data.ts b/frontend/admin/admin/src/components/header/data.ts
+index 42dad99..a4ccf0f 100644
+--- a/frontend/admin/admin/src/components/header/data.ts
++++ b/frontend/admin/admin/src/components/header/data.ts
+@@ -1,8 +1,8 @@
+ import { RepositoryFactory } from "../../service/FactoryService";
+ 
+-export const GetNotifications = async () => {
++export const GetNotifications = async (limit: number) => {
+     try {
+-        const data = await RepositoryFactory.get('notification').getNotifications();
++        const data = await RepositoryFactory.get('notification').getNotifications(limit);
+         return data;
+     } catch (error) {
+         console.log(error)
+diff --git a/frontend/admin/admin/src/components/header/notification.tsx b/frontend/admin/admin/src/components/header/notification.tsx
+index 5c3ca83..27fa6ed 100644
+--- a/frontend/admin/admin/src/components/header/notification.tsx
++++ b/frontend/admin/admin/src/components/header/notification.tsx
+@@ -6,31 +6,50 @@ import {
+   ListItem,
+   ListItemText,
+   IconButton,
++  Box,
++  Button,
+ } from "@mui/material";
+ import CloseIcon from "@mui/icons-material/Close";
+-import { useEffect, useState } from "react";
+ import type { GetNotificationsResponse } from "../../types/notification";
++import { GetNotifications } from "./data";
+ 
+ type Props = {
+   setOpenNotification: (open: boolean) => void;
+   show: boolean;
++  notificationsData: GetNotificationsResponse[];
++  setNotificationsData: React.Dispatch<
++    React.SetStateAction<GetNotificationsResponse[]>
++  >;
++  total: number;
++  limit: number;
+ };
+ 
+ export default function NotificationComponent({
+   setOpenNotification,
+   show,
++  notificationsData,
++  total,
++  limit,
++  setNotificationsData,
+ }: Props) {
+   if (!show) return null;
+-  const [notifications, setNotifications] = useState<GetNotificationsResponse[]>([]);
+-  useEffect(() => {}, []);
++
++  const handleLoadMore = async () => {
++    limit += 10;
++    const data = await GetNotifications(limit);
++    const notifications = data?.notifications || [];
++    setNotificationsData(notifications);
++  };
++
+   return (
+     <Container
+       sx={{
+         position: "absolute",
+         top: 60,
+         right: 20,
+-        width: 350,
++        width: 450,
+         zIndex: 9999,
++        overflowY: "auto",
+       }}
+     >
+       <Paper
+@@ -49,22 +68,17 @@ export default function NotificationComponent({
+             borderBottom: "1px solid #eee",
+           }}
+         >
+-          <Typography variant="h6">
+-            Thông báo
+-          </Typography>
++          <Typography variant="h6">Thông báo</Typography>
+ 
+-          <IconButton
+-            size="small"
+-            onClick={() => setOpenNotification(false)}
+-          >
++          <IconButton size="small" onClick={() => setOpenNotification(false)}>
+             <CloseIcon />
+           </IconButton>
+         </div>
+ 
+         <List sx={{ maxHeight: 400, overflowY: "auto" }}>
+-          {notifications.map((item) => (
++          {notificationsData?.map((item) => (
+             <ListItem
+-              key={item.id}
++              key={item._id}
+               sx={{
+                 borderBottom: "1px solid #f0f0f0",
+                 cursor: "pointer",
+@@ -73,14 +87,30 @@ export default function NotificationComponent({
+                 },
+               }}
+             >
+-              <ListItemText
+-                primary={item.title}
+-                secondary={item.content}
+-              />
++              <ListItemText primary={item.title} secondary={item.content} />
+             </ListItem>
+           ))}
++          {notificationsData.length < total && (
++            <Box
++              sx={{
++                p: 1.5,
++                borderTop: "1px solid #eee",
++                textAlign: "center",
++              }}
++            >
++              <Button
++                fullWidth
++                variant="text"
++                onClick={() => {
++                  handleLoadMore();
++                }}
++              >
++                Xem thêm
++              </Button>
++            </Box>
++          )}
+         </List>
+       </Paper>
+     </Container>
+   );
+-}
+\ No newline at end of file
++}
+diff --git a/frontend/admin/admin/src/layouts/component/HeaderComponent.tsx b/frontend/admin/admin/src/layouts/component/HeaderComponent.tsx
+index 4cbcc34..32bc9fb 100644
+--- a/frontend/admin/admin/src/layouts/component/HeaderComponent.tsx
++++ b/frontend/admin/admin/src/layouts/component/HeaderComponent.tsx
+@@ -12,21 +12,29 @@ import SearchIcon from "@mui/icons-material/Search";
+ import LanguageIcon from "@mui/icons-material/Language";
+ import NotificationsNoneIcon from "@mui/icons-material/NotificationsNone";
+ import ManageAccountsIcon from "@mui/icons-material/ManageAccounts";
+-import { useState } from "react";
+-import { useDispatch } from "react-redux";
++import { useEffect, useState } from "react";
++import { useDispatch, useSelector } from "react-redux";
+ import { setDark } from "../../redux/features/darkMode";
+ import ProfileAndLogout from "../../components/header/profileAndLogout";
+ import { RepositoryFactory } from "../../service/FactoryService";
+ import { logout } from "../../redux/features/auth";
+ import { useSocket } from "../../context/SocketContext";
+ import NotificationComponent from "../../components/header/notification";
++import { setDataNotification } from "../../redux/features/notification";
++import type { GetNotificationsResponse } from "../../types/notification";
++import { GetNotifications } from "../../components/header/data";
+ 
+ export default function HeaderComponent() {
+   const [check, setCheck] = useState(false);
+   const [show, setShow] = useState(false);
+   const dispatch = useDispatch();
+-  const { socket  } = useSocket() as any; 
++  const { socket } = useSocket() as any;
+   const [notifications, setNotifications] = useState(false);
++  const [notificationsData, setNotificationsData] = useState<GetNotificationsResponse[]>([]);
++  const {dataNotification} = useSelector((state :any)=>state.notification)
++  const [totalNotification , setTotalNotification] = useState<number>(0)
++  let limit = 10;
++    const { lastMessage } = useSocket();
+   const handleDarkMode = () => {
+     const newCheck = !check;
+     setCheck(newCheck);
+@@ -45,12 +53,48 @@ export default function HeaderComponent() {
+     try {
+       await RepositoryFactory.get("auth").logout();
+       socket.disconnect();
+-      dispatch(logout())
++      dispatch(logout());
+     } catch (error) {
+       console.log(error);
+     }
+   };
+ 
++  useEffect(() => {
++    const fechData = async () => {
++      try {
++        
++        const data = await GetNotifications(limit);
++        const notifications = data?.notifications || [];
++        setNotificationsData(notifications);
++        setTotalNotification(data?.total ||0)
++        dispatch(setDataNotification(data?.total));
++        console.log(data);
++      } catch (error) {
++        console.log(error);
++      }
++    };
++    fechData();
++  }, []);
++
++  useEffect(() => {
++    if (lastMessage?.event === "new_notification") {
++      const newNotification = lastMessage.data as GetNotificationsResponse;
++      console.log("New message received via WebSocket:", newNotification);
++      setNotificationsData((p: GetNotificationsResponse[]) => {
++        const isDuplicate = p.some((msg) => msg._id === newNotification._id); // Thay 'id' bằng key định danh của message nếu cần
++        if (isDuplicate) return p;
++
++        const updated = [...p, newNotification].sort(
++          (a, b) =>
++            new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
++        );
++
++        dispatch(setDataNotification(totalNotification +1));
++        return updated;
++
++      });
++    }
++  }, [lastMessage]);
+ 
+ 
+   return (
+@@ -110,12 +154,18 @@ export default function HeaderComponent() {
+               </li>
+               <li style={{ position: "relative" }}>
+                 <Button onClick={() => setNotifications(!notifications)}>
+-                  <Badge badgeContent={1} color="primary">
++                  <Badge badgeContent={dataNotification} color="primary">
+                     <NotificationsNoneIcon color="primary" />
+-
+                   </Badge>
+                 </Button>
+-                <NotificationComponent setOpenNotification={setNotifications} show={notifications} />
++                <NotificationComponent
++                  setOpenNotification={setNotifications}
++                  show={notifications}
++                  notificationsData={notificationsData}
++                  total={totalNotification}
++                  limit = {limit}
++                  setNotificationsData={setNotificationsData}
++                />
+               </li>
+               <li style={{ position: "relative" }}>
+                 <Button
+diff --git a/frontend/admin/admin/src/redux/store.ts b/frontend/admin/admin/src/redux/store.ts
+index 042315a..af2e1b0 100644
+--- a/frontend/admin/admin/src/redux/store.ts
++++ b/frontend/admin/admin/src/redux/store.ts
+@@ -2,12 +2,13 @@
+ import DarkMode from "./features/darkMode";
+ import authSlice from "./features/auth"
+ import  addRoom from '../redux/features/addroom';
+-
++import NotificationSlice from "../redux/features/notification"
+ const store = configureStore({
+     reducer: {
+         darkmode: DarkMode,
+         auth:authSlice,
+-        dataRoom:addRoom
++        dataRoom:addRoom,
++        notification:NotificationSlice
+     }
+ });
+ 
+diff --git a/frontend/admin/admin/src/service/notification.ts b/frontend/admin/admin/src/service/notification.ts
+index 5d51849..aed0592 100644
+--- a/frontend/admin/admin/src/service/notification.ts
++++ b/frontend/admin/admin/src/service/notification.ts
+@@ -1,10 +1,13 @@
+-import type { GetNotificationsResponse } from "../types/notification";
++import type { GetNotificationData } from "../types/notification";
+ import BaseService from "./BaseService";
+ 
+-export default
+-class NotificationService extends BaseService {
+-    async getNotifications():Promise<Array<GetNotificationsResponse>> {
+-        const res = await this.http.get("/admin/notifications");
+-        return res.data;
+-    }
+-}
+\ No newline at end of file
++export default class NotificationService extends BaseService {
++  async getNotifications(limit: number): Promise<GetNotificationData> {
++    const res = await this.http.get("/admin/notifications", {
++      params: {
++        limit: limit.toString(),
++      },
++    });
++    return res.data;
++  }
++}
+diff --git a/frontend/admin/admin/src/types/notification.ts b/frontend/admin/admin/src/types/notification.ts
+index 7b0f55a..9b4dc34 100644
+--- a/frontend/admin/admin/src/types/notification.ts
++++ b/frontend/admin/admin/src/types/notification.ts
+@@ -1,8 +1,15 @@
++
++
+ export interface GetNotificationsResponse {
+-    id:string;
++    _id:string;
+     user_id: number;
+     title: string;
+     content: string;
+     is_read: boolean;
+     created_at: string;
++}
++
++export interface GetNotificationData {
++    notifications:GetNotificationsResponse[],
++    total:number
+ }
+\ No newline at end of file

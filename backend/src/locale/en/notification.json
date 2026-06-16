@@ -1,0 +1,7 @@
+{
+  "Insufficient quantity of products": "Insufficient quantity of products",
+  "The account does not exist": "The account does not exist",
+  "Incorrect password": "Incorrect password",
+  "Refresh token does not exist": "Refresh token does not exist",
+  "Refresh token is invalid": "Refresh token is invalid"
+}

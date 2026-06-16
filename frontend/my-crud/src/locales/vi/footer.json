@@ -1,0 +1,37 @@
+{
+  "footer": {
+    "card": {
+      "title": "Thời trang nam TORANO",
+      "description": " Hệ thống thời trang cho phái mạnh hàng đầu Việt Nam, hướng tới phong cách nam tính, lịch lãm và trẻ trung.",
+      "Method": "Phương thức thanh toán"
+    },
+    "contact": {
+      "title":"Thông tin liên hệ",
+      "local": "Địa chỉ: ",
+      "address": "  Tầng 8, Tòa nhà 311-313 Trường Chinh, Phường Phương Liệt, Thành phố Hà Nội, Việt Nam",
+      "phone": "Điện thoại: ",
+      "number1": "0964942121",
+      "number2": "0904636356",
+      "email": "Email: ",
+      "mail": "cskh@torano.vn",
+      "Method": "Phương thức vận chuyển"
+    },
+    "link": {
+      "title":"Nhóm liên kết",
+      "search": "Tìm kiếm",
+      "about": "Giới thiệu",
+      "return": "Chính sách đổi trả",
+      "privacy": "Chính sách bảo mật",
+      "careers": "Tuyển dụng",
+      "contact": "Liên hệ"
+    },
+    "register": {
+      "title": "Đăng ký nhận tin",
+      "description": "Để cập nhật những sản phẩm mới, nhận thông tin ưu đãi đặc biệt và thông tin giảm giá khác.",
+      "placeholder": "Nhập email của bạn",
+      "button": "Đăng ký"
+
+    },
+    "text": "Copyright © 2026 Torano. Powered by Haravan"
+  }
+}

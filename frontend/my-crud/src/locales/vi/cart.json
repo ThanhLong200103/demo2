@@ -1,0 +1,13 @@
+{
+    "cart":{
+        "cartItem":"Giỏ hàng",
+        "my cart":"Giỏ hàng của tôi",
+        "all products":"Tất cả sản phẩm",
+        "total":"Tổng Thanh toán",
+        "product":"Sản phẩm",
+        "checkout":"Đặt hàng",
+        "empty cart":"Chưa có sản phẩm trong giỏ hàng...",
+        "back to products":"Trở về trang sản phẩm",
+        "promotion":"Khuyến mãi dành cho bạn"
+    }
+}

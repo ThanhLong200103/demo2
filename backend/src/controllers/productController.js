@@ -1,59 +1,75 @@
-const ProductService = require("../services/productService")
-
+const attributeService = require("../services/attributeService");
+const ProductService = require("../services/productService");
+const CacthAsync = require("../utils/cachAsync");
 class ProductController {
-    getAllProduct = async (req , res)=>{
-        try{
-            const data = await ProductService.getAllProduct()
-        res.json(data)
-        }catch (err)
-        {
-      res.status(500).json({ error: err.message });
-
-        }
-    } 
-    getProduct = async (req , res) =>{
-        try{
-            const {id} = req.params
-        const data = await ProductService.getProduct(id)
-        res.json(data)
-
-        }catch(err){
-      res.status(500).json({ error: err.message });
-
-        }
+  getAllProduct = CacthAsync(async (req, res) => {
+    const limit = Math.min(21, Number(req.query.limit) || 12);
+  const cursor = req.query.cursor;
+  const direction = req.query.direction;
+  const page = Number(req.query.page) || null;
+  const locale = req.language || "vi";
+  console.log("LOCALE:", req.language);
+    const data = await ProductService.getAllProduct(limit,cursor , direction, page, locale);
+    res.json(data);
+  });
+  getProduct = CacthAsync(async (req, res) => {
+    const { id } = req.params;
+    const locale = req.language || "vi";
+    // console.log(id)
+    // console.log("LOCALE:", req.language);
+    const data = await ProductService.getProduct(id, locale);
+    res.json(data);
+  });
+  deleteProduct = CacthAsync(async (req, res) => {
+    const { id } = req.params;
+    const data = await ProductService.deleteProduct(id);
+    res.json(data);
+  });
+  editProduct = CacthAsync(async (req, res) => {
+    const { id } = req.params;
+    const { name, price, img, quantity } = req.body;
+    const data = await ProductService.editProduct({
+      name,
+      price,
+      img,
+      quantity,
+      id,
+    });
+    res.json(data);
+  });
+  createProduct = CacthAsync(async (req, res) => {
+    const { name, price, img, quantity } = req.body;
+    const data = await ProductService.createProduct({
+      name,
+      price,
+      img,
+      quantity,
+    });
+    res.json(data);
+  });
+  getAttributes = CacthAsync(
+    async(req , res) =>{
+      const {productId} = req.query;
+      // console.log(productId)
+      const data = await attributeService.getAttributes(productId)
+      res.json(data)
     }
-    deleteProduct  = async (req,res) =>{
-        try {
-             const {id} = req.params
-        const data = await ProductService.deleteProduct(id)
-        res.json(data)
-
-        } catch (error) {
-      res.status(500).json({ error: err.message });
-            
-        }
+  )
+  getOneAttributes = CacthAsync(
+    async(req , res) =>{
+      const {productId , sizeAttribute , colorAttribute} = req.query;
+      // console.log(productId)
+      const data = await attributeService.getOneAttributes({productId , sizeAttribute , colorAttribute})
+      res.json(data)
     }
-    editProduct = async (req, res) =>{
-        try {
-             const {id} = req.params
-             const {name, price, img, quantity} = req.body
-        const data = await ProductService.editProduct({name, price, img, quantity ,id})
-        res.json(data)
-        } catch (error) {
-      res.status(500).json({ error: err.message });
-            
-        }
+  )
+  searchProduct = CacthAsync(
+    async(req,res)=>{
+       const { name } = req.query; 
+      console.log("Name:",name)
+      const data = await ProductService.searchProduct(name);
+      res.json(data)
     }
-    createProduct = async(req,res)=>{
-        try {
-        
-             const {name, price, img, quantity} = req.body
-        const data = await ProductService.createProduct({name, price, img, quantity})
-        res.json(data)
-        } catch (error) {
-      res.status(500).json({ error: err.message });
-            
-        }
-    }
-} 
+  )
+}
 module.exports = new ProductController();

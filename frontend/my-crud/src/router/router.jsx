@@ -5,6 +5,19 @@ import EditPage from "../pages/EditPage";
 import IndexPagew from "../pages/IndexPagew";
 import DeletePage from "../pages/DeletePage";
 import CartPage from "../pages/CartPage";
+import LoginPage from "../pages/loginPage";
+import OrderPage from "../pages/orderPage";
+import RegisterPage from "../pages/registerPage";
+import PurchaseHistoryPage from "../pages/purchaseHistoryPage";
+import VnpayPage from "../pages/VnpayPage";
+import PaymentSuccess from "../pages/PaymentSuccess";
+import PaymentFail from "../pages/PaymentFail";
+
+import DetailProductPage from "../pages/detailProductPage";
+import AccountPage from "../pages/accoutPage";
+import BuyNowPage from "../pages/buyNowPage";
+import CategoryPage from "../pages/categoryPage";
+import SearchPage from "../pages/searchPage";
 
 export default function AppRouter() {
     return(
@@ -15,7 +28,18 @@ export default function AppRouter() {
             <Route path="/index" element = {<IndexPagew></IndexPagew>}></Route>
             <Route path="/delete/:id" element = {<DeletePage></DeletePage>}></Route>
             <Route path="/cart" element = {<CartPage></CartPage>}></Route>
-
+            <Route path="/login" element = {<LoginPage></LoginPage>}></Route>
+            <Route path="/order" element = {<OrderPage></OrderPage>}></Route>
+            <Route path="/register" element = {<RegisterPage></RegisterPage>}></Route>
+            <Route path="/history" element = {<PurchaseHistoryPage></PurchaseHistoryPage>}></Route>
+            <Route path="/payment" element = {<VnpayPage></VnpayPage>}></Route>
+            <Route path="/payment-success" element = {<PaymentSuccess></PaymentSuccess>}></Route>
+            <Route path="/payment-failed" element = {<PaymentFail></PaymentFail>}></Route>
+            <Route path="/account" element = {<AccountPage></AccountPage>}></Route>
+            <Route path="/products/:id" element={<DetailProductPage></DetailProductPage>}></Route>
+            <Route path="/buyNow" element={<BuyNowPage></BuyNowPage>}></Route>
+            <Route path="/collections/:name" element={<CategoryPage></CategoryPage>}></Route>
+            <Route path="/search/:name" element={<SearchPage></SearchPage>}></Route>
 
         </Routes>
     )
