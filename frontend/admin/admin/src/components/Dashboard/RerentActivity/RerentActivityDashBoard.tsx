@@ -9,7 +9,7 @@ import {
   Typography,
 } from "@mui/material";
 import TableOrderDashboard from "./TableOrderDashboard";
-import { StyledButonUser } from "../../user/styled";
+import { StyledButonUser } from "../../User/styled";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import { StyledGridRerentActivity } from "../styled";
 import { useNavigate } from "react-router-dom";

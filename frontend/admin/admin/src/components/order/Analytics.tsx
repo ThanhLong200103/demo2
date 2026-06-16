@@ -1,5 +1,5 @@
 import { Typography } from "@mui/material";
-import { StyledPieChatDashboard } from "../dashboard/styled";
+import { StyledPieChatDashboard } from "../Dashboard/styled";
 type dataOrder = {
   id: number;
   value: number;

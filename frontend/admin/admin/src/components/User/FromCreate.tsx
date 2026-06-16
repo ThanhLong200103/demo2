@@ -1,53 +1,38 @@
-import {
-  Box,
-  Button,
-  TextField,
- 
-} from "@mui/material";
-import { useEffect, useState } from "react";
+import { Box, Button, TextField } from "@mui/material";
+import { useState } from "react";
 import type { RegisterUser } from "../../types/user";
 import { registerUser } from "./data";
 
-
 type Props = {
-
   handleClose: () => void;
 };
 
-export default function FormUserCreate({
-  handleClose
-}: Props) {
-  const [formData, setFormData] =
-    useState<RegisterUser>({
-      name: "",
-      email: "",
-      phone: "",
-      password: "",
-    });
+export default function FormUserCreate({ handleClose }: Props) {
+  const [formData, setFormData] = useState<RegisterUser>({
+    name: "",
+    email: "",
+    phone: "",
+    password: "",
+  });
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement>
-  ) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value,
     });
   };
 
-  const handleSubmit = async (
-    e: any
-  ) => {
+  const handleSubmit = async (e: any) => {
     e.preventDefault();
 
     try {
-      console.log(formData)
-      await registerUser(formData)
+      console.log(formData);
+      await registerUser(formData);
       handleClose();
     } catch (error) {
       console.log(error);
     }
   };
-
 
   return (
     <Box
@@ -58,11 +43,9 @@ export default function FormUserCreate({
         display: "flex",
         flexDirection: "column",
         gap: 2,
-           paddingTop:"36px"
+        paddingTop: "36px",
       }}
     >
-     
-
       <TextField
         label="Name"
         name="name"
@@ -97,11 +80,8 @@ export default function FormUserCreate({
         fullWidth
       />
 
-      <Button
-        type="submit"
-        variant="contained"
-      >
-       Thêm
+      <Button type="submit" variant="contained">
+        Thêm
       </Button>
     </Box>
   );

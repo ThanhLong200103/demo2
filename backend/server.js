@@ -58,7 +58,7 @@ app.use(cookieParser());
   // TEST RabbitMQ
   // await ProducerRabbitMQ();
   // await ConSumerRabbitMQ();
-  await startConsumers()
+  await startConsumers() 
 
   //Test Kafka 
   // await ProducerKafka()
@@ -68,4 +68,4 @@ app.use(cookieParser());
   server.listen(port, () => {
     console.log(`Server running on port ${port}`);
   });
-})();
+})();  

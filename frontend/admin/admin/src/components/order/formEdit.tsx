@@ -1,41 +1,27 @@
-import {
-  Box,
-  Button,
-  TextField,
-  Typography,
-} from "@mui/material";
+import { Box, Button, TextField } from "@mui/material";
 import { useEffect, useState } from "react";
 import { getOneOrder, updatePriceOrder } from "./data";
 import type { OrderPriceUpdate } from "../../types/order";
 
-
 type Props = {
   id: string;
-  handleClose:()=>void
+  handleClose: () => void;
 };
 
+export default function FormEditOrder({ id, handleClose }: Props) {
+  const [formData, setFormData] = useState<OrderPriceUpdate>({
+    id: "",
+    total_price: 0,
+  });
 
-export default function FormEditOrder({
-  id,handleClose
-}: Props) {
-  const [formData, setFormData] =
-    useState<OrderPriceUpdate>({
-      id: "",
-      total_price: 0,
-    });
-
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement>
-  ) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value,
     });
   };
 
-  const handleSubmit = async (
-    e: any
-  ) => {
+  const handleSubmit = async (e: any) => {
     e.preventDefault();
 
     try {
@@ -44,8 +30,8 @@ export default function FormEditOrder({
         total_price: Number(formData.total_price),
       });
 
-     await updatePriceOrder(formData)
-     handleClose()
+      await updatePriceOrder(formData);
+      handleClose();
     } catch (error) {
       console.log(error);
     }
@@ -80,28 +66,18 @@ export default function FormEditOrder({
         padding: 3,
       }}
     >
-     
-
-      <TextField
-        label="Order ID"
-        value={id}
-        disabled
-        fullWidth
-      />
+      <TextField label="Order ID" value={id} disabled fullWidth />
 
       <TextField
         label="Total Price"
         name="total_price"
         type="number"
-        value={formData.total_price||""}
+        value={formData.total_price || ""}
         onChange={handleChange}
         fullWidth
       />
 
-      <Button
-        type="submit"
-        variant="contained"
-      >
+      <Button type="submit" variant="contained">
         Update Price
       </Button>
     </Box>

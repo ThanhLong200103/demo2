@@ -3,14 +3,11 @@ import { HandleLogic } from "../components/hanlde/hanlde";
 import { SearchLogic } from "../components/hanlde/search";
 import { Container, Grid2 } from "@mui/material";
 import CheckBoxProduct from "../components/product/checkbox";
-import {
-  colorProduct,
-  sizeProduct,
-} from "../components/product/data";
+import { colorProduct, sizeProduct } from "../components/product/data";
 import { ColumTableProduct } from "../components/product/colums";
 import DataGird from "../components/tableGird";
 import BasicModal from "../components/modal";
-import { Product } from "../components/dashboard/data";
+import { Product } from "../components/Dashboard/data";
 
 import type { ProductType } from "../types/product";
 
@@ -23,7 +20,7 @@ export default function ProductPage() {
   });
   const [rowCount, setRowCount] = useState(0);
   const [loading, setLoading] = useState(false);
-  const[products , setProducts] = useState<ProductType[]>([])
+  const [products, setProducts] = useState<ProductType[]>([]);
   const handleAdd = () => {
     console.log(valueSearch);
     setOpen(true);
@@ -48,19 +45,16 @@ export default function ProductPage() {
   useEffect(() => {
     const effectData = async () => {
       try {
-        setLoading(true)
-           const data = await Product(
-            paginationModel.page+1,
-            paginationModel.pageSize,
-
-           );
-           setRowCount(data.total)
-    setProducts(data.data)
-        
+        setLoading(true);
+        const data = await Product(
+          paginationModel.page + 1,
+          paginationModel.pageSize,
+        );
+        setRowCount(data.total);
+        setProducts(data.data);
       } catch (error) {
-        
-      }finally{
-        setLoading(false)
+      } finally {
+        setLoading(false);
       }
     };
     effectData();

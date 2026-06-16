@@ -1,10 +1,10 @@
 import { Container, Grid2 } from "@mui/material";
-import ButtonDasdboard from "../components/dashboard/ButtonDashBoard";
-import ChatAndAnalytics from "../components/dashboard/chatAndAnalytics";
+import ButtonDasdboard from "../components/Dashboard/ButtonDashBoard";
+import ChatAndAnalytics from "../components/Dashboard/chatAndAnalytics";
 import PaidRoundedIcon from "@mui/icons-material/PaidRounded";
-import RerentActivityDashBoard from "../components/dashboard/RerentActivity/RerentActivityDashBoard";
+import RerentActivityDashBoard from "../components/Dashboard/RerentActivity/RerentActivityDashBoard";
 import { useEffect, useState } from "react";
-import { Order, Revenue, User } from "../components/dashboard/data";
+import { Order, Revenue, User } from "../components/Dashboard/data";
 import type { OrderType } from "../types/order";
 import type { UserType } from "../types/user";
 
@@ -66,14 +66,14 @@ export default function DashboardPage() {
 
         const ordertime = order.sort(
           (a, b) =>
-           ( new Date(b.created_at).getTime() - new Date(a.created_at).getTime()),
+            new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
         );
 
-        let arrayOrderNew = []
+        let arrayOrderNew = [];
         for (let index = 0; index < 9; index++) {
-          arrayOrderNew.push(ordertime[index])
+          arrayOrderNew.push(ordertime[index]);
         }
-        setOrdertimes(arrayOrderNew)
+        setOrdertimes(arrayOrderNew);
         // const products = await Product();
         // console.log(order);
         // console.log("Danh sách data:", result.data);lam
@@ -84,7 +84,6 @@ export default function DashboardPage() {
 
     fetchRevenue();
   }, []);
-
 
   return (
     <>

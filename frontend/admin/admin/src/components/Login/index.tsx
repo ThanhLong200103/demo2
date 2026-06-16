@@ -4,29 +4,29 @@ import {
   Stack,
   TextField,
   Typography,
-  Button
+  Button,
 } from "@mui/material";
 
+type Props = {
+  valueEmail: string;
+  valuePassword: string;
+  setValuePassword: (value: string) => void;
+  setValueEmail: (value: string) => void;
+  handleLogin: () => void;
+};
 
-type Props ={
-    valueEmail :string,
-    valuePassword :string,
-setValuePassword:(value :string)=>void
-  setValueEmail:(value :string)=>void
-   handleLogin :()=>void
-
-}
-
-export default function LoginComponent({valueEmail ,valuePassword ,setValuePassword, setValueEmail,handleLogin,...props}:Props) {
-    return(
-         <Container maxWidth="sm">
+export default function LoginComponent({
+  valueEmail,
+  valuePassword,
+  setValuePassword,
+  setValueEmail,
+  handleLogin,
+}: Props) {
+  return (
+    <Container maxWidth="sm">
       <Paper sx={{ p: 4, mt: 10 }}>
         <Stack spacing={3}>
-          
-          <Typography
-            variant="h4"
-            textAlign="center"
-          >
+          <Typography variant="h4" textAlign="center">
             Login
           </Typography>
 
@@ -35,7 +35,6 @@ export default function LoginComponent({valueEmail ,valuePassword ,setValuePassw
             fullWidth
             value={valueEmail}
             onChange={(e) => setValueEmail(e.target.value)}
-            
           />
 
           <TextField
@@ -46,16 +45,11 @@ export default function LoginComponent({valueEmail ,valuePassword ,setValuePassw
             onChange={(e) => setValuePassword(e.target.value)}
           />
 
-          <Button
-            variant="contained"
-            size="large"
-            onClick={handleLogin}
-          >
+          <Button variant="contained" size="large" onClick={handleLogin}>
             Login
           </Button>
-
         </Stack>
       </Paper>
     </Container>
-    )
-};
+  );
+}
